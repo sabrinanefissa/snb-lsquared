@@ -1,0 +1,75 @@
+/* ==========================================================================
+   LIGHT GROUNDS VARIANT
+   Opt in with ?grounds=light, which puts .grounds-light on <html> before paint.
+   Nothing here applies to the default page. Three sections give up black for
+   paper: the strips, the publish scenes and the figures band. Photos keep
+   their dark veils and white text, so nothing inside a frame changes.
+   ========================================================================== */
+
+.grounds-light{
+  --paper-ground:#F3F1EC;
+  --ink-on-paper:#06121E;
+  --ink-soft:rgba(6,18,30,.66);
+  --edge-on-paper:rgba(6,18,30,.14);
+}
+
+/* ---------------------------------------------------------------- 4. strips */
+.grounds-light #strips{background:var(--paper-ground)}
+.grounds-light .strips__title{color:var(--ink-on-paper)}
+.grounds-light .strip{
+  background:#E7E3DA;
+  box-shadow:0 14px 30px rgba(6,18,30,.16),0 2px 6px rgba(6,18,30,.08);
+}
+/* the blue pixels shedding out of the statement land on paper, so they take
+   the deep blue rather than the pale tint that only reads on black */
+.grounds-light .shed--into{--shed-rgb:26,111,163;--shed-alpha:.9}
+
+/* Industries keeps its dark ground in this variant: the photograph is the
+   section, and paper around it would fight the image. */
+
+/* ---------------------------------------------------------------- 6. publish */
+.grounds-light #publish{background:var(--paper-ground)}
+.grounds-light .pub__title{color:var(--ink-on-paper)}
+.grounds-light .pub__shot{
+  background:#E7E3DA;
+  box-shadow:0 14px 30px rgba(6,18,30,.16),0 2px 6px rgba(6,18,30,.08);
+}
+.grounds-light .seg{background:rgba(6,18,30,.09)}
+.grounds-light .seg button{color:rgba(6,18,30,.68)}
+.grounds-light .seg button.is-on{background:var(--ink-on-paper);color:var(--paper)}
+@media (hover:hover) and (pointer:fine){
+  .grounds-light .seg button:not(.is-on):hover{color:var(--ink-on-paper);background:rgba(6,18,30,.06)}
+}
+.grounds-light .pub__status{color:var(--ink-on-paper)}
+.grounds-light .pub__status.is-ready{color:var(--deep)}
+.grounds-light .pub__status.is-ready .dot{background:var(--deep)}
+.grounds-light .pub__status.is-none{color:rgba(6,18,30,.55)}
+.grounds-light .pub__status.is-none .dot{background:rgba(6,18,30,.34)}
+.grounds-light #pub-go[aria-disabled="true"]{
+  background:rgba(6,18,30,.1);border-color:transparent;color:rgba(6,18,30,.52);
+}
+@media (hover:hover) and (pointer:fine){
+  .grounds-light #pub-go[aria-disabled="true"]:hover{background:rgba(6,18,30,.1);border-color:transparent}
+}
+
+/* 9. the figures are a full screen dark moment in both variants now, so the
+   variant has nothing to say about them. */
+
+/* ---------------------------------------------------------------- seams
+   No muddy dark to paper gradients. Where a shed already lives it carries the
+   change; everywhere else the grounds meet on a clean edge. */
+.grounds-light #strips{background-image:none}
+.grounds-light #publish{
+  background-image:none;
+}
+/* a hairline where two flat grounds meet, so the edge reads as intended
+   rather than as a rendering seam */
+.grounds-light #strips{border-bottom:1px solid var(--edge-on-paper)}
+.grounds-light #publish{border-top:1px solid var(--edge-on-paper);border-bottom:1px solid var(--edge-on-paper)}
+
+/* ---------------------------------------------------------------- browser surfaces */
+.grounds-light #strips :focus-visible,
+.grounds-light #publish :focus-visible{outline-color:var(--deep)}
+.grounds-light #strips ::selection,
+.grounds-light #publish ::selection{background:var(--deep);color:var(--paper)}
+

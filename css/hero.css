@@ -1,0 +1,40 @@
+/* ===================== 1 . HERO (animated) =====================
+   LOCKED. Copied verbatim from homepage-mock/index.html. Do not restyle or retime. */
+/* r4 item 1: the photo fills the whole hero and the count sits in the centre
+   over it. Only the placement and the legibility treatment changed; the type,
+   the timings, the tap to skip and everything from "One location." on are
+   exactly as the mock left them. */
+#hero{height:100svh;min-height:480px;position:relative;overflow:hidden;background:var(--black);display:block}
+#hero .hshot{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;background:#000;transition:opacity 1s var(--ease)}
+/* r18: the count is a code-drawn wall of glowing screens (js/herowall.js). One canvas for the wall,
+   one blurred copy over it for the bloom. No photographs, no dark pool: the screens behind the words dim themselves. */
+#hero .hshot canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#hero #h_bloom{filter:blur(30px) saturate(1.55) brightness(1.12);mix-blend-mode:screen;opacity:.88;pointer-events:none}
+#hero .read{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;
+  gap:calc(min(clamp(54px,15svh,150px),12.6vw) * .28);padding:0 4vw;text-align:center;flex-wrap:wrap;
+  text-shadow:0 2px 26px rgba(0,0,0,.92),0 1px 3px rgba(0,0,0,.8);
+  transition:opacity 1s var(--ease)}
+/* The ONLY change to the locked hero: the existing size is wrapped in min() so
+   "Infinite screens" cannot overflow a phone. At 1130x520 and 1440x900 the vw
+   term is larger than the svh term, so the computed size is unchanged there. */
+#hero .num{font-stretch:64%;font-weight:800;line-height:.9;letter-spacing:-.02em;font-variant-numeric:tabular-nums;
+  font-size:min(clamp(54px,15svh,150px),12.6vw);color:var(--paper)}
+#hero .word{font-stretch:64%;font-weight:800;text-transform:uppercase;letter-spacing:.02em;
+  font-size:min(clamp(54px,15svh,150px),12.6vw);line-height:.9;color:var(--paper)}
+#hero .num:empty{display:none}
+#hero.end .hshot,#hero.end .read{opacity:0}
+#hero .big{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:0 5vw;
+  opacity:0;transition:opacity 1.5s var(--ease);pointer-events:none}
+#hero .big.on{opacity:1}
+#hero .bigA{font-stretch:64%;font-weight:800;text-transform:uppercase;letter-spacing:-.015em;line-height:.9;
+  font-size:clamp(48px,13.5vw,240px);color:var(--paper);white-space:nowrap}
+/* set like the L Squared wordmark: wide, geometric, blue */
+#hero .bigB{font-stretch:118%;font-weight:600;text-transform:uppercase;letter-spacing:.01em;line-height:1;
+  font-size:clamp(30px,7.6vw,132px);color:var(--blue);white-space:nowrap}
+#hero .hlogo{position:absolute;left:50%;top:50%;width:min(80vw,1180px);transform:translate(-50%,-50%);
+  opacity:0;transition:opacity 1.2s var(--ease);pointer-events:none}
+#hero .hlogo.on{opacity:1}
+#hero .hlogo img{display:block;width:100%;height:auto;clip-path:inset(0 84.6% 0 0);transform:translateX(42.4%);
+  transition:clip-path 1.7s var(--ease),transform 1.7s var(--ease)}
+#hero .hlogo.full img{clip-path:inset(0 0 0 0);transform:translateX(0)}
+@media (prefers-reduced-motion:reduce){#hero .big,#hero .hlogo,#hero .hlogo img{transition:none}}

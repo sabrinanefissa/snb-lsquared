@@ -1,0 +1,701 @@
+/* L Squared homepage v7 - sections 2 to 11 */
+
+/* ===================== 2 . BLUE STATEMENT ===================== */
+/* r6: one flat blue slab, exactly one viewport tall, with clean edges top and
+   bottom. The ramps are gone: they made the blue area read off centre and let
+   the colour bleed into the section below. */
+#statement{
+  background:var(--blue);color:var(--ink);
+  min-height:100dvh;height:100dvh;
+}
+#statement .pixfield{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.statement__wrap{position:relative;z-index:2}
+.statement__h{color:var(--ink);font-size:clamp(38px,7.2vw,108px)}
+
+/* ===================== 3 . INDEPENDENT =====================
+   The pixels shed out of the blue and land as ONE centred line. The sentence
+   sits directly under that line. Runway is short enough that the last word
+   lights just before the section ends: no dead static screen at the bottom. */
+#independent{
+  position:relative;height:170dvh;
+  background:var(--blue);   /* the second blue moment, flat, clean edges */
+}
+.fall{position:sticky;top:0;height:100dvh;overflow:hidden}
+#fall-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.fall__stage{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:0 clamp(20px,5vw,64px)}
+.fall__line{
+  position:relative;z-index:1;
+  max-width:min(26ch,80vw);text-align:center;text-wrap:balance;
+  margin-top:clamp(56px,10dvh,104px);       /* sits directly under the landed line */
+  font-stretch:70%;font-weight:800;letter-spacing:-.012em;line-height:1.1;
+  font-size:clamp(30px,4.6vw,84px);
+  color:var(--ink);
+}
+/* the dim state is a colour, not a faded opacity, so it never reads as disabled */
+.fall__line i{font-style:normal;color:#2F7FB2;transition:color 420ms var(--ease)}
+.fall__line i.is-on{color:var(--ink)}
+
+/* ===================== 4 . FIVE STRIPS =====================
+   r4: a title above the row, and the word and the open sentence live on the
+   photo over a bottom gradient. No bands, no hairline boxes. */
+#strips{min-height:100dvh;
+  background:linear-gradient(180deg,#061320 0%,#05121E 40%,#04101D 100%)}
+/* r7 item 3: the row is allowed to use the window, not the 1180px text column */
+#strips .wrap{max-width:none}
+.strips__title{font-size:var(--title);color:var(--paper);margin-bottom:var(--gap-title);flex:0 0 auto}
+.stripswrap{width:100%;display:flex;justify-content:center}
+/* r8 item 2: the row is back to the accordion it was before the no-crop
+   change: five strips fill the row, the open one is wider, every photo is
+   cover cropped. The r7 window sizing stays, so the row is as wide as 92vw
+   and as tall as the section has room for. */
+.strips{
+  --rowh:min(
+    calc(100dvh - 2 * var(--pad-sec) - var(--gap-title) - 1.1 * clamp(24px,3.5vw,50px)),
+    720px);
+  display:grid;grid-template-columns:2.1fr 1fr 1fr 1fr 1fr;gap:12px;
+  width:min(92vw,1840px);height:var(--rowh);min-height:340px;
+  transition:grid-template-columns 620ms var(--ease);
+}
+.strips[data-open="1"]{grid-template-columns:1fr 2.1fr 1fr 1fr 1fr}
+.strips[data-open="2"]{grid-template-columns:1fr 1fr 2.1fr 1fr 1fr}
+.strips[data-open="3"]{grid-template-columns:1fr 1fr 1fr 2.1fr 1fr}
+.strips[data-open="4"]{grid-template-columns:1fr 1fr 1fr 1fr 2.1fr}
+.strip{
+  position:relative;overflow:hidden;min-width:0;padding:0;
+  border:0;border-radius:10px;background:#0A1826;
+  cursor:pointer;color:inherit;
+  box-shadow:0 12px 26px rgba(0,0,0,.5);
+}
+.strip__ph{
+  position:absolute;inset:0;
+  /* every strip, open or closed, is a cover crop of its photograph */
+  background-size:cover;background-position:var(--bp,center);background-repeat:no-repeat;
+  filter:grayscale(.5) brightness(.66);
+  transition:filter .45s var(--ease),opacity 380ms var(--ease);
+}
+/* the open strip is shown at full brightness, never dimmed */
+.strip.is-open .strip__ph{filter:grayscale(0) brightness(1)}
+/* r8 item 2: per photo framing, so no face is cut off when the strip opens */
+.strips > .strip:nth-child(1){--bp:center 28%}   /* team, heads high in frame */
+.strips > .strip:nth-child(2){--bp:center 32%}   /* meeting */
+.strips > .strip:nth-child(3){--bp:center 30%}   /* security */
+.strips > .strip:nth-child(4){--bp:center 30%}   /* support */
+.strips > .strip:nth-child(5){--bp:center center} /* maps */
+.strip--map .strip__ph{opacity:0}
+.strip--map .strip__ph.is-on{opacity:1}
+/* the gradient the words sit on */
+.strip__veil{
+  position:absolute;left:0;right:0;bottom:0;height:38%;pointer-events:none;
+  background:linear-gradient(180deg,rgba(4,9,15,0) 0%,rgba(4,9,15,.7) 38%,rgba(4,9,15,.95) 62%,rgba(4,9,15,.97) 100%);
+  transition:height .45s var(--ease);
+}
+/* open: the full height veil gets out of the way and a short gradient that
+   only hugs the text block takes over, so the photograph stays bright */
+.strip.is-open .strip__veil{height:0}
+.strip__copy{
+  position:absolute;left:0;right:0;bottom:0;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:24px clamp(10px,1.4vw,22px) clamp(14px,2.2dvh,24px);
+  text-align:center;
+}
+.strip__copy::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(4,9,15,0) 0%,rgba(4,9,15,.5) 32%,
+    rgba(4,9,15,.84) 70%,rgba(4,9,15,.9) 100%);
+  opacity:0;transition:opacity .45s var(--ease);
+}
+.strip.is-open .strip__copy::before{opacity:1}
+.strip__word,.strip__say{position:relative;z-index:1}
+.strip__word{
+  font-stretch:76%;font-weight:700;letter-spacing:.005em;line-height:1.05;
+  font-size:clamp(17px,2vw,27px);color:var(--paper);
+  text-shadow:0 2px 14px rgba(0,0,0,.96),0 1px 3px rgba(0,0,0,.9);
+}
+.strip__say{
+  font-stretch:78%;font-weight:600;line-height:1.24;letter-spacing:.005em;
+  font-size:clamp(14px,1.35vw,19px);color:rgba(243,241,236,.95);
+  text-shadow:0 2px 14px rgba(0,0,0,.96),0 1px 3px rgba(0,0,0,.9);
+  max-height:0;opacity:0;overflow:hidden;
+  transition:max-height 520ms var(--ease),opacity 320ms var(--ease);
+}
+.strip.is-open .strip__say{max-height:9em;opacity:1}
+.strip:active{transform:scale(.995)}
+
+/* stacked: the same accordion, running down the screen */
+@media (max-width:760px){
+  .strips{
+    width:100%;height:min(560px,66dvh);min-height:0;
+    grid-template-columns:1fr;grid-template-rows:2.1fr 1fr 1fr 1fr 1fr;
+    transition:grid-template-rows 620ms var(--ease);
+  }
+  .strips[data-open="1"]{grid-template-columns:1fr;grid-template-rows:1fr 2.1fr 1fr 1fr 1fr}
+  .strips[data-open="2"]{grid-template-columns:1fr;grid-template-rows:1fr 1fr 2.1fr 1fr 1fr}
+  .strips[data-open="3"]{grid-template-columns:1fr;grid-template-rows:1fr 1fr 1fr 2.1fr 1fr}
+  .strips[data-open="4"]{grid-template-columns:1fr;grid-template-rows:1fr 1fr 1fr 1fr 2.1fr}
+}
+
+/* ===================== 5 . INDUSTRIES =====================
+   r6: nothing sits on the photograph. Title and tabs are on the section ground
+   above it, the caption is on the ground below it, and the image runs the full
+   width with no frame, no scrim and no overlay of any kind.
+   Rhythm: tabs are part of the title group (--s2 away from it), the whole group
+   is --gap-title from the photo, and the caption sits --s3 under it. */
+#industries{
+  --pad-ind:clamp(22px,4dvh,36px);   /* r15: a little tighter top and bottom so the photo gets the height */
+  position:relative;width:100%;height:100dvh;min-height:420px;overflow:hidden;
+  background:linear-gradient(180deg,#04101D 0%,#050A10 100%);
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+}
+.ind__head{
+  flex:0 0 auto;width:100%;
+  display:flex;flex-direction:column;align-items:center;
+  padding:var(--pad-ind) clamp(18px,5vw,64px) 0;
+}
+.ind__title{font-size:var(--title);color:var(--paper)}
+.ind__tabs{
+  margin-top:var(--s2);
+  display:flex;flex-wrap:wrap;justify-content:center;align-items:center;
+  gap:clamp(10px,2vw,30px);
+  background:none;border:0;padding:0;
+}
+.ind__tabs button,.ind__tabs .ind__all{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;
+  min-height:44px;padding:0 2px;
+  font-family:inherit;font-stretch:78%;font-weight:700;text-transform:none;
+  font-size:clamp(14px,1.45vw,19px);letter-spacing:.01em;
+  color:rgba(243,241,236,.66);background:none;border:0;cursor:pointer;text-decoration:none;
+  transition:color 240ms var(--ease),transform 140ms var(--ease);
+}
+.ind__tabs button::after,.ind__tabs .ind__all::after{
+  content:"";position:absolute;left:0;right:0;bottom:6px;height:2px;border-radius:1px;
+  background:var(--blue);transform:scaleX(0);transform-origin:50% 50%;
+  transition:transform 280ms var(--ease);
+}
+.ind__tabs button.is-on{color:var(--paper)}
+.ind__tabs button.is-on::after{transform:scaleX(1)}
+.ind__tabs .ind__all{color:var(--hi)}
+.ind__tabs .ind__all::after{background:var(--hi);transform:scaleX(1);opacity:.55}
+.ind__tabs button:active,.ind__tabs .ind__all:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){
+  .ind__tabs button:not(.is-on):hover{color:var(--paper)}
+  .ind__tabs button:not(.is-on):hover::after{transform:scaleX(.5)}
+  .ind__tabs .ind__all:hover{color:var(--paper)}
+  .ind__tabs .ind__all:hover::after{background:var(--paper);opacity:1}
+}
+/* r8 item 3: the photo takes every pixel that is left and may be cropped from
+   the BOTTOM only. It runs edge to edge unless a top anchored crop that wide
+   would cut the screens: then that one photo is narrower instead.
+   --kw is photo ratio / the fraction of the photo height that must stay
+   visible, so the widest safe width is 100cqh * --kw. */
+.ind__stage{
+  position:relative;flex:1 1 auto;min-height:min(300px,100dvh - 229px);
+  width:100%;margin:var(--gap-title) 0 var(--s2);overflow:hidden;
+  background:none;container-type:size;   /* r29: no panel of its own, so nothing reads as a bar under the photo */
+}
+.ind__ph{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(100cqw,calc(100cqh * var(--kw,6)));
+  /* and never taller than the photograph itself is at that width, so a narrow
+     window shows it whole instead of cropping its sides */
+  height:min(100cqh,calc(100cqw / var(--ar,1.78)));
+  background-size:cover;background-repeat:no-repeat;background-position:center top;
+}
+/* r30: image led. The photograph runs the full width of the window, whole, and the section takes whatever height
+   that needs (it may run a little past one screen). The stage is a 3:1 box, the shape of the photographs. */
+#industries{height:auto;min-height:100dvh;justify-content:center;overflow:visible}
+.ind__stage{flex:0 0 auto;height:min(80dvh,calc(100vw / 3));min-height:0}
+/* r30: the photographs are the carousel. Two slides trade places sideways; the arrows sit on the stage edges. */
+.ind__slide{position:absolute;inset:0;transform:translateX(100%);transition:transform 620ms var(--ease)}
+.ind__slide.is-on{transform:translateX(0)}
+@media (prefers-reduced-motion:reduce){.ind__slide{transition:none}}
+.ind__arrow{
+  position:absolute;top:50%;z-index:3;display:inline-grid;place-items:center;width:44px;height:44px;margin-top:-22px;padding:0;
+  border:0;border-radius:50%;cursor:pointer;background:rgba(3,8,14,.34);color:rgba(243,241,236,.7);
+  transition:color 200ms var(--ease),background-color 200ms var(--ease),transform 140ms var(--ease);
+}
+.ind__arrow--prev{left:clamp(8px,1.4vw,24px)}
+.ind__arrow--next{right:clamp(8px,1.4vw,24px)}
+.ind__arrow:active{transform:scale(.92)}
+@media (hover:hover) and (pointer:fine){.ind__arrow:hover{color:var(--paper);background:rgba(3,8,14,.6)}}
+/* the caption sits on the bottom edge of its own photo, over a short soft fade */
+.ind__ph::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34%;pointer-events:none;
+  background:linear-gradient(180deg,rgba(3,8,14,0) 0%,rgba(3,8,14,.5) 52%,rgba(3,8,14,.86) 100%)}
+.ind__cap{
+  position:absolute;left:0;right:0;bottom:clamp(14px,3.2cqh,30px);z-index:1;margin:0;padding:0 clamp(16px,4vw,56px);
+  display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;
+  font-stretch:78%;font-weight:700;line-height:1.16;letter-spacing:.005em;
+  font-size:clamp(16px,1.9vw,30px);color:var(--paper);text-shadow:0 2px 14px rgba(0,0,0,.7);
+}
+/* r29: the same quiet text link it was in the tab row, not a button */
+.ind__capname{font-stretch:64%;font-weight:800;text-transform:uppercase;letter-spacing:.04em;line-height:.92;font-size:clamp(28px,3.4vw,58px);color:var(--hi);text-shadow:0 2px 18px rgba(0,0,0,.75)}   /* r32: the industry name alone, large, on the photo */
+.ind__captext{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.ind__cta{
+  flex:0 0 auto;margin:0 0 var(--pad-ind);position:relative;display:inline-flex;align-items:center;min-height:44px;padding:0 2px;
+  font-stretch:78%;font-weight:700;font-size:clamp(14px,1.45vw,19px);letter-spacing:.01em;text-decoration:none;
+  color:var(--hi);transition:color 240ms var(--ease),transform 140ms var(--ease);
+}
+.ind__cta::after{content:"";position:absolute;left:0;right:0;bottom:6px;height:2px;border-radius:1px;background:var(--hi);opacity:.55;transition:background-color 240ms var(--ease),opacity 240ms var(--ease)}
+.ind__cta:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){.ind__cta:hover{color:var(--paper)}.ind__cta:hover::after{background:var(--paper);opacity:1}}
+@media (max-width:760px){.ind__stage{height:calc(100vw / 2.25)}.ind__captext{white-space:normal}.ind__cap{font-size:clamp(15px,4vw,19px)}}
+
+/* ===================== 6 . CHANGE THE MENU LIVE =====================
+   r4: two unframed scenes with a real gap, each with its own switch and its
+   own live line underneath, and one Publish below both. */
+#publish{background:linear-gradient(180deg,#061423 0%,#040E19 58%,var(--black) 100%);min-height:100dvh}
+/* r7 item 6: the two scenes get the window, not the 1180px text column */
+#publish .wrap{max-width:none}
+.pub__title{font-size:var(--title);color:var(--paper);margin-bottom:var(--gap-title)}
+.pub__rig{
+  /* the two columns are exactly the two photographs, so the 32px gap between
+     them is the real gap, not a gap between two half-empty tracks */
+  display:grid;grid-template-columns:auto auto;justify-content:center;gap:32px;
+  width:100%;max-width:none;align-items:start;
+}
+.pub__scene{display:flex;flex-direction:column;align-items:center;min-width:0}
+.pub__shot{
+  position:relative;overflow:hidden;border:0;border-radius:10px;
+  container-type:inline-size;background:#0A1826;
+  /* r8 item 4: the scene box is wider and shorter, about 2.2:1, and the photo
+     is cropped from the BOTTOM only. The two scenes sit side by side with a
+     32px gap and use up to 92vw. Measured: the menu boards end at 78% of the
+     photo height, so a 2.2:1 top anchored crop (80.5% visible) keeps every
+     board whole in all three states of both scenes. */
+  /* r14: shown WHOLE at the photo's own 1600x903 shape, same width as before, taller */
+  aspect-ratio:1600 / 903;
+  --pubh:min(62dvh,560px,calc(100dvh - 300px));
+  width:min(calc((min(92vw,1840px) - 32px) / 2),calc(var(--pubh) * 1.772));
+  height:auto;
+  box-shadow:0 14px 30px rgba(0,0,0,.5);
+}
+/* identical box, fit and anchor on all three layers, so they stay registered */
+.pub__ph{position:absolute;inset:0;background-size:cover;background-repeat:no-repeat;background-position:center top;opacity:0}
+.pub__ph.is-on{opacity:1}
+.pub__ph.is-coming{opacity:1;z-index:3;clip-path:inset(0 100% 0 0)}
+.pub__shot.is-wiping .pub__ph.is-coming{clip-path:inset(0 0 0 0);transition:clip-path 620ms var(--ease)}
+.pub__shot .wipe{
+  position:absolute;left:0;top:0;bottom:0;width:16px;z-index:4;
+  background:repeating-linear-gradient(180deg,var(--hi) 0 5px,transparent 5px 10px);
+  opacity:0;pointer-events:none;
+}
+.pub__shot.is-wiping .wipe{animation:pubwipe 620ms var(--ease)}
+@keyframes pubwipe{0%{opacity:.9;transform:translateX(-16px)}92%{opacity:.5}100%{opacity:0;transform:translateX(100cqw)}}
+/* the toggle belongs to its scene, the status belongs to the toggle */
+.pub__under{
+  margin-top:var(--s4);
+  display:flex;flex-direction:column;align-items:center;gap:var(--s2);
+}
+.seg{
+  display:inline-flex;gap:4px;padding:4px;border-radius:999px;
+  background:rgba(243,241,236,.07);
+}
+.seg button{
+  min-height:44px;padding:0 clamp(14px,1.9vw,26px);border-radius:999px;
+  font-family:inherit;font-stretch:78%;font-weight:700;text-transform:none;
+  font-size:clamp(13px,1.3vw,17px);letter-spacing:.01em;
+  color:rgba(243,241,236,.7);background:none;border:0;cursor:pointer;
+  transition:color 240ms var(--ease),background-color 240ms var(--ease),transform 140ms var(--ease);
+}
+.seg button.is-on{color:var(--ink);background:var(--paper)}
+.seg button:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){.seg button:not(.is-on):hover{color:var(--paper)}}
+.pub__status{
+  display:flex;align-items:center;gap:9px;
+  font-stretch:78%;font-weight:600;font-size:clamp(13px,1.25vw,16px);letter-spacing:.02em;
+  color:rgba(243,241,236,.74);
+}
+.pub__status .dot{width:8px;height:8px;border-radius:50%;background:#37D67A;flex:0 0 auto;
+  transition:background-color 200ms var(--ease)}
+/* a scene with an unpublished change is waiting, not live */
+.pub__status.is-ready .dot{background:var(--hi)}
+.pub__status.is-ready{color:var(--hi)}
+/* a screen that has never been published is simply dark */
+.pub__status.is-none .dot{background:rgba(243,241,236,.4)}
+.pub__status.is-none{color:rgba(243,241,236,.55)}
+.pub__scene.is-blinking .dot{animation:dotblink 720ms var(--ease) 1}
+@keyframes dotblink{0%,100%{background:#37D67A}30%{background:var(--hi)}60%{background:#0E2436}}
+#pub-go{margin-top:clamp(28px,4.2dvh,46px);min-width:210px}   /* clearly apart from both scenes */
+#pub-go[aria-disabled="true"]{
+  background:rgba(243,241,236,.08);border-color:transparent;color:rgba(243,241,236,.5);cursor:default;
+}
+/* one soft pulse when the section arrives, so the first click is invited
+   without anything being staged on the visitor's behalf */
+.seg button.is-hinted{animation:seghint 1100ms var(--ease) 1}
+@keyframes seghint{
+  0%,100%{box-shadow:0 0 0 0 rgba(124,194,236,0)}
+  45%{box-shadow:0 0 0 7px rgba(124,194,236,.2)}
+}
+@media (prefers-reduced-motion:reduce){.seg button.is-hinted{animation:none}}
+@media (hover:hover) and (pointer:fine){
+  #pub-go[aria-disabled="true"]:hover{background:rgba(243,241,236,.08);border-color:transparent}
+}
+
+/* r21: the photographs are the point of this section, so they take the window. The pair runs almost edge to
+   edge with a thin seam, each toggle and its live line sit on the bottom edge of their own photo (the menu
+   boards are at the top, so nothing is covered), and Publish sits centred under the seam. Photos stay WHOLE. */
+@media (min-width:761px){
+  #publish{--pad-sec:clamp(20px,3.6dvh,36px);padding-left:20px;padding-right:20px}
+  .pub__rig{
+    /* r28: the photos sit at the exact centre of the section, so the same room is kept above them (title)
+       and below them (Publish) */
+    --pubh:calc(100dvh - 2 * var(--pad-sec) - 2 * (var(--title) + var(--gap-title)));
+    grid-template-columns:1fr 1fr;gap:14px;margin:0 auto;
+    width:min(100%,calc(var(--pubh) * 1.772 * 2 + 14px));
+  }
+  #publish .wrap{display:grid;grid-template-rows:1fr auto 1fr;justify-items:center;min-height:calc(100dvh - 2 * var(--pad-sec))}
+  #publish .pub__title{align-self:end}
+  #publish #pub-go{align-self:start}
+  .pub__scene{position:relative;width:100%}
+  .pub__shot{width:100%}
+  .pub__under{
+    position:absolute;left:0;right:0;bottom:0;z-index:5;margin:0;
+    flex-direction:row;justify-content:center;gap:var(--s4);
+    padding:clamp(30px,5dvh,54px) var(--s4) var(--s3);border-radius:0 0 10px 10px;
+    background:none;   /* r34: nothing darkens the photograph */
+    pointer-events:none;
+  }
+  .pub__under > *{pointer-events:auto}
+  .pub__under .seg button{font-size:clamp(14px,1vw,19px)}
+  .pub__under .pub__status{font-size:clamp(14px,.95vw,18px)}
+  /* r34: back to the dark switch */
+  .pub__under .seg{background:rgba(6,14,22,.72);backdrop-filter:blur(6px)}
+  .pub__under .seg button{color:rgba(243,241,236,.74)}
+  .pub__under .seg button.is-on{background:var(--paper);color:var(--ink)}
+  /* r34: the live line wears the same dark pill as the switch, so the photo itself is never darkened */
+  .pub__under .pub__status{color:rgba(243,241,236,.9);background:rgba(6,14,22,.72);backdrop-filter:blur(6px);padding:0 16px;min-height:44px;border-radius:999px}
+  .pub__under .pub__status.is-none{color:rgba(243,241,236,.7)}
+  .pub__under .pub__status.is-ready{color:var(--hi)}
+  #pub-go{margin-top:var(--s4)}
+  @media (hover:hover) and (pointer:fine){.pub__under .seg button:not(.is-on):hover{color:var(--paper)}}
+  /* the paper variant keeps these light, because they now sit on the photo, not on the ground */
+  .grounds-light .pub__under .seg{background:rgba(6,14,22,.72)}
+  .grounds-light .pub__under .seg button{color:rgba(243,241,236,.74)}
+  .grounds-light .pub__under .seg button.is-on{background:var(--paper);color:var(--ink)}
+  .grounds-light .pub__under .pub__status{color:rgba(243,241,236,.86)}
+  .grounds-light .pub__under .pub__status.is-none{color:rgba(243,241,236,.7)}
+  .grounds-light .pub__under .pub__status.is-ready{color:var(--hi)}
+  .grounds-light .pub__under .pub__status.is-none .dot{background:rgba(243,241,236,.4)}
+  .grounds-light .pub__under .pub__status.is-ready .dot{background:var(--hi)}
+}
+
+/* ===================== 7 . DRAG BAR =====================
+   r6: nothing overlays the photograph. The sentence is a second line under the
+   headline on the section ground, and the divider runs the full height of the
+   image again. r6: one scene only, the retail floor. */
+#reliability{background:linear-gradient(180deg,var(--black) 0%,#02070C 60%,#000 100%)}
+#reliability .wrap{max-width:none}
+.rely__h{font-size:var(--title);color:var(--paper);max-width:34ch}
+.rely__sub{
+  margin-top:var(--s1);max-width:44ch;
+  font-stretch:78%;font-weight:600;line-height:1.24;letter-spacing:.01em;
+  font-size:clamp(17px,1.7vw,24px);color:var(--paper-soft);
+}
+/* r16: less empty padding here, so the image gets the height (and with it the width) */
+#reliability{--pad-sec:clamp(30px,6dvh,56px)}
+.rely__frame{
+  position:relative;overflow:hidden;border:0;border-radius:10px;
+  margin-top:var(--gap-title);
+  /* r8 item 5: the matched retail pair is 2160x726 (2.975:1) and is shown
+     WHOLE. The height is whatever the section has left under the two lines of
+     copy, and the width follows the real ratio, so nothing is cut. */
+  --relyh:min(700px,calc(100dvh - 2 * var(--pad-sec) - var(--gap-title) - 100px));
+  aspect-ratio:2172 / 724;   /* r23: the new matched pair is 2172x724, exactly 3:1 */
+  /* r32: image led, like Industries. The scene runs nearly the full window width, whole, and the section
+     takes the height that needs (a little past one screen on a short window). */
+  width:min(calc(100vw - 40px),2400px);
+  height:auto;
+  touch-action:pan-y;
+  box-shadow:0 16px 34px rgba(0,0,0,.55);
+}
+.rely__stack{position:absolute;inset:0}
+.rely__ph{position:absolute;inset:0;background-size:contain;background-repeat:no-repeat;background-position:center}
+.rely__ph--on{clip-path:inset(0 calc(100% - var(--p,78%)) 0 0)}
+.rely__handle{
+  position:absolute;top:0;bottom:0;width:48px;margin-left:-24px;z-index:4;
+  left:clamp(26px,var(--p,78%),calc(100% - 26px));
+  display:flex;align-items:center;justify-content:center;
+  cursor:ew-resize;touch-action:none;background:none;border:0;
+  scroll-margin-top:200px;
+}
+.rely__handle::before{content:"";position:absolute;top:0;bottom:0;left:23px;width:2px;background:var(--hi)}
+.rely__grip{
+  position:relative;width:44px;height:44px;border-radius:3px;
+  background:rgba(8,20,32,.92);border:1px solid var(--hi);
+  display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:3px;padding:9px;
+  box-shadow:0 6px 16px rgba(0,0,0,.6);
+  transition:transform 160ms var(--ease);
+}
+.rely__grip i{background:var(--hi);border-radius:1px}
+.rely__grip i:nth-child(5){background:none}
+.rely__handle:active .rely__grip{transform:scale(.94)}
+
+@media (max-height:600px){
+  .rely__h{font-size:var(--title)}
+  .rely__sub{font-size:19px}
+}
+
+/* ===================== 8 . TRUSTED BY =====================
+   r4: the thinnest section on the page. Mark and orbiting logos grouped on the
+   left, the customer quote on the right. */
+#clients{
+  position:relative;width:100%;background:#000;
+  min-height:min(300px,58dvh);height:auto;
+  padding:var(--pad-sec) clamp(16px,4vw,56px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+}
+.clients__title{
+  font-size:var(--title);color:var(--paper);
+  margin-bottom:var(--gap-title);
+}
+.clients__row{
+  width:100%;max-width:1280px;
+  display:grid;grid-template-columns:1.18fr .82fr;align-items:center;gap:clamp(18px,3vw,44px);
+}
+#clients .orbit{
+  --orbit-bg:transparent;
+  --orbit-label-room:6px; /* no hover labels here, so the ring gets the room */
+  /* r7b: measured. The ring's vertical radius must keep every logo at least
+     28px clear of the mark, so the stage is as tall as that clearance needs. */
+  --orbit-stage-h:310px;
+  --orbit-mark-size:76px;  /* large enough to anchor the group */
+  --orbit-logo-w:136px;
+  --orbit-logo-h:44px;
+  width:100%;padding:0;border:0;font-family:inherit;background:none;
+}
+#clients .orbit__label{display:none}
+/* open artwork reads as a near white silhouette */
+#clients .orbit__img--mono{filter:grayscale(1) brightness(0) invert(1) opacity(.9)}
+/* artwork that is mostly a filled plate is inverted instead of silhouetted */
+#clients .orbit__logo[data-key="geek-squad"] .orbit__img--mono,
+#clients .orbit__logo[data-key="cold-stone-creamery"] .orbit__img--mono,
+#clients .orbit__logo[data-key="lenovo"] .orbit__img--mono{
+  filter:grayscale(1) invert(1) brightness(1.4) contrast(.5) brightness(1.62);
+}
+#clients .orbit__logo[data-key="mcmaster-university"] .orbit__img,
+#clients .orbit__logo[data-key="international-centre"] .orbit__img{transform:scale(1.5)}
+#clients .orbit__logo[data-key="ups-store"] .orbit__img{transform:scale(1.55)}
+#clients .orbit__logo[data-key="cold-stone-creamery"] .orbit__img,
+#clients .orbit__logo[data-key="hatch"] .orbit__img,
+#clients .orbit__logo[data-key="best-buy-business"] .orbit__img{transform:scale(1.18)}
+#clients .orbit__logo[data-key="geek-squad"] .orbit__img{transform:scale(.8)}
+#clients .orbit__logo[data-key="lenovo"] .orbit__img,
+#clients .orbit__logo[data-key="purolator"] .orbit__img{transform:scale(.88)}
+
+.quote{position:relative;margin:0;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:clamp(10px,1.6dvh,16px);
+  padding-top:clamp(10px,1.6dvh,18px)}
+/* the accent is a large blue opening quote mark, not a box */
+.quote::before{
+  content:"“";position:absolute;left:50%;top:calc(-.30em + 2px);transform:translateX(-50%);
+  font-stretch:78%;font-weight:800;line-height:1;
+  font-size:clamp(46px,5vw,76px);color:var(--blue);opacity:.9;pointer-events:none;
+}
+.quote__text{
+  margin:0;max-width:52ch;text-wrap:balance;
+  font-stretch:78%;font-weight:600;line-height:1.38;letter-spacing:.004em;
+  font-size:clamp(15px,1.75vw,21px);color:rgba(243,241,236,.94);
+}
+.quote__by{display:flex;align-items:center;justify-content:center}
+.quote__logo{width:clamp(94px,9vw,126px);height:auto;filter:grayscale(1) brightness(0) invert(1) opacity(.72)}
+
+/* large windows (Sabrina's is about 2000 wide): the band scales up instead of
+   sitting small in the middle */
+@media (min-width:1500px){
+  .clients__row{max-width:min(1760px,92vw)}
+  #clients .orbit{--orbit-stage-h:400px;--orbit-mark-size:108px;--orbit-logo-w:196px;--orbit-logo-h:64px}
+  .quote__text{font-size:clamp(21px,1.45vw,29px);max-width:50ch}
+  .quote__logo{width:clamp(126px,8vw,170px)}
+  .quote::before{font-size:clamp(76px,5vw,104px)}
+}
+@media (max-width:860px){
+  #clients{min-height:auto}
+  .clients__row{grid-template-columns:1fr;gap:22px}
+  /* r7b: the narrow ring is shorter in perimeter, so the logos are smaller and
+     the stage taller, which is what keeps 28px between them and off the mark */
+  #clients .orbit{--orbit-stage-h:318px;--orbit-mark-size:68px;--orbit-logo-w:100px;--orbit-logo-h:40px}
+}
+/* r7b: on a phone the ring is only as wide as the phone, so the mark and the
+   logos both come down a step rather than crowd each other. */
+@media (max-width:560px){
+  #clients .orbit{--orbit-mark-size:56px;--orbit-logo-w:84px;--orbit-logo-h:34px}
+}
+
+/* ===================== 9 . THE FIGURES =====================
+   r7: a full screen moment, set exactly like the hero's own scenes. One figure
+   at a time, out fully before the next comes in. Behind it, the same v4 cursor
+   field as the blue statement, in blue on the dark with a glow: the one place
+   on this page where a glow is wanted. */
+#numbers{
+  position:relative;width:100%;min-height:100dvh;background:#050A10;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+}
+#numbers .pixfield{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.beats{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;width:100%}
+/* the height is reserved so nothing jumps between beats. r7b: the reserve is
+   two lines of the figure size, because the longest beat sets on two lines at
+   every desktop width and was reaching the Book a demo below it. */
+.beats__stage{
+  position:relative;width:100%;
+  height:min(clamp(60px,11.6vw,230px),13vw);   /* r24: every beat is one line, so one line is reserved */
+  display:flex;align-items:center;justify-content:center;
+}
+.beats__line{
+  position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
+  display:flex;align-items:baseline;justify-content:center;gap:.3em;flex-wrap:nowrap;white-space:nowrap;
+  opacity:0;transition:opacity .35s var(--ease);   /* leaving is quicker */
+}
+.beats__line.is-on{opacity:1;transition:opacity .5s var(--ease)}
+.beats__fig,.beats__word{
+  font-stretch:64%;font-weight:800;text-transform:uppercase;line-height:.9;
+  font-variant-numeric:tabular-nums;
+  font-size:min(clamp(34px,10.6vw,210px),11vw);   /* r24: sized so the longest beat stays on one line */
+}
+.beats__fig{color:var(--paper);letter-spacing:-.02em}
+.beats__word{color:var(--hi);letter-spacing:.02em;margin-left:.24em}   /* r25: a real word space, measured in the big type */
+.beats__cta{margin-top:clamp(40px,9dvh,110px)}
+@media (max-width:620px){
+  .beats__stage{height:clamp(104px,28vw,190px)}
+  .beats__fig,.beats__word{font-size:clamp(30px,9.4vw,64px)}
+}
+/* reduced motion: nothing rotates, all four read at once */
+@media (prefers-reduced-motion:reduce){
+  .beats__stage{height:auto;flex-direction:column;gap:clamp(6px,1.2dvh,14px);padding:clamp(6px,1dvh,12px) 0}
+  .beats__line{position:static;transform:none;opacity:1;flex-wrap:nowrap}
+  .beats__fig,.beats__word{font-size:min(clamp(28px,5vw,64px),8vw)}
+  #numbers .pixfield{display:none}
+}
+
+/* ===================== 10 . BOOK A DEMO =====================
+   r7: the photograph is the scene and the form is what is playing on the blank
+   middle screen. The screen rectangle was measured from the pixels of
+   demo-wall.webp: left 25.12%, top 14.13%, width 48.57%, height 58.13%.
+   Below 1200x700 the screen area would be too small to hold real type, so the
+   picture becomes a cropped header and the form sits under it on the ground. */
+#demo{background:var(--black);min-height:100dvh}
+.demo__stage{
+  display:flex;flex-direction:column;align-items:center;gap:var(--gap-title);
+  width:100%;max-width:620px;
+}
+.demo__shot{
+  position:relative;width:100%;aspect-ratio:1774 / 887;overflow:hidden;border-radius:10px;
+  box-shadow:0 16px 34px rgba(0,0,0,.55);
+}
+.demo__img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.demo__screen{display:flex;flex-direction:column;align-items:center;width:100%}
+.demo__h{font-size:clamp(28px,4.6vw,64px);color:var(--paper)}
+
+.form{
+  margin-top:var(--gap-title);width:100%;max-width:460px;
+  display:flex;flex-direction:column;gap:var(--s2);text-align:center;
+}
+.field{display:flex;flex-direction:column;gap:7px}
+.form label{
+  font-stretch:76%;font-weight:700;text-transform:uppercase;
+  font-size:13px;letter-spacing:.08em;color:var(--paper-soft);text-align:center;
+}
+.form input,.form select{
+  font-family:inherit;font-stretch:80%;font-weight:600;font-size:16px;letter-spacing:.02em;
+  min-height:48px;padding:0 14px;text-align:center;
+  color:var(--paper);background:rgba(12,40,72,.62);
+  border:1px solid rgba(124,194,236,.42);border-radius:8px;
+  transition:border-color 200ms var(--ease),background-color 200ms var(--ease);
+}
+.form select{
+  appearance:none;text-align:center;text-align-last:center;
+  background-image:linear-gradient(45deg,transparent 50%,var(--hi) 50%),linear-gradient(135deg,var(--hi) 50%,transparent 50%);
+  background-position:calc(100% - 20px) 21px,calc(100% - 14px) 21px;
+  background-size:6px 6px,6px 6px;background-repeat:no-repeat;
+  padding-right:42px;padding-left:42px;
+}
+.form select option{background:var(--ink);color:var(--paper)}
+.form input::placeholder{color:rgba(243,241,236,.66)}
+.form input:focus,.form select:focus{border-color:var(--blue);background:rgba(18,56,98,.76)}
+.form__note{
+  min-height:0;
+  font-stretch:76%;font-weight:700;font-size:13px;letter-spacing:.04em;color:var(--hi);
+}
+.form__note:empty{display:none}
+.form__note.is-error{color:#FFB4A2}
+
+@media (min-width:760px){
+  #demo{padding:0;display:flex;align-items:center;justify-content:center;background:#05090f;isolation:isolate}
+  #demo::before{content:"";position:absolute;inset:-40px;z-index:-1;background:url(../assets/demo-wall.webp?v=r23) center/cover no-repeat;filter:blur(34px) brightness(.72)}
+  #demo .demo__shot{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 4%,#000 96%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 4%,#000 96%,transparent 100%)}
+}
+/* ---- the screen itself. r8 item 8: it now holds at short windows too, so the
+   wall is never hidden. The stage is sized by whichever dimension runs out
+   first, and the type and the fields scale with it. Only a phone falls back to
+   the image above and the form below. ---- */
+@media (min-width:760px){
+  .demo__stage{
+    position:relative;display:block;gap:0;
+    aspect-ratio:1774 / 887;
+    /* r23: the wall takes the whole screen height. It is 2:1 and is never cropped, so on a window wider
+       than 2:1 the sides are a soft blurred continuation of the same wall, not empty bands. */
+    width:min(100vw,calc(100dvh * 2));
+    max-width:none;
+    container-type:size;
+  }
+  .demo__shot{position:absolute;inset:0;aspect-ratio:auto;border-radius:0;box-shadow:none;overflow:visible}
+  .demo__img{object-fit:fill}
+  /* measured from the pixels of the new contact form.png: the blank middle
+     screen runs x 23.51% to 76.27%, y 11.72% to 81.40%. The box below sits
+     inside that, so the heading and the form never touch the bezel. */
+  .demo__screen{
+    position:absolute;left:24.3%;top:12.7%;width:51.2%;height:67.4%;
+    justify-content:center;padding:2.2cqw 3.2cqw;
+  }
+  .demo__h{font-size:3cqw;line-height:.94;text-shadow:0 2px 18px rgba(3,12,24,.5)}
+  .form{
+    margin-top:2.2cqw;max-width:none;width:100%;gap:1cqw;
+    background:none;border:0;padding:0;
+  }
+  /* .form carries [data-wipe], which is itself an inline-size container, so
+     everything INSIDE the form is measured against the form, not the stage. */
+  .field{gap:max(5px,.9cqw)}
+  .form label{font-size:max(11px,2cqw)}
+  .form input,.form select{
+    font-size:max(13px,2.8cqw);min-height:max(36px,7.4cqw);border-radius:1.2cqw;
+    background:rgba(8,32,62,.58);border-color:rgba(124,194,236,.5);
+  }
+  .form select{background-position:calc(100% - 20px) 45%,calc(100% - 14px) 45%}
+  .form .btn{min-height:max(36px,7.6cqw);font-size:max(12px,2.6cqw)}
+  .form__note{font-size:max(11px,2.1cqw)}
+}
+
+/* ===================== small screens ===================== */
+@media (max-width:760px){
+  .pub__rig{grid-template-columns:1fr;gap:20px;width:100%}
+  .pub__shot{--pubh:min(30dvh,260px);width:min(100%,calc(var(--pubh) * 1.772))}
+  .fall__line{font-size:clamp(30px,7.4vw,46px);max-width:min(18ch,88vw);margin-top:clamp(44px,8dvh,80px)}
+  .ind__head{padding-top:clamp(64px,11dvh,104px)}
+}
+@media (max-width:520px){
+  .ind__tabs{gap:10px 16px}
+}
+
+/* ===================== SHED TRANSITIONS =====================
+   A short transparent canvas straddling a section boundary. Pixels in the
+   upper ground's colour let go of its edge and fall into the next section.
+   It is a transition, not a section: no height of its own in the flow. */
+.shed{
+  --shedh:clamp(120px,15dvh,170px);
+  position:relative;z-index:3;display:block;
+  width:100%;height:var(--shedh);
+  margin-top:calc(var(--shedh) * -.8);
+  margin-bottom:calc(var(--shedh) * -.2);
+  pointer-events:none;
+}
+/* blue pixels are invisible over the blue, so this one reaches down into the
+   dark where they can actually be seen */
+.shed--into{--shedh:clamp(150px,20dvh,210px);
+  margin-top:calc(var(--shedh) * -.34);
+  margin-bottom:calc(var(--shedh) * -.66);
+}
+/* a transition that has to live inside the gap between two sections: it never
+   reaches the content on either side, only the empty ground between them */
+.shed--seam{--shedh:clamp(72px,11dvh,132px);
+  margin-top:calc(var(--shedh) * -.45);
+  margin-bottom:calc(var(--shedh) * -.55);
+}

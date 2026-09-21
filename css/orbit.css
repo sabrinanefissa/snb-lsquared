@@ -1,0 +1,331 @@
+/* ==========================================================================
+   L Squared - Logo Orbit
+   Mountable block. All styles namespaced under .orbit.
+   Themes: <section class="orbit" data-theme="dark">  -> near-black band
+           <section class="orbit" data-theme="light"> -> cream band
+   ========================================================================== */
+
+.orbit {
+  /* Palette */
+  --orbit-accent: #56B0E4;
+  --orbit-mark-grey: #CBCDCF;
+
+  /* Easing (Emil curves) */
+  --orbit-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --orbit-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  /* Geometry - read by orbit.js via getComputedStyle */
+  --orbit-stage-h: 720px;
+  --orbit-mark-size: 220px;
+  --orbit-logo-w: 200px;
+  --orbit-logo-h: 80px;
+
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  overflow: hidden; /* contains the orbit field on narrow viewports */
+  padding: clamp(56px, 7vw, 104px) clamp(16px, 5vw, 64px) clamp(48px, 6vw, 88px);
+  background: var(--orbit-bg);
+  color: var(--orbit-ink);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.orbit *,
+.orbit *::before,
+.orbit *::after { box-sizing: border-box; }
+
+.orbit[data-theme="dark"] {
+  --orbit-bg: #0B0C0D;
+  --orbit-ink: #F3F1EC;
+  --orbit-ink-soft: rgba(243, 241, 236, 0.58);
+  --orbit-hairline: rgba(243, 241, 236, 0.14);
+  --orbit-portal-glow: rgba(86, 176, 228, 0.34);
+}
+
+.orbit[data-theme="light"] {
+  --orbit-bg: #FAF9F5;
+  --orbit-ink: #0B0C0D;
+  --orbit-ink-soft: rgba(11, 12, 13, 0.56);
+  --orbit-hairline: rgba(11, 12, 13, 0.12);
+  --orbit-portal-glow: rgba(86, 176, 228, 0.28);
+}
+
+/* ---------- Headline ---------------------------------------------------- */
+
+.orbit__head {
+  margin: 0 auto clamp(20px, 3vw, 40px);
+  max-width: 34ch;
+  text-align: center;
+  font-size: clamp(1.5rem, 1.05rem + 1.9vw, 2.75rem);
+  line-height: 1.08;
+  letter-spacing: -0.022em;
+  font-weight: 560;
+  color: var(--orbit-ink);
+}
+
+/* ---------- Stage ------------------------------------------------------- */
+
+.orbit__stage {
+  position: relative;
+  width: 100%;
+  max-width: 1120px;
+  height: var(--orbit-stage-h);
+  margin: 0 auto;
+  perspective: 1100px;
+  perspective-origin: 50% 50%;
+  touch-action: pan-y;         /* vertical page scroll stays native; we take X */
+  cursor: grab;
+}
+
+.orbit__stage.is-dragging { cursor: grabbing; }
+
+/* ---------- The mark (3x3, open centre) --------------------------------- */
+
+.orbit__mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--orbit-mark-size);
+  height: var(--orbit-mark-size);
+  margin-left: calc(var(--orbit-mark-size) / -2);
+  margin-top: calc(var(--orbit-mark-size) / -2);
+  transform-style: preserve-3d;
+  will-change: transform;
+  z-index: 50;                 /* logos sit at 20 (behind) or 80 (in front) */
+  pointer-events: none;
+}
+
+/* The eight solid squares are drawn on this canvas as a fine grid of cells
+   that scatter around the pointer. It overspills the mark box (scale must
+   match MOSAIC_OVERSPILL in orbit.js) so a scattered cell is never clipped. */
+.orbit__mosaic {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 180%;
+  height: 180%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.orbit__cell {
+  position: absolute;
+  width: 30.6%;
+  height: 30.6%;
+}
+
+/* The open middle cell is the portal: no fill, just a breathing rim. */
+.orbit__portal {
+  background: none;
+  border-radius: 1px;
+}
+
+.orbit__portal::after {
+  content: "";
+  position: absolute;
+  inset: -6%;
+  border-radius: 2px;
+  /* v7: the zero-offset halo is removed. A crisp rim only. */
+  box-shadow: 0 0 0 1px var(--orbit-portal-glow);
+  opacity: var(--orbit-portal-energy, 0);
+  transition: opacity 320ms var(--orbit-ease-out);
+}
+
+/* ---------- Logo field -------------------------------------------------- */
+
+.orbit__field {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.orbit__logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  pointer-events: none;        /* hit area lives on .orbit__art */
+  will-change: transform;
+  z-index: 20;
+}
+
+.orbit__art {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--orbit-logo-w);
+  height: var(--orbit-logo-h);
+  margin-left: calc(var(--orbit-logo-w) / -2);
+  margin-top: calc(var(--orbit-logo-h) / -2);
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+  pointer-events: auto;
+  cursor: pointer;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.orbit__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  -webkit-user-drag: none;
+  user-select: none;
+  transition: opacity 220ms var(--orbit-ease-out);
+}
+
+/* Resting state: alpha-preserving monochrome, tuned per logo tone + theme.
+   The filters are static per theme, never animated - only opacity crossfades. */
+.orbit__img--mono { opacity: 1; }
+.orbit__img--color { opacity: 0; }
+
+.orbit[data-theme="light"] .orbit__logo[data-tone="dark"] .orbit__img--mono {
+  filter: grayscale(1) contrast(1.04) brightness(0.5);
+}
+.orbit[data-theme="light"] .orbit__logo[data-tone="light"] .orbit__img--mono {
+  filter: grayscale(1) invert(1) contrast(1.04) brightness(0.5);
+}
+.orbit[data-theme="dark"] .orbit__logo[data-tone="light"] .orbit__img--mono {
+  filter: grayscale(1) brightness(1.5);
+}
+.orbit[data-theme="dark"] .orbit__logo[data-tone="dark"] .orbit__img--mono {
+  filter: grayscale(1) invert(1) brightness(1.35);
+}
+
+/* Full colour on activation, but only where the original artwork is legible
+   against this theme's band. See data-safe in orbit.js. */
+.orbit[data-theme="dark"] .orbit__logo[data-safe~="dark"].is-active .orbit__img--color,
+.orbit[data-theme="light"] .orbit__logo[data-safe~="light"].is-active .orbit__img--color {
+  opacity: 1;
+}
+.orbit[data-theme="dark"] .orbit__logo[data-safe~="dark"].is-active .orbit__img--mono,
+.orbit[data-theme="light"] .orbit__logo[data-safe~="light"].is-active .orbit__img--mono {
+  opacity: 0;
+}
+
+/* ---------- Label ------------------------------------------------------- */
+
+.orbit__label {
+  position: absolute;
+  left: 0;
+  top: calc(var(--orbit-logo-h) / 2 + 16px);
+  width: 224px;
+  margin-left: -112px;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 180ms var(--orbit-ease-out),
+              transform 220ms var(--orbit-ease-out);
+}
+
+.orbit__logo.is-active .orbit__label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.orbit__name {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1.3;
+  color: var(--orbit-ink);
+}
+
+.orbit__industry {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--orbit-ink-soft);
+}
+
+/* Focus ring - keyboard only, drawn around the art box. */
+.orbit__art:focus-visible {
+  outline: 2px solid var(--orbit-accent);
+  outline-offset: 8px;
+  border-radius: 2px;
+}
+.orbit__art:focus:not(:focus-visible) { outline: none; }
+
+/* Press feedback. In the animated mode JS owns .orbit__art's transform and
+   folds the press into the same matrix, so CSS only handles the static mode. */
+@media (hover: hover) and (pointer: fine) {
+  .orbit[data-static="true"] .orbit__art:active { transform: scale(0.97); }
+}
+
+/* ---------- Screen-reader client list ----------------------------------- */
+
+.orbit__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Responsive -------------------------------------------------- */
+
+@media (max-width: 1100px) {
+  .orbit {
+    --orbit-stage-h: 500px;
+    --orbit-mark-size: 118px;
+    --orbit-logo-w: 108px;
+    --orbit-logo-h: 44px;
+  }
+}
+
+@media (max-width: 720px) {
+  .orbit {
+    --orbit-stage-h: 400px;
+    --orbit-mark-size: 92px;
+    --orbit-logo-w: 84px;
+    --orbit-logo-h: 34px;
+  }
+  .orbit__label { width: 168px; margin-left: -84px; top: calc(var(--orbit-logo-h) / 2 + 12px); }
+  .orbit__stage { perspective: 800px; }
+}
+
+/* ---------- Reduced motion ---------------------------------------------- */
+/* Not "no animation" - no movement. Colour and opacity still communicate. */
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit__mark,
+  .orbit__cell,
+  .orbit__logo { transition: none !important; }
+
+  .orbit__art {
+    transition: transform 180ms var(--orbit-ease-out);
+  }
+  .orbit__portal::after { transition: none; }
+  .orbit__stage { cursor: default; }
+}
+
+.orbit[data-static="true"] .orbit__logo.is-active .orbit__art {
+  transform: scale(1.12);
+}

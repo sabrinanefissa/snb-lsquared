@@ -1,0 +1,201 @@
+/* L Squared homepage v7 - base
+   Tokens, type, shared containers, chrome. One world: near black, one blue moment. */
+
+@font-face{
+  font-family:'Archivo';
+  font-style:normal;
+  font-weight:100 900;
+  font-stretch:62% 125%;
+  font-display:swap;
+  src:url(../assets/fonts/archivo.woff2) format('woff2');
+}
+
+:root{
+  --black:#050A10;
+  --ink:#06121E;
+  --blue:#56B0E4;
+  --hi:#7CC2EC;
+  --deep:#1A6FA3;
+  --paper:#F3F1EC;
+  --paper-soft:rgba(243,241,236,.66);
+  --band:#102132;
+  --hair:rgba(86,176,228,.34);
+  --hair-soft:rgba(243,241,236,.14);
+  --ease:cubic-bezier(.23,1,.32,1);
+  /* one spacing scale for the page, 4 unit base (impeccable layout.md).
+     Nothing outside this scale, and the two section level rhythms below. */
+  --s1:8px;  --s2:12px; --s3:16px; --s4:20px;
+  --s5:32px; --s6:48px; --s7:72px;
+  --pad-sec:clamp(30px,7dvh,96px);      /* even top and bottom on every section */
+  --title:clamp(24px,3.5vw,50px);         /* r20: every section title is this one size */
+  --gap-title:clamp(24px,5.5dvh,52px);    /* title group to its content */
+  --shadow:0 16px 32px rgba(0,0,0,.55);
+}
+
+*{margin:0;box-sizing:border-box}
+html{scrollbar-color:var(--deep) var(--black);scroll-behavior:smooth}
+/* clip, not hidden: overflow-x:hidden turns the body into a scroll container and
+   breaks position:sticky for the section 3 stage. */
+html,body{background:var(--black);overflow-x:clip}
+body{
+  font-family:'Archivo',sans-serif;
+  color:var(--paper);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+img{display:block;max-width:100%}
+button,input,select,textarea,a{font-family:inherit}
+
+::selection{background:var(--blue);color:var(--ink)}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:var(--black)}
+::-webkit-scrollbar-thumb{background:#16394F;border:3px solid var(--black);border-radius:0}
+::-webkit-scrollbar-thumb:hover{background:var(--deep)}
+
+:where(a,button,input,select,[tabindex]):focus-visible{
+  outline:2px solid var(--blue);
+  outline-offset:4px;
+  border-radius:2px;
+}
+/* elements that clip their own children draw the ring inside */
+.strip:focus-visible,.rely__handle:focus-visible,
+.ind__tabs button:focus-visible,.seg button:focus-visible{outline-offset:-3px}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+
+.skip{position:fixed;left:50%;top:-100px;transform:translateX(-50%);z-index:200;
+  background:var(--band);color:var(--paper);border:1px solid var(--hair);border-radius:2px;
+  min-height:44px;display:inline-flex;align-items:center;
+  padding:0 22px;font-stretch:76%;font-weight:700;font-size:13px;letter-spacing:.06em;
+  text-transform:uppercase;text-decoration:none;transition:top 200ms var(--ease)}
+.skip:focus{top:12px}
+
+/* ---------------------------------------------------------------- type */
+/* One character for every small line on the page: condensed Archivo with real
+   weight. Nothing on this page is allowed to read as plain placeholder text. */
+.small{font-stretch:76%;font-weight:700;letter-spacing:.025em}
+.t{font-stretch:64%;font-weight:800;text-transform:uppercase;letter-spacing:-.012em;line-height:.92}
+
+/* ---------------------------------------------------------------- shared shells */
+.sec{
+  position:relative;width:100%;overflow:hidden;
+  padding:var(--pad-sec) clamp(20px,5vw,64px);
+  min-height:100dvh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+}
+.wrap{width:100%;max-width:1180px;margin:0 auto;display:flex;flex-direction:column;align-items:center}
+
+/* every photo lives inside a frame, every small line inside a solid band */
+.frame{
+  position:relative;overflow:hidden;
+  border:1px solid var(--hair);border-radius:3px;
+  background:#0A1826;box-shadow:var(--shadow);
+}
+
+.band{
+  position:absolute;left:0;right:0;bottom:0;height:var(--bandh,46px);
+  background:var(--band);border-top:1px solid var(--hair);
+  display:flex;align-items:center;justify-content:center;gap:10px;padding:0 14px;
+  font-stretch:76%;font-weight:700;font-size:clamp(15px,1.5vw,19px);
+  letter-spacing:.025em;color:var(--paper);
+}
+.band .dot{width:8px;height:8px;border-radius:50%;background:#37D67A;flex:0 0 auto}
+
+/* ---------------------------------------------------------------- buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:48px;padding:0 32px;
+  font-family:inherit;font-stretch:72%;font-weight:800;text-transform:uppercase;
+  font-size:clamp(14px,1.35vw,17px);letter-spacing:.045em;
+  color:var(--ink);background:var(--blue);border:1px solid var(--blue);border-radius:999px;
+  text-decoration:none;cursor:pointer;
+  transition:transform 140ms var(--ease),background-color 200ms var(--ease);
+}
+.btn--sm{min-height:44px;padding:0 18px;font-size:13px}
+.btn--wide{width:100%}
+.btn:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){
+  .btn:hover{background:var(--hi);border-color:var(--hi)}
+}
+
+/* ---------------------------------------------------------------- top bar */
+.topbar{
+  position:fixed;inset:0 0 auto 0;z-index:120;
+  display:flex;justify-content:center;
+  padding:12px clamp(14px,4vw,32px);
+  background:none;pointer-events:none;
+  transition:transform 320ms var(--ease);
+}
+.topbar{transform:translateY(calc(-100% - 18px))}
+.topbar.is-here{transform:translateY(0)}
+.topbar__in{
+  pointer-events:auto;
+  display:flex;align-items:center;gap:clamp(10px,2vw,28px);
+  padding:8px 8px 8px 18px;
+  background:var(--band);border:1px solid var(--hair);border-radius:3px;
+  box-shadow:0 10px 22px rgba(0,0,0,.55);
+}
+.topbar__brand{display:flex;align-items:center;min-height:44px;line-height:0}
+.topbar__brand img{width:clamp(104px,10vw,148px);height:auto}
+.topbar__nav{display:flex;align-items:center;gap:clamp(10px,1.7vw,24px)}
+.topbar__nav a{
+  display:inline-flex;align-items:center;min-height:44px;padding:0 2px;
+  font-stretch:76%;font-weight:700;font-size:14px;letter-spacing:.025em;
+  color:var(--paper-soft);text-decoration:none;
+  border-bottom:1px solid transparent;
+  transition:color 200ms var(--ease),border-color 200ms var(--ease);
+}
+@media (hover:hover) and (pointer:fine){
+  .topbar__nav a:hover{color:var(--paper);border-bottom-color:var(--blue)}
+}
+.topbar__nav a:active{color:var(--blue)}
+
+@media (max-width:860px){
+  .topbar__nav{display:none}
+  .topbar__in{padding:8px 8px 8px 14px}
+}
+
+/* ---------------------------------------------------------------- reveal: the L mark wipes in */
+[data-wipe]{position:relative;container-type:inline-size}
+.js [data-wipe]{
+  clip-path:inset(0 100% 0 0);
+  transition:clip-path 780ms var(--ease);
+}
+.js [data-wipe].is-in{clip-path:inset(0 0 0 0)}
+[data-wipe]::after{
+  content:"";position:absolute;top:0;bottom:0;left:0;width:14px;z-index:9;
+  background:repeating-linear-gradient(180deg,var(--blue) 0 5px,transparent 5px 10px);
+  opacity:0;pointer-events:none;
+}
+[data-wipe].is-in::after{animation:markpass 780ms var(--ease) forwards}
+@keyframes markpass{
+  0%{opacity:.85;transform:translateX(-14px)}
+  92%{opacity:.35}
+  100%{opacity:0;transform:translateX(100cqw)}
+}
+
+/* ---------------------------------------------------------------- footer */
+.foot{background:var(--ink);border-top:1px solid var(--hair-soft);padding:clamp(28px,5vh,54px) clamp(20px,5vw,64px)}
+.foot__in{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:22px}
+.foot__logo{width:clamp(130px,14vw,180px);height:auto}
+.foot__nav{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:4px;
+  padding:4px;background:var(--band);border:1px solid var(--hair);border-radius:3px;
+}
+.foot__nav a{
+  display:inline-flex;align-items:center;min-height:44px;padding:0 clamp(10px,1.6vw,20px);
+  font-stretch:76%;font-weight:700;font-size:14px;letter-spacing:.025em;
+  color:var(--paper-soft);text-decoration:none;border-radius:2px;
+  transition:color 200ms var(--ease),background-color 200ms var(--ease);
+}
+@media (hover:hover) and (pointer:fine){.foot__nav a:hover{color:var(--paper);background:rgba(243,241,236,.08)}}
+.foot__nav a:active{color:var(--blue)}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important}
+  .js [data-wipe]{clip-path:none;transition:none}
+  [data-wipe]::after{display:none}
+  .topbar{transition:none}
+}
