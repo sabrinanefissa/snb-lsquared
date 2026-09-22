@@ -163,3 +163,13 @@
 /* trusted by: smaller logos, so the ring stays inside the screen */
 #clients{padding-left:var(--gut);padding-right:var(--gut)}
 #clients .orbit{--orbit-logo-w:72px;--orbit-logo-h:30px}
+
+/* r39: no dead space around the photos. Sections sit closer, the industry
+   name sits right under its photo and the link right under the name. */
+:root{--pad-sec:36px}
+#industries,#reliability,#clients,#demo,#publish{padding-top:var(--pad-sec);padding-bottom:var(--pad-sec)}
+.ind__stage{--caprow:56px;margin-bottom:0}
+.ind__cap{top:calc(100% + 4px)}
+.ind__cta{margin-top:2px}
+.rely__frame{margin-bottom:0}
+#reliability{--pad-sec:36px}
