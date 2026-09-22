@@ -9,7 +9,8 @@
   /* r43, phone only: a touch puts the mark where the finger is, the same way
      the pointer does on desktop. Above 760px nothing here runs. */
   const tap={x:-1e4,y:-1e4,t:-1e4};
-  const onTouch=e=>{if(e.pointerType!=='touch'||innerWidth>760)return;tap.x=e.clientX;tap.y=e.clientY;tap.t=performance.now();kick();};
+  const PLAIN=new URLSearchParams(location.search).has('plain');
+  const onTouch=e=>{if(e.pointerType!=='touch'||innerWidth>760||PLAIN)return;tap.x=e.clientX;tap.y=e.clientY;tap.t=performance.now();kick();};
   window.addEventListener('pointerdown',onTouch,{passive:true});
   window.addEventListener('pointermove',onTouch,{passive:true});
   document.documentElement.addEventListener('pointerleave',()=>{ptr.has=false;});

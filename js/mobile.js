@@ -7,12 +7,14 @@
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => [...(r || document).querySelectorAll(s)];
   const EASE = 'cubic-bezier(.23,1,.32,1)';
+  /* ?plain=1 turns the hints off, for telling a hint problem from a layout one */
+  const PLAIN = new URLSearchParams(location.search).has('plain');
 
   /* when a section comes into view its hint plays slowly, once, and HOLDS
      in the moved position until the visitor touches that section; the
      returned function is what the touch calls to put things back */
   const hint = (el, play, undo) => {
-    if (!el || RM.matches) return () => {};
+    if (!el || RM.matches || PLAIN) return () => {};
     let used = false, played = false, timer = 0;
     const io = new IntersectionObserver(([e]) => {
       if (e.isIntersecting && !used && !played) { played = true; io.disconnect(); timer = setTimeout(play, 500); }
