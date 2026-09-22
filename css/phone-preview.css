@@ -1,0 +1,12 @@
+/* PREVIEW ONLY (phone-preview.html): centre crops standing in for the phone
+   remakes, so the shapes can be judged before the real images are made. */
+.ind__stage{height:calc((100vw - 2 * var(--gut)) / .8 + var(--caprow))}
+.pub__shot{aspect-ratio:1/1;height:auto}
+.pub__ph{background-size:cover;background-position:center}
+.rely__frame{aspect-ratio:4/5;height:auto}
+.rely__ph{background-size:cover}
+.demo__shot{aspect-ratio:1/1}
+.demo__img{object-fit:cover}
+.pv-tag{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:99;
+  background:#E4B656;color:#0B1520;font:700 12px/1 Archivo,sans-serif;letter-spacing:.06em;
+  text-transform:uppercase;padding:8px 12px;border-radius:999px;pointer-events:none}

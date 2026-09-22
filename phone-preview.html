@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>L Squared</title>
+<meta name="description" content="L Squared digital signage platform and managed network.">
+<link rel="icon" href="data:,">
+<script>document.documentElement.className+=' js'+(new URLSearchParams(location.search).get('grounds')==='light'?' grounds-light':'');</script>
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/archivo.woff2" crossorigin>
+<link rel="stylesheet" href="css/base.css?v=r38">
+<link rel="stylesheet" href="css/hero.css?v=r38">
+<link rel="stylesheet" href="css/orbit.css?v=r38">
+<link rel="stylesheet" href="css/sections.css?v=r38">
+<link rel="stylesheet" href="css/grounds-light.css?v=r38">
+<link rel="stylesheet" href="css/mobile.css?v=r38" media="(max-width: 760px)">
+<link rel="stylesheet" href="css/phone-preview.css?v=p1" media="(max-width: 760px)">
+<meta name="robots" content="noindex">
+</head>
+<body>
+
+<a class="skip" href="#statement">Skip to content</a>
+
+<!-- 0 - TOP BAR : one state, transparent overlay, solid lockup -->
+<header class="topbar" id="topbar">
+  <div class="topbar__in">
+    <a class="topbar__brand" href="#hero" aria-label="L Squared, home">
+      <img src="assets/lsquared-logo.png" alt="" width="160" height="34" decoding="async">
+    </a>
+    <nav class="topbar__nav" aria-label="Main">
+      <a href="#industries">Industries</a>
+      <a href="#publish">Publishing</a>
+      <a href="#reliability">Support</a>
+      <a href="#clients">Clients</a>
+    </nav>
+    <a class="btn btn--sm" href="#demo">Book a demo</a>
+  </div>
+</header>
+
+<main id="main">
+<h1 class="sr-only">L Squared</h1>
+
+<!-- 1 - HERO : copied verbatim from homepage-mock/index.html -->
+<section id="hero" aria-label="L Squared">
+  <div class="hshot" id="h_shot"><canvas id="h_wall" aria-hidden="true"></canvas><canvas id="h_bloom" aria-hidden="true"></canvas></div>
+  <div class="read" id="h_read"><span class="num" id="h_num"></span><span class="word" id="h_word"></span></div>
+  <div class="big" id="h_bigA"><div class="bigA">One location.</div></div>
+  <div class="big" id="h_bigB"><div class="bigB">One platform.</div></div>
+  <div class="hlogo" id="h_logo"><img src="assets/lsquared-logo.png" alt="L Squared"></div>
+</section>
+
+<!-- 2 - BLUE STATEMENT -->
+<section class="sec" id="statement">
+  <canvas class="pixfield" data-fx="pixfield" aria-hidden="true"></canvas>
+  <div class="wrap statement__wrap">
+    <h2 class="t statement__h">We own the platform.<br>We build the network.</h2>
+  </div>
+</section>
+
+<canvas class="shed shed--into" data-shed="186,224,246" data-shed-alpha=".8" data-shed-safe="84" aria-hidden="true"></canvas>
+
+<!-- 4 - FIVE STRIPS -->
+<section class="sec" id="strips">
+  <div class="wrap">
+    <h2 class="t strips__title">What you get with L Squared.</h2>
+    <div class="stripswrap" data-wipe>
+    <div class="strips" data-strips data-open="0">
+      <button class="strip is-open" type="button" aria-expanded="true">
+        <span class="strip__ph" style="background-image:url(assets/team.webp)"></span>
+        <span class="strip__veil" aria-hidden="true"></span>
+        <span class="strip__copy">
+          <span class="strip__word">People</span>
+          <span class="strip__say">You&rsquo;ll know our names. We&rsquo;ll know yours.</span>
+        </span>
+      </button>
+      <button class="strip" type="button" aria-expanded="false">
+        <span class="strip__ph" style="background-image:url(assets/meeting.webp)"></span>
+        <span class="strip__veil" aria-hidden="true"></span>
+        <span class="strip__copy">
+          <span class="strip__word">Trust</span>
+          <span class="strip__say">We own the company. So we own the problem.</span>
+        </span>
+      </button>
+      <button class="strip" type="button" aria-expanded="false">
+        <span class="strip__ph" style="background-image:url(assets/security.webp)"></span>
+        <span class="strip__veil" aria-hidden="true"></span>
+        <span class="strip__copy">
+          <span class="strip__word">Security</span>
+          <span class="strip__say">Only your people change your screens.</span>
+        </span>
+      </button>
+      <button class="strip" type="button" aria-expanded="false">
+        <span class="strip__ph" style="background-image:url(assets/support.webp)"></span>
+        <span class="strip__veil" aria-hidden="true"></span>
+        <span class="strip__copy">
+          <span class="strip__word">Support</span>
+          <span class="strip__say">Call at 3 a.m. Someone picks up.</span>
+        </span>
+      </button>
+      <button class="strip strip--map" type="button" aria-expanded="false" data-maps>
+        <span class="strip__ph is-on" style="background-image:url(assets/scale.webp?v=r38)"></span>
+        <span class="strip__veil" aria-hidden="true"></span>
+        <span class="strip__copy">
+          <span class="strip__word">Scale</span>
+          <span class="strip__say">One screen or every store you own. Same people.</span>
+        </span>
+      </button>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 - INDUSTRIES : type on the ground, the photo completely clean -->
+<section id="industries">
+  <div class="ind__head">
+    <h2 class="t ind__title" id="ind-title">Industries we serve</h2>
+    <p class="sr-only" id="ind-name" aria-live="polite">Restaurants</p>
+  </div>
+  <div class="ind__stage" id="ind-stage" role="group" aria-roledescription="carousel" aria-labelledby="ind-title">
+    <div class="ind__slide is-on" id="ind-a"><div class="ind__ph"><p class="ind__cap"><span class="ind__capname"></span></p></div></div>
+    <div class="ind__slide" id="ind-b"><div class="ind__ph"><p class="ind__cap"><span class="ind__capname"></span></p></div></div>
+    <button type="button" class="ind__arrow ind__arrow--prev" id="ind-prev" aria-label="Previous industry"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 2.5 4.5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="ind__arrow ind__arrow--next" id="ind-next" aria-label="Next industry"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M6 2.5 11.5 8 6 13.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+  <a class="ind__cta" href="industries.html">See all industries</a>
+</section>
+
+<!-- 5b - THE SENTENCE : the pixels shed and land as one line -->
+<section id="independent">
+  <div class="fall">
+    <canvas id="fall-canvas" aria-hidden="true"></canvas>
+    <div class="fall__stage">
+      <p class="fall__line" data-words>Menus, maps, sales, safety notices. Whatever goes on your screens, we make sure it&rsquo;s right, on time, and on.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 - CHANGE THE MENU LIVE -->
+<section class="sec" id="publish">
+  <div class="wrap">
+    <h2 class="t pub__title">Change the menu. Watch it go live.</h2>
+    <div class="pub__rig" data-wipe>
+      <div class="pub__scene">
+        <div class="pub__shot" id="pub-1">
+          <div class="pub__ph is-on" style="background-image:url(assets/phone-preview/menu-blank.webp?v=r38)" data-menu="none"></div>
+          <div class="pub__ph" style="background-image:url(assets/phone-preview/menu-breakfast.webp)" data-menu="breakfast"></div>
+          <div class="pub__ph" style="background-image:url(assets/phone-preview/menu-lunch.webp)" data-menu="lunch"></div>
+          <div class="wipe" aria-hidden="true"></div>
+        </div>
+        <div class="pub__under">
+          <div class="seg" role="radiogroup" aria-label="Counter boards menu to stage" data-scene="1">
+            <button type="button" role="radio" aria-checked="false" tabindex="0" data-menu="breakfast">Breakfast</button>
+            <button type="button" role="radio" aria-checked="false" tabindex="-1" data-menu="lunch">Lunch</button>
+          </div>
+          <p class="pub__status is-none"><span class="dot"></span><span class="pub__state">Nothing published</span></p>
+        </div>
+      </div>
+      <div class="pub__scene">
+        <div class="pub__shot" id="pub-2">
+          <div class="pub__ph is-on" style="background-image:url(assets/phone-preview/drivethru-blank.webp?v=r38)" data-menu="none"></div>
+          <div class="pub__ph" style="background-image:url(assets/phone-preview/drivethru.webp)" data-menu="breakfast"></div>
+          <div class="pub__ph" style="background-image:url(assets/phone-preview/drivethru-menu.webp)" data-menu="lunch"></div>
+          <div class="wipe" aria-hidden="true"></div>
+        </div>
+        <div class="pub__under">
+          <div class="seg" role="radiogroup" aria-label="Drive thru menu to stage" data-scene="2">
+            <button type="button" role="radio" aria-checked="false" tabindex="0" data-menu="breakfast">Breakfast</button>
+            <button type="button" role="radio" aria-checked="false" tabindex="-1" data-menu="lunch">Lunch</button>
+          </div>
+          <p class="pub__status is-none"><span class="dot"></span><span class="pub__state">Nothing published</span></p>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="btn" id="pub-go">Publish</button>
+  </div>
+</section>
+
+<!-- 7 - DRAG BAR : one scene, the retail floor -->
+<section class="sec" id="reliability">
+  <div class="wrap">
+    <h2 class="t rely__h">Everyone notices a dead screen.</h2>
+    <p class="rely__sub">We keep yours on. 99.99% of the time.</p>
+    <div class="rely__frame" data-wipe>
+      <div class="rely__stack">
+        <div class="rely__ph rely__ph--off" id="rely-off" style="background-image:url(assets/phone-preview/retail-off.webp?v=r38)"></div>
+        <div class="rely__ph rely__ph--on" id="rely-on" style="background-image:url(assets/phone-preview/retail-on.webp?v=r38)"></div>
+        <div class="rely__handle" id="rely-handle" role="slider" tabindex="0"
+             aria-label="Drag to compare dead screens with working screens"
+             aria-valuemin="0" aria-valuemax="100" aria-valuenow="76"
+             aria-valuetext="76 percent working screens">
+          <span class="rely__grip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 - THIN LOGO BAND (real logo-orbit component) -->
+<section id="clients" aria-label="Trusted by">
+  <h2 class="t clients__title">Trusted by</h2>
+  <div class="clients__row">
+    <div class="orbit" data-theme="dark" data-orbit-rings="1" data-orbit-slots="5" aria-label="Clients and partners"></div>
+    <figure class="quote">
+      <blockquote class="quote__text">Our office and most warehouses are transformed with the new digital displays. It allows us to circulate important business updates and critical information quickly across these facilities. The locations with this technology have quickly realized greater engagement from the employees.</blockquote>
+      <figcaption class="quote__by"><img class="quote__logo" src="assets/logos/purolator.png" alt="Purolator" width="126" height="22" decoding="async"></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 9 - THE FIGURES : a full screen moment -->
+<section class="sec" id="numbers">
+  <canvas class="pixfield" data-fx="pixfield" aria-hidden="true"></canvas>
+  <div class="beats" data-wipe>
+    <p class="sr-only">99.99% uptime. Under 20 minutes to a reply. Support 24/7. Training in 1 hour. One team, end to end. Screens in 60+ countries. 100+ integrations. SOC 2 Type II.</p>
+    <div class="beats__stage" id="beats" aria-hidden="true">
+      <div class="beats__line is-on"><span class="beats__fig">99.99%</span><span class="beats__word">Uptime</span></div>
+      <div class="beats__line"><span class="beats__fig">Under 20 min</span><span class="beats__word">Reply</span></div>
+      <div class="beats__line"><span class="beats__fig">24/7</span><span class="beats__word">Support</span></div>
+      <div class="beats__line"><span class="beats__fig">1 hour</span><span class="beats__word">Training</span></div>
+      <div class="beats__line"><span class="beats__fig">One team</span><span class="beats__word">End to end</span></div>
+      <div class="beats__line"><span class="beats__fig">60+</span><span class="beats__word">Countries</span></div>
+      <div class="beats__line"><span class="beats__fig">100+</span><span class="beats__word">Integrations</span></div>
+      <div class="beats__line"><span class="beats__fig">SOC 2</span><span class="beats__word">Type II</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 - BOOK A DEMO : the form is what is playing on the middle screen -->
+<section class="sec" id="demo">
+  <div class="demo__stage">
+    <div class="demo__shot">
+      <img class="demo__img" src="assets/phone-preview/demo-wall.webp?v=r38" alt="" width="1774" height="887" decoding="async">
+    </div>
+    <div class="demo__screen">
+      <h2 class="t demo__h">However you grow,<br>your screens keep up.</h2>
+      <form class="form" id="demo-form" novalidate data-wipe>
+        <div class="field">
+          <label for="f-email">Work email</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" placeholder="you@company.com" aria-describedby="form-note" required>
+        </div>
+        <div class="field">
+          <label for="f-screens">Number of screens</label>
+          <select id="f-screens" name="screens">
+            <option>1 to 10</option>
+            <option>10 to 50</option>
+            <option>50 to 250</option>
+            <option>250 or more</option>
+          </select>
+        </div>
+        <button class="btn btn--wide" type="submit">Send request</button>
+        <p class="form__note" id="form-note" role="status"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot__in">
+    <img class="foot__logo" src="assets/lsquared-logo.png" alt="L Squared" width="180" height="38" decoding="async">
+    <nav class="foot__nav" aria-label="Footer">
+      <a href="#industries">Industries</a>
+      <a href="#publish">Publishing</a>
+      <a href="#reliability">Support</a>
+      <a href="#clients">Clients</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="js/herowall.js?v=r38"></script>
+<script src="js/hero.js?v=r38"></script>
+<script src="js/pixfield.js?v=r38"></script>
+<script src="js/fall.js?v=r38"></script>
+<script src="js/shed.js?v=r38"></script>
+<script src="js/page.js?v=r38"></script>
+<script>/* preview: the industry carousel loads its photos from page.js; point them at the crops */
+(function(){var fix=function(el){var b=el.style.backgroundImage;if(b&&b.indexOf('phone-preview')<0&&/ind-|mfg-on/.test(b)){el.style.backgroundImage=b.replace('assets/','assets/phone-preview/');}if(el.style.getPropertyValue('--kw')!=='.8')el.style.setProperty('--kw','.8');};
+document.querySelectorAll('.ind__ph').forEach(function(el){fix(el);new MutationObserver(function(){fix(el)}).observe(el,{attributes:true,attributeFilter:['style']});});})();</script>
+<div class="pv-tag">Phone crop preview</div>
+<script src="js/orbit.js?v=r38"></script>
+</body>
+</html>
