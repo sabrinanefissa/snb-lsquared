@@ -173,3 +173,28 @@
 .ind__cta{margin-top:2px}
 .rely__frame{margin-bottom:0}
 #reliability{--pad-sec:36px}
+
+/* r40: the three type sections fill their screen. Lines may break on a phone;
+   the words are set big enough to own the section, not float in it. */
+.statement__h{font-size:17vw;line-height:.9;max-width:none;padding:0 var(--gut)}
+
+.fall__stage{padding:0 var(--gut)}
+.fall__line{font-size:12.4vw;line-height:1.02;max-width:none;letter-spacing:-.01em}
+
+/* figures: the figure on top, its word under it, both big; every beat stacks
+   in the same cell so the tallest one sets the height and nothing jumps */
+.beats__stage{display:grid;height:auto;padding:0 var(--gut)}
+.beats__line{position:static;grid-area:1/1;transform:none;flex-direction:column;align-items:center;
+  justify-content:center;gap:.06em;white-space:normal}
+.beats__fig{font-size:25vw;line-height:.86;text-wrap:balance}
+.beats__word{font-size:13vw;line-height:.9;margin-left:0}
+/* r40b: bigger again, the words own the screen */
+.statement__h{font-size:22vw;line-height:.88;width:min-content;margin:0 auto}
+.fall__line{font-size:14.6vw;line-height:1}
+.beats__fig{font-size:32vw}
+.beats__word{font-size:16vw}
+@media (prefers-reduced-motion:reduce){
+  .beats__stage{display:flex;gap:28px}
+  .beats__line{grid-area:auto}
+  .beats__fig{font-size:18vw}.beats__word{font-size:10vw}
+}
