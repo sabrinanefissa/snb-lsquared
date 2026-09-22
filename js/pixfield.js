@@ -43,7 +43,10 @@
           const x=this.ox+i*s+h,y=this.oy+j*s+h;
           /* cells behind the type are held back so they never fight it */
           let a=Math.min(1,v)*col[1];
-          if(gu&&x+q>gu.l&&x<gu.r&&y+q>gu.t&&y<gu.b)a*=.18;
+          /* on a phone the guarded type is much bigger relative to the
+             canvas, so the same .18 would erase the field almost entirely;
+             desktop is untouched */
+          if(gu&&x+q>gu.l&&x<gu.r&&y+q>gu.t&&y<gu.b)a*=(this.w<760?.5:.18);
           c.globalAlpha=a;c.fillRect(x,y,q,q);}
         if(gd)c.shadowBlur=0;}
       c.globalAlpha=1;}
