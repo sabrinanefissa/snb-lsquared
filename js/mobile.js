@@ -54,7 +54,6 @@
   {
     const stage = $('.demo__stage'), screen = $('.demo__screen'), h = $('.demo__h');
     if (stage && screen) {
-      if (h) h.textContent = "Let\u2019s talk.";
       const fit = () => {
         const W = stage.clientWidth, H = stage.clientHeight, R = 852 / 1846;
         const k = Math.max(W / 852, H / 1846), iw = 852 * k, ih = 1846 * k;
@@ -79,12 +78,12 @@
       const mk = (list, cls) => {
         const r = document.createElement('div'); r.className = 'mq__row ' + cls;
         for (let k = 0; k < 2; k++) list.forEach((n) => {
-          const i = document.createElement('img'); i.src = 'assets/logos/' + n + '.png'; i.alt = ''; i.decoding = 'async'; i.className = 'mq__logo mq__logo--' + n; r.appendChild(i);
+          const i = document.createElement('img'); i.src = 'assets/logos/' + n + '-hq.png?v=r55'; i.alt = ''; i.decoding = 'async'; i.className = 'mq__logo mq__logo--' + n; r.appendChild(i);
         });
         return r;
       };
       const mq = document.createElement('div'); mq.className = 'mq'; mq.setAttribute('aria-hidden', 'true');
-      mq.appendChild(mk(L.slice(0, 5), 'mq__row--a')); mq.appendChild(mk(L.slice(4).concat(L.slice(0, 1)), 'mq__row--b'));
+      mq.appendChild(mk(L.slice(0, 5), 'mq__row--a')); mq.appendChild(mk(L.slice(5), 'mq__row--b'));
       orbit.insertAdjacentElement('afterend', mq);
     }
   }
@@ -189,8 +188,14 @@
         stage.classList.add('is-peeking');
         on.style.transition = 'transform 1400ms ' + EASE;
         on.style.transform = 'translateX(-34%)';
+        /* the name rides inside the photo, so it is moved back by the same
+           distance at the same pace: on screen only the photo travels */
+        const cap = $('.ind__cap', on);
+        if (cap) { cap.style.transition = 'transform 1400ms ' + EASE; cap.style.transform = 'translateX(' + (on.offsetWidth * .34) + 'px)'; }
       }, () => {
         stage.classList.remove('is-peeking');
+        const cap = $('.ind__slide.is-on .ind__cap', stage);
+        if (cap) { cap.style.transition = 'transform 420ms ' + EASE; cap.style.transform = ''; }
         const on = $('.ind__slide.is-on', stage);
         if (!on) return;
         on.style.transition = 'transform 420ms ' + EASE;

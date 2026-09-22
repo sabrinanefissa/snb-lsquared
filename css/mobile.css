@@ -32,14 +32,14 @@
 #hero .hlogo{width:86vw}
 
 /* ---------------------------------------------------------------- 2 blue statement */
-#statement{height:100svh;min-height:100svh}
+#statement{height:var(--app-h,100svh);min-height:var(--app-h,100svh)}
 .statement__h{font-size:9.7vw;line-height:.95}
 
 /* ---------------------------------------------------------------- 4 five strips
    the stacked accordion takes the screen; the open strip grows tall */
-#strips{min-height:100svh}
+#strips{min-height:var(--app-h,100svh)}
 .strips{
-  height:calc(100svh - 2 * var(--pad-sec) - var(--gap-title) - 2.2 * var(--title));
+  height:calc(var(--app-h,100svh) - 2 * var(--pad-sec) - var(--gap-title) - 2.2 * var(--title));
   min-height:460px;max-height:720px;gap:8px;
   grid-template-rows:3.6fr 1fr 1fr 1fr 1fr;
 }
@@ -86,7 +86,7 @@
 /* ---------------------------------------------------------------- 7 change the menu
    the two scenes stack; each keeps its own switch and live line right under it,
    side by side in one row; Publish follows both */
-#publish{min-height:100svh;padding-left:12px;padding-right:12px}
+#publish{min-height:var(--app-h,100svh);padding-left:12px;padding-right:12px}
 .pub__rig{gap:18px}
 .pub__shot{--pubh:none;width:100%;border-radius:8px;box-shadow:none}
 .pub__under{margin-top:10px;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:8px 14px}
@@ -207,7 +207,7 @@
 
 /* A) full screen, content spread across it, not clumped in the middle */
 #industries,#reliability,#clients,#demo,#publish{
-  min-height:100svh;height:auto;
+  min-height:var(--app-h,100svh);height:auto;
   display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;
   padding-top:max(28px,env(safe-area-inset-top));padding-bottom:28px;
 }
@@ -248,16 +248,16 @@
    browser's address bar slides in or out while scrolling, which resizes the
    sections above the one being read and throws the page up or down. svh is
    the fixed small viewport, so the page keeps one height. */
-#independent{height:170svh}
-.fall{height:100svh}
-.fall__line{margin-top:clamp(56px,10svh,104px)}
-#numbers{min-height:100svh}
-.rely__frame{--relyh:min(700px,calc(100svh - 2 * var(--pad-sec) - var(--gap-title) - 100px))}
-.shed{--shedh:clamp(120px,15svh,170px)}
-.shed--into{--shedh:clamp(150px,20svh,210px)}
-.shed--seam{--shedh:clamp(72px,11svh,132px)}
-.beats__cta{margin-top:clamp(40px,9svh,110px)}
-.strips{height:calc(100svh - 2 * var(--pad-sec) - var(--gap-title) - 2.2 * var(--title))}
+#independent{height:calc(var(--app-h,100svh) * 1.7)}
+.fall{height:var(--app-h,100svh)}
+.fall__line{margin-top:clamp(56px,calc(var(--app-h,100svh) * 0.1),104px)}
+#numbers{min-height:var(--app-h,100svh)}
+.rely__frame{--relyh:min(700px,calc(var(--app-h,100svh) - 2 * var(--pad-sec) - var(--gap-title) - 100px))}
+.shed{--shedh:clamp(120px,calc(var(--app-h,100svh) * 0.15),170px)}
+.shed--into{--shedh:clamp(150px,calc(var(--app-h,100svh) * 0.2),210px)}
+.shed--seam{--shedh:clamp(72px,calc(var(--app-h,100svh) * 0.11),132px)}
+.beats__cta{margin-top:clamp(40px,calc(var(--app-h,100svh) * 0.09),110px)}
+.strips{height:calc(var(--app-h,100svh) - 2 * var(--pad-sec) - var(--gap-title) - 2.2 * var(--title))}
 .ind__stage{min-height:0}
 .quote{gap:12px;padding-top:12px}
 
@@ -338,7 +338,7 @@ html{scroll-behavior:auto}
 /* contact: the new tall three-screen wall, whole, as tall as the screen allows.
    Screens: top 12.9-29.7%, middle 31.3-58.8%, bottom 60.2-76.9% of the height,
    all spanning about 13% to 86% of the width. */
-.demo__stage{width:min(100vw,calc(100svh * .4615));aspect-ratio:852 / 1846;margin:0 auto}
+.demo__stage{width:min(100vw,calc(var(--app-h,100svh) * .4615));aspect-ratio:852 / 1846;margin:0 auto}
 .demo__h{left:15%;right:15%;top:12.9%;height:16.8%;font-size:min(6.4vw,30px)}
 .form{left:16%;right:16%;top:31.3%;bottom:23.1%;grid-template-rows:27.5fr 1.4fr 16.7fr}
 .form .field:nth-of-type(1){margin-top:5.5%}
@@ -424,8 +424,8 @@ html.mnav-open .topbar{transform:translateY(0)}
 /* contact: the wall photo fills the whole screen (cover). The screen layer is
    sized by js/mobile.js to the photo as displayed, so these percentages are
    of the photo: top screen 12.9-29.7%, middle 31.3-58.8%, bottom 60.2-76.9%. */
-#demo{padding:0;min-height:100svh}
-.demo__stage{width:100vw;height:100svh;max-width:none;aspect-ratio:auto;margin:0;overflow:hidden}
+#demo{padding:0;min-height:var(--app-h,100svh)}
+.demo__stage{width:100vw;height:var(--app-h,100svh);max-width:none;aspect-ratio:auto;margin:0;overflow:hidden}
 .demo__shot{position:absolute;inset:0;width:100%;height:100%}
 .demo__img{object-fit:cover;object-position:center}
 .demo__screen{position:absolute;inset:auto;display:block;padding:0}
@@ -462,3 +462,30 @@ html.mnav-open .topbar{transform:translateY(0)}
   left:50%;transform:translateX(-50%)}
 .ind__slide{will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .ind__head{position:relative;z-index:3}
+
+/* ================================================================== r55 */
+
+/* every titled section: title, then its content, as one group centred in
+   the screen. Same title size (--title), same gap to content (--gap-title),
+   same section padding, on every section. */
+#strips,#industries,#publish,#reliability,#clients{justify-content:center}
+#strips .wrap,#publish .wrap,#reliability .wrap{flex:0 0 auto;justify-content:center}
+.strips__title,.ind__title,.pub__title,.rely__h,.clients__title{font-size:var(--title);line-height:.95;margin:0 0 var(--gap-title)}
+.ind__head{margin:0;padding:0 var(--gut)}
+.ind__stage{margin:0}
+.ind__cta{margin-top:14px}
+.pub__rig{margin-top:0}
+.rely__sub{margin:-12px 0 0}
+.rely__frame{margin-top:var(--gap-title)}
+.clients__row{flex:0 0 auto;justify-content:flex-start;gap:30px}
+
+/* trusted by: the logos in colour, each on its own white tile, like the
+   logo wall behind the team */
+.mq__row{gap:14px;padding-right:14px}
+.mq__logo,.mq__logo--cold-stone-creamery,.mq__logo--international-centre,.mq__logo--ups-store,.mq__logo--mcmaster-university{
+  width:132px;height:64px;padding:13px 16px;box-sizing:border-box;
+  object-fit:contain;background:#fff;border-radius:10px;filter:none;opacity:1}
+.mq{gap:14px}
+
+/* r55: the hero and its type are locked to the measured height too */
+#hero{height:var(--app-h,100svh)}
