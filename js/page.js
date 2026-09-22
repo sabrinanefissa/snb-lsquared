@@ -133,10 +133,10 @@
        --kw is the photo ratio divided by the fraction of its height that has
        to stay visible, so a bottom only crop never reaches the screens. */
     const IND = [
-      ['Restaurants', 'assets/ind-restaurants.webp?v=r11', 'Breakfast menu at six. Lunch menu at eleven.', 'center top', '2.246', '2.246'],
+      ['Restaurants', 'assets/ind-restaurants.webp?v=r50', 'Breakfast menu at six. Lunch menu at eleven.', 'center top', '1.777', '1.777'],
       ['Retail', 'assets/ind-retail.webp?v=r11', 'Friday’s sale is on the wall before the doors open.', 'center top', '2.250', '2.250'],
-      ['Hospitality', 'assets/ind-hospitality.webp?v=r27', 'Guests know where to go the moment they walk in.', 'center top', '3.000', '3.000'],
-      ['Manufacturing', 'assets/mfg-on.webp?v=r27', 'Today’s targets, where the whole floor can see them.', 'center top', '3.000', '3.000']
+      ['Hospitality', 'assets/ind-hospitality.webp?v=r50', 'Guests know where to go the moment they walk in.', 'center top', '2.990', '2.990'],
+      ['Manufacturing', 'assets/mfg-on.webp?v=r50', 'Today’s targets, where the whole floor can see them.', 'center top', '3.000', '3.000']
     ];
     /* r30: the photographs are the carousel. They slide sideways, always in the direction of travel, and loop.
        Each photo carries its industry name and its line on its own bottom edge. */

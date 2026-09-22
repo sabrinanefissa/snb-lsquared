@@ -28,6 +28,7 @@
      Desktop markup and files are untouched; only the URL changes here. */
   const PHONE = {
     'ind-restaurants.webp': ['assets/m/ind-restaurants.webp?v=m1', '.8'],
+    'ind-retail.webp': ['assets/m/ind-retail.webp?v=m1', '.8'],
     'ind-hospitality.webp': ['assets/m/ind-hospitality.webp?v=m1', '.7584'],
     'mfg-on.webp': ['assets/m/mfg-on.webp?v=m1', '.7759'],
     'retail-off.webp': ['assets/m/retail-off.webp?v=m1'],

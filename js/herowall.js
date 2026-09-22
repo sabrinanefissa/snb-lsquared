@@ -7,7 +7,7 @@ const hero=document.getElementById('hero'),num=document.getElementById('h_num'),
 if(!cv||!hero)return;
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PHONE=matchMedia('(max-width: 760px)');
-const BLUE=[86,176,228],GOLD=[246,170,34],WHITE=[208,222,238],OFF=[9,13,19];           // L Squared blue, and an orange pushed toward yellow gold
+const BLUE=[86,176,228],GOLD=[255,153,0],WHITE=[208,222,238],OFF=[9,13,19];           // L Squared blue, and an orange pushed toward yellow gold
 let W=0,H=0,D=1;
 function size(){D=Math.min(2,window.devicePixelRatio||1);W=hero.clientWidth;H=hero.clientHeight;cv.width=W*D;cv.height=H*D;bl.width=Math.ceil(W/4);bl.height=Math.ceil(H/4);cx.setTransform(D,0,0,D,0,0);sprites={};if(state)(state.inf?layoutInf():layout(state.n));}
 addEventListener('resize',size);

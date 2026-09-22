@@ -699,6 +699,18 @@
   margin-top:calc(var(--shedh) * -.45);
   margin-bottom:calc(var(--shedh) * -.55);
 }
-/* r48: the bridge line breaks after "Right place." on every width */
-.fall__line{max-width:none}
-.fall__line i:nth-child(4)::after{content:"\A";white-space:pre}
+
+/* r50: the bridge is the CEO's words, set smaller than a statement, with his name under it */
+.fall__stage{flex-direction:column}
+.fall__line{max-width:min(40ch,82vw);font-size:clamp(22px,2.7vw,46px);line-height:1.18;font-stretch:76%;letter-spacing:-.006em}
+.fall__by{position:relative;z-index:1;margin-top:clamp(14px,2vh,22px);font-stretch:76%;font-weight:700;font-size:clamp(13px,1vw,16px);letter-spacing:.14em;text-transform:uppercase;color:var(--ink);opacity:.72}
+
+/* r50: one warm accent, taken from the gold light strips in the photography. Used thin and sparingly. */
+:root{--gold:#F0A24A}
+.ind__cta::after{background:var(--gold);opacity:.75}
+.rely__handle::before{background:var(--gold)}
+.rely__grip i{background:var(--gold)}
+.quote::before{color:var(--gold)}
+.form input:focus,.form select:focus{border-color:var(--gold)}
+.form .btn{border-radius:6px}
+.foot{border-top-color:rgba(240,162,74,.35)}
