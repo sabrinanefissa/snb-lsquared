@@ -243,3 +243,20 @@
 /* r42: the peek-on-scroll-up nav bar reads as a stray dark bar on a phone
    (touch scroll bounce triggers it unpredictably); removed on mobile only */
 #topbar{display:none}
+
+/* r45: nothing on a phone is sized in dvh. dvh changes every time the
+   browser's address bar slides in or out while scrolling, which resizes the
+   sections above the one being read and throws the page up or down. svh is
+   the fixed small viewport, so the page keeps one height. */
+#independent{height:170svh}
+.fall{height:100svh}
+.fall__line{margin-top:clamp(56px,10svh,104px)}
+#numbers{min-height:100svh}
+.rely__frame{--relyh:min(700px,calc(100svh - 2 * var(--pad-sec) - var(--gap-title) - 100px))}
+.shed{--shedh:clamp(120px,15svh,170px)}
+.shed--into{--shedh:clamp(150px,20svh,210px)}
+.shed--seam{--shedh:clamp(72px,11svh,132px)}
+.beats__cta{margin-top:clamp(40px,9svh,110px)}
+.strips{height:calc(100svh - 2 * var(--pad-sec) - var(--gap-title) - 2.2 * var(--title))}
+.ind__stage{min-height:0}
+.quote{gap:12px;padding-top:12px}
