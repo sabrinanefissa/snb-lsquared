@@ -260,3 +260,8 @@
 .strips{height:calc(100svh - 2 * var(--pad-sec) - var(--gap-title) - 2.2 * var(--title))}
 .ind__stage{min-height:0}
 .quote{gap:12px;padding-top:12px}
+
+/* r47: no smooth scroll-behavior on a phone. iOS makes its own scroll
+   corrections when the toolbars show on a scroll up, and with smooth
+   behaviour those corrections animate as a visible jump. */
+html{scroll-behavior:auto}
