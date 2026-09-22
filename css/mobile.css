@@ -451,3 +451,14 @@ html.mnav-open .topbar{transform:translateY(0)}
    below it, so the form is not clipped on a phone */
 .js .form[data-wipe],.js .form[data-wipe].is-in{clip-path:none;transition:none}
 .form[data-wipe]::after{display:none}
+
+/* ================================================================== r54
+   Industries on Safari: no container units, no container query, a clipped
+   stage, and the slides on their own compositing layer, so the preview slide
+   can't repaint over the title or nudge the page while scrolling. */
+.ind__stage{container-type:normal;overflow:clip;isolation:isolate;z-index:1;
+  height:calc((100vw - 2 * var(--gut)) / var(--kw,.8) + var(--caprow))}
+.ind__ph{width:calc(100vw - 2 * var(--gut));height:calc((100vw - 2 * var(--gut)) / var(--kw,.8));
+  left:50%;transform:translateX(-50%)}
+.ind__slide{will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.ind__head{position:relative;z-index:3}
