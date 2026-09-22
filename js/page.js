@@ -133,8 +133,8 @@
        --kw is the photo ratio divided by the fraction of its height that has
        to stay visible, so a bottom only crop never reaches the screens. */
     const IND = [
-      ['Restaurants', 'assets/ind-restaurants.webp?v=r50', 'Breakfast menu at six. Lunch menu at eleven.', 'center top', '1.777', '1.777'],
-      ['Retail', 'assets/ind-retail.webp?v=r11', 'Friday’s sale is on the wall before the doors open.', 'center top', '2.250', '2.250'],
+      ['Restaurants', 'assets/ind-restaurants.webp?v=r56', 'Breakfast menu at six. Lunch menu at eleven.', 'center top', '2.251', '2.251'],
+      ['Retail', 'assets/ind-retail.webp?v=r56', 'Friday’s sale is on the wall before the doors open.', 'center top', '3.000', '3.000'],
       ['Hospitality', 'assets/ind-hospitality.webp?v=r50', 'Guests know where to go the moment they walk in.', 'center top', '2.990', '2.990'],
       ['Manufacturing', 'assets/mfg-on.webp?v=r50', 'Today’s targets, where the whole floor can see them.', 'center top', '3.000', '3.000']
     ];
