@@ -128,3 +128,38 @@
 .foot{padding:40px 20px max(40px,env(safe-area-inset-bottom))}
 .foot__nav{background:none;border:0;display:grid;grid-template-columns:1fr 1fr;gap:0 24px;padding:0}
 .foot__nav a{justify-content:center;font-size:15px}
+
+/* ---------------------------------------------------------------- r38 phone polish
+   every photo sits inside the same 16px side gutter as the text, whole, with
+   the same soft corners, and every control row is centred on the page */
+:root{--gut:16px}
+
+/* industries: the photo keeps its own ratio inside the gutter and sits right
+   on the name row, so wide and wider photos line up the same way */
+.ind__stage{height:calc((100vw - 2 * var(--gut)) / 2.25 + var(--caprow))}
+.ind__ph{
+  width:calc(100cqw - 2 * var(--gut));
+  height:calc((100cqw - 2 * var(--gut)) / var(--kw,2.25));
+  top:auto;bottom:var(--caprow);
+  border-radius:8px;background-size:cover;
+}
+
+/* change the menu: the switch, then its live line, both centred under the photo */
+#publish{padding-left:var(--gut);padding-right:var(--gut)}
+.pub__under{flex-direction:column;align-items:center;gap:8px}
+.pub__status{justify-content:center}
+
+/* dead screen and the contact wall: inside the gutter, not edge to edge */
+.rely__frame{width:calc(100vw - 2 * var(--gut));margin-left:auto;margin-right:auto;border-radius:8px;overflow:hidden}
+.demo__shot{width:calc(100vw - 2 * var(--gut));margin-left:auto;margin-right:auto;border-radius:8px;overflow:hidden}
+
+/* footer links centred in their columns */
+.foot__nav a{text-align:center}
+
+/* the live line sits snug under its switch */
+.pub__under{gap:2px}
+.pub__under .pub__status{min-height:30px}
+
+/* trusted by: smaller logos, so the ring stays inside the screen */
+#clients{padding-left:var(--gut);padding-right:var(--gut)}
+#clients .orbit{--orbit-logo-w:72px;--orbit-logo-h:30px}
