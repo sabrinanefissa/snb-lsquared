@@ -6,6 +6,12 @@
   const coarse=matchMedia('(hover:none),(pointer:coarse)').matches;
   const ptr={x:-1e4,y:-1e4,t:-1e4,has:false};
   window.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;ptr.x=e.clientX;ptr.y=e.clientY;ptr.t=performance.now();ptr.has=true;},{passive:true});
+  /* r43, phone only: a touch puts the mark where the finger is, the same way
+     the pointer does on desktop. Above 760px nothing here runs. */
+  const tap={x:-1e4,y:-1e4,t:-1e4};
+  const onTouch=e=>{if(e.pointerType!=='touch'||innerWidth>760)return;tap.x=e.clientX;tap.y=e.clientY;tap.t=performance.now();kick();};
+  window.addEventListener('pointerdown',onTouch,{passive:true});
+  window.addEventListener('pointermove',onTouch,{passive:true});
   document.documentElement.addEventListener('pointerleave',()=>{ptr.has=false;});
   const fxs=[];let raf=0,lastT=0;
   const loop=now=>{raf=0;const dt=lastT?Math.min(64,now-lastT):16.7;lastT=now;let any=false;
@@ -55,7 +61,9 @@
      pointer inside it, so there is never a stray block sitting in a corner.
      On a touch device it is one slow drift across the centre instead. */
   const feel=(el,now,w,h)=>{const r=el.getBoundingClientRect();
-    if(coarse){const p=through(r);return{x:w*(.14+.72*p),y:h*(.5+.10*Math.sin(p*Math.PI*2)),v:.8,r};}
+    if(coarse){
+      if(innerWidth<=760&&now-tap.t<1600&&tap.x>=r.left&&tap.x<=r.right&&tap.y>=r.top&&tap.y<=r.bottom)return{x:tap.x-r.left,y:tap.y-r.top,v:1,r,real:true};
+      const p=through(r);return{x:w*(.14+.72*p),y:h*(.5+.10*Math.sin(p*Math.PI*2)),v:.8,r};}
     const inside=ptr.has&&ptr.x>=r.left&&ptr.x<=r.right&&ptr.y>=r.top&&ptr.y<=r.bottom;
     if(inside&&now-ptr.t<1800)return{x:ptr.x-r.left,y:ptr.y-r.top,v:1,r,real:true};
     return null;};
