@@ -198,3 +198,44 @@
   .beats__line{grid-area:auto}
   .beats__fig{font-size:18vw}.beats__word{font-size:10vw}
 }
+
+/* ================================================================== r41
+   Every section fills the screen like it does on PC, the industries
+   carousel loses its arrows and gets its title above the photo, the
+   publish scenes lose the separate Publish step, and the sections built
+   around a drag or a tap get a one-time preview of their own motion. */
+
+/* A) full screen, content spread across it, not clumped in the middle */
+#industries,#reliability,#clients,#demo,#publish{
+  min-height:100svh;height:auto;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;
+  padding-top:max(28px,env(safe-area-inset-top));padding-bottom:28px;
+}
+#reliability .wrap,#demo .wrap,#publish .wrap{flex:1 1 auto;min-height:0;justify-content:space-evenly;width:100%}
+.clients__row{flex:1 1 auto;display:flex;flex-direction:column;justify-content:space-evenly;width:100%;gap:28px}
+
+/* B) industries: the name sits above the photo, not below; no arrow chrome;
+   the stage now takes the real ratio of whatever photo is showing, so the
+   3:1 industries do not leave a gap the 2.25:1 ones do not have */
+.ind__arrow{display:none}
+.ind__stage{--caprow:50px;height:calc((100vw - 2 * var(--gut)) / var(--kw,2.25) + var(--caprow))}
+.ind__ph{top:var(--caprow);bottom:auto}
+.ind__cap{top:auto;bottom:calc(100% + 6px)}
+.ind__capname{font-size:30px}
+
+/* C) publish: the Publish button is gone, a toggle goes live the moment it
+   is tapped; "Publish" is a small label over the toggles, not a button; the
+   live line sits in the photo's own bottom corner */
+#pub-go{display:none}
+.pub__rig{gap:20px}
+.pub__scene{position:relative}
+.pub__under::before{
+  content:"Publish";display:block;margin-bottom:8px;
+  font:700 11px/1 Archivo,sans-serif;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(243,241,236,.48);
+}
+.pub__shot .pub__status{
+  position:absolute;right:10px;bottom:10px;left:auto;margin:0;z-index:2;
+  background:rgba(6,14,22,.74);backdrop-filter:blur(6px);
+  padding:0 12px;min-height:34px;border-radius:999px;font-size:13px;
+}
