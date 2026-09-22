@@ -7,14 +7,12 @@
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => [...(r || document).querySelectorAll(s)];
   const EASE = 'cubic-bezier(.23,1,.32,1)';
-  /* ?plain=1 turns the hints off, for telling a hint problem from a layout one */
-  const PLAIN = new URLSearchParams(location.search).has('plain');
 
   /* when a section comes into view its hint plays slowly, once, and HOLDS
      in the moved position until the visitor touches that section; the
      returned function is what the touch calls to put things back */
   const hint = (el, play, undo) => {
-    if (!el || RM.matches || PLAIN) return () => {};
+    if (!el || RM.matches) return () => {};
     let used = false, played = false, timer = 0;
     const io = new IntersectionObserver(([e]) => {
       if (e.isIntersecting && !used && !played) { played = true; io.disconnect(); timer = setTimeout(play, 500); }
@@ -50,6 +48,23 @@
   $$('.rely__ph').forEach(swapBg);
   const wall = $('.demo__img');
   if (wall) { const hit = phoneFor(wall.getAttribute('src')); if (hit) { wall.src = hit[0]; wall.width = 852; wall.height = 1846; } }
+  /* the wall photo covers the whole screen; the layer that holds the headline,
+     the fields and the link is sized to the photo as displayed, so the screen
+     positions (measured on the photo) stay true whatever the phone's shape */
+  {
+    const stage = $('.demo__stage'), screen = $('.demo__screen'), h = $('.demo__h');
+    if (stage && screen) {
+      if (h) h.textContent = "Let\u2019s talk.";
+      const fit = () => {
+        const W = stage.clientWidth, H = stage.clientHeight, R = 852 / 1846;
+        const k = Math.max(W / 852, H / 1846), iw = 852 * k, ih = 1846 * k;
+        screen.style.left = ((W - iw) / 2) + 'px'; screen.style.top = ((H - ih) / 2) + 'px';
+        screen.style.width = iw + 'px'; screen.style.height = ih + 'px';
+      };
+      fit(); addEventListener('resize', fit, { passive: true });
+      if (wall) wall.addEventListener('load', fit);
+    }
+  }
   $$('.ind__ph').forEach((ph) => {
     swapBg(ph);
     new MutationObserver(() => swapBg(ph)).observe(ph, { attributes: true, attributeFilter: ['style'] });

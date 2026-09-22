@@ -78,7 +78,7 @@
 .strip.is-open .strip__ph{filter:grayscale(0) brightness(1)}
 /* r8 item 2: per photo framing, so no face is cut off when the strip opens */
 .strips > .strip:nth-child(1){--bp:center 28%}   /* team, heads high in frame */
-.strips > .strip:nth-child(2){--bp:center 32%}   /* meeting */
+.strips > .strip:nth-child(2){--bp:center 30%}   /* team in front of the logo wall */
 .strips > .strip:nth-child(3){--bp:center 30%}   /* security */
 .strips > .strip:nth-child(4){--bp:center 30%}   /* support */
 .strips > .strip:nth-child(5){--bp:center center} /* maps */
