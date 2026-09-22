@@ -265,3 +265,51 @@
    corrections when the toolbars show on a scroll up, and with smooth
    behaviour those corrections animate as a visible jump. */
 html{scroll-behavior:auto}
+
+/* r48: the proof beats are sentences now. Figure over word, both sized so
+   the longest single word (RESPONSIBILITY., RELATIONSHIPS) fits the width */
+.beats__fig{font-size:15vw;line-height:.9}
+.beats__word{font-size:11.5vw;line-height:.92}
+.beats__fig,.beats__word{max-width:calc(100vw - 2 * var(--gut));text-wrap:balance}
+
+/* ================================================================== r48
+   phone photos: portrait versions (see js/mobile.js) */
+
+/* dead screen: the 4:5 pair, whole, inside the gutter */
+.rely__frame{aspect-ratio:1080 / 1350;--relyh:none;height:auto}
+
+/* contact: the square three-screen wall runs edge to edge; the headline
+   sits in the top screen, the two fields in the middle one, the button in
+   the bottom one. Positions are measured from the photo:
+   screens span x 12.4%-87.7%; top y 4-30%, middle 31.7-71.6%, bottom 73.5-96% */
+#demo{padding-left:0;padding-right:0}
+.demo__stage{position:relative;width:100vw;max-width:none;aspect-ratio:1 / 1;gap:0}
+.demo__shot{position:absolute;inset:0;width:100%;height:100%;margin:0;border-radius:0;aspect-ratio:auto;overflow:hidden;
+  -webkit-mask-image:none;mask-image:none}
+.demo__img{object-fit:cover}
+.demo__screen{position:absolute;inset:0;padding:0;display:block}
+.demo__h{
+  position:absolute;left:12.4%;right:12.3%;top:4%;height:26%;margin:0;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  font-size:min(7.2vw,34px);line-height:.95;
+}
+.form{
+  position:absolute;left:14.4%;right:14.3%;top:31.7%;bottom:4%;max-width:none;margin:0;
+  display:grid;grid-template-rows:39.9fr 1.9fr 22.5fr;gap:0;
+}
+.form .field:nth-of-type(1){grid-row:1;align-self:start;margin-top:4.5vw}
+.form .field:nth-of-type(2){grid-row:1;align-self:end;margin-bottom:4.5vw}
+.form .field{gap:4px}
+.form label{font-size:11px;letter-spacing:.08em}
+.form input,.form select{min-height:42px;height:42px;font-size:16px}
+.form .btn{grid-row:3;align-self:center;min-height:46px;height:46px}
+.form__note{position:absolute;left:0;right:0;top:100%;margin-top:10px;text-align:center}
+.form{grid-template-columns:100%}
+.form .field,.form .btn{grid-column:1;width:100%}
+/* dead screen: title and its line are one group, the photo follows */
+#reliability .wrap{justify-content:center}
+.rely__sub{margin-top:10px}
+.rely__frame{margin-top:var(--gap-title)}
+.form .field,.form .btn{min-width:0}
+.form input,.form select{width:100%;min-width:0}
+.form{width:auto}

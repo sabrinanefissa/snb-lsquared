@@ -549,7 +549,7 @@
 .beats__fig,.beats__word{
   font-stretch:64%;font-weight:800;text-transform:uppercase;line-height:.9;
   font-variant-numeric:tabular-nums;
-  font-size:min(clamp(34px,10.6vw,210px),11vw);   /* r24: sized so the longest beat stays on one line */
+  font-size:min(clamp(28px,6.3vw,130px),6.6vw);   /* r48: the proof lines are sentences now; sized so the longest (Your screens. Our responsibility.) stays on one line */
 }
 .beats__fig{color:var(--paper);letter-spacing:-.02em}
 .beats__word{color:var(--hi);letter-spacing:.02em;margin-left:.24em}   /* r25: a real word space, measured in the big type */
@@ -699,3 +699,6 @@
   margin-top:calc(var(--shedh) * -.45);
   margin-bottom:calc(var(--shedh) * -.55);
 }
+/* r48: the bridge line breaks after "Right place." on every width */
+.fall__line{max-width:none}
+.fall__line i:nth-child(4)::after{content:"\A";white-space:pre}

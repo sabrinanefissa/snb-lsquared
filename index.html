@@ -9,13 +9,13 @@
 <link rel="icon" href="data:,">
 <script>document.documentElement.className+=' js'+(new URLSearchParams(location.search).get('grounds')==='light'?' grounds-light':'');</script>
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/archivo.woff2" crossorigin>
-<link rel="stylesheet" href="css/base.css?v=r47">
-<link rel="stylesheet" href="css/hero.css?v=r47">
-<link rel="stylesheet" href="css/orbit.css?v=r47">
-<link rel="stylesheet" href="css/sections.css?v=r47">
-<link rel="stylesheet" href="css/grounds-light.css?v=r47">
-<link rel="stylesheet" href="css/mobile.css?v=r47" media="(max-width: 760px)">
-<script defer src="js/mobile.js?v=r47"></script>
+<link rel="stylesheet" href="css/base.css?v=r49">
+<link rel="stylesheet" href="css/hero.css?v=r49">
+<link rel="stylesheet" href="css/orbit.css?v=r49">
+<link rel="stylesheet" href="css/sections.css?v=r49">
+<link rel="stylesheet" href="css/grounds-light.css?v=r49">
+<link rel="stylesheet" href="css/mobile.css?v=r49" media="(max-width: 760px)">
+<script defer src="js/mobile.js?v=r49"></script>
 </head>
 <body>
 
@@ -44,7 +44,7 @@
 <section id="hero" aria-label="L Squared">
   <div class="hshot" id="h_shot"><canvas id="h_wall" aria-hidden="true"></canvas><canvas id="h_bloom" aria-hidden="true"></canvas></div>
   <div class="read" id="h_read"><span class="num" id="h_num"></span><span class="word" id="h_word"></span></div>
-  <div class="big" id="h_bigA"><div class="bigA">One location.</div></div>
+  <div class="big" id="h_bigA"><div class="bigA">Run as one.</div></div>
   <div class="big" id="h_bigB"><div class="bigB">One platform.</div></div>
   <div class="hlogo" id="h_logo"><img src="assets/lsquared-logo.png" alt="L Squared"></div>
 </section>
@@ -53,7 +53,7 @@
 <section class="sec" id="statement">
   <canvas class="pixfield" data-fx="pixfield" aria-hidden="true"></canvas>
   <div class="wrap statement__wrap">
-    <h2 class="t statement__h">We own the platform.<br>We build the network.</h2>
+    <h2 class="t statement__h">We own the platform.<br>You own the network.</h2>
   </div>
 </section>
 
@@ -62,7 +62,7 @@
 <!-- 4 - FIVE STRIPS -->
 <section class="sec" id="strips">
   <div class="wrap">
-    <h2 class="t strips__title">What you get with L Squared.</h2>
+    <h2 class="t strips__title">Why LSQUARED.</h2>
     <div class="stripswrap" data-wipe>
     <div class="strips" data-strips data-open="0">
       <button class="strip is-open" type="button" aria-expanded="true">
@@ -70,7 +70,7 @@
         <span class="strip__veil" aria-hidden="true"></span>
         <span class="strip__copy">
           <span class="strip__word">People</span>
-          <span class="strip__say">You&rsquo;ll know our names. We&rsquo;ll know yours.</span>
+          <span class="strip__say">Every client, known by name.</span>
         </span>
       </button>
       <button class="strip" type="button" aria-expanded="false">
@@ -78,15 +78,15 @@
         <span class="strip__veil" aria-hidden="true"></span>
         <span class="strip__copy">
           <span class="strip__word">Trust</span>
-          <span class="strip__say">We own the company. So we own the problem.</span>
+          <span class="strip__say">Every problem has an owner.</span>
         </span>
       </button>
       <button class="strip" type="button" aria-expanded="false">
         <span class="strip__ph" style="background-image:url(assets/security.webp)"></span>
         <span class="strip__veil" aria-hidden="true"></span>
         <span class="strip__copy">
-          <span class="strip__word">Security</span>
-          <span class="strip__say">Only your people change your screens.</span>
+          <span class="strip__word">Standard</span>
+          <span class="strip__say">High standards. Not negotiable.</span>
         </span>
       </button>
       <button class="strip" type="button" aria-expanded="false">
@@ -94,15 +94,15 @@
         <span class="strip__veil" aria-hidden="true"></span>
         <span class="strip__copy">
           <span class="strip__word">Support</span>
-          <span class="strip__say">Call at 3 a.m. Someone picks up.</span>
+          <span class="strip__say">Less escalation. More resolution.</span>
         </span>
       </button>
       <button class="strip strip--map" type="button" aria-expanded="false" data-maps>
-        <span class="strip__ph is-on" style="background-image:url(assets/scale.webp?v=r47)"></span>
+        <span class="strip__ph is-on" style="background-image:url(assets/scale.webp?v=r49)"></span>
         <span class="strip__veil" aria-hidden="true"></span>
         <span class="strip__copy">
           <span class="strip__word">Scale</span>
-          <span class="strip__say">One screen or every store you own. Same people.</span>
+          <span class="strip__say">Central control. Local freedom.</span>
         </span>
       </button>
     </div>
@@ -113,7 +113,7 @@
 <!-- 5 - INDUSTRIES : type on the ground, the photo completely clean -->
 <section id="industries">
   <div class="ind__head">
-    <h2 class="t ind__title" id="ind-title">Industries we serve</h2>
+    <h2 class="t ind__title" id="ind-title">Made for how you operate.</h2>
     <p class="sr-only" id="ind-name" aria-live="polite">Restaurants</p>
   </div>
   <div class="ind__stage" id="ind-stage" role="group" aria-roledescription="carousel" aria-labelledby="ind-title">
@@ -122,7 +122,7 @@
     <button type="button" class="ind__arrow ind__arrow--prev" id="ind-prev" aria-label="Previous industry"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 2.5 4.5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <button type="button" class="ind__arrow ind__arrow--next" id="ind-next" aria-label="Next industry"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M6 2.5 11.5 8 6 13.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   </div>
-  <a class="ind__cta" href="industries.html">See all industries</a>
+  <a class="ind__cta" href="industries.html">Explore all industries</a>
 </section>
 
 <!-- 5b - THE SENTENCE : the pixels shed and land as one line -->
@@ -130,7 +130,7 @@
   <div class="fall">
     <canvas id="fall-canvas" aria-hidden="true"></canvas>
     <div class="fall__stage">
-      <p class="fall__line" data-words>Menus, maps, sales, safety notices. Whatever goes on your screens, we make sure it&rsquo;s right, on time, and on.</p>
+      <p class="fall__line" data-words>Right message. Right place. Right on time.</p>
     </div>
   </div>
 </section>
@@ -138,11 +138,11 @@
 <!-- 6 - CHANGE THE MENU LIVE -->
 <section class="sec" id="publish">
   <div class="wrap">
-    <h2 class="t pub__title">Change the menu. Watch it go live.</h2>
+    <h2 class="t pub__title">Publishing made easy.</h2>
     <div class="pub__rig" data-wipe>
       <div class="pub__scene">
         <div class="pub__shot" id="pub-1">
-          <div class="pub__ph is-on" style="background-image:url(assets/menu-blank.webp?v=r47)" data-menu="none"></div>
+          <div class="pub__ph is-on" style="background-image:url(assets/menu-blank.webp?v=r49)" data-menu="none"></div>
           <div class="pub__ph" style="background-image:url(assets/menu-breakfast.webp)" data-menu="breakfast"></div>
           <div class="pub__ph" style="background-image:url(assets/menu-lunch.webp)" data-menu="lunch"></div>
           <div class="wipe" aria-hidden="true"></div>
@@ -157,7 +157,7 @@
       </div>
       <div class="pub__scene">
         <div class="pub__shot" id="pub-2">
-          <div class="pub__ph is-on" style="background-image:url(assets/drivethru-blank.webp?v=r47)" data-menu="none"></div>
+          <div class="pub__ph is-on" style="background-image:url(assets/drivethru-blank.webp?v=r49)" data-menu="none"></div>
           <div class="pub__ph" style="background-image:url(assets/drivethru.webp)" data-menu="breakfast"></div>
           <div class="pub__ph" style="background-image:url(assets/drivethru-menu.webp)" data-menu="lunch"></div>
           <div class="wipe" aria-hidden="true"></div>
@@ -178,12 +178,12 @@
 <!-- 7 - DRAG BAR : one scene, the retail floor -->
 <section class="sec" id="reliability">
   <div class="wrap">
-    <h2 class="t rely__h">Everyone notices a dead screen.</h2>
-    <p class="rely__sub">We keep yours on. 99.99% of the time.</p>
+    <h2 class="t rely__h">Everyone notices a dark screen.</h2>
+    <p class="rely__sub">Yours stay on.</p>
     <div class="rely__frame" data-wipe>
       <div class="rely__stack">
-        <div class="rely__ph rely__ph--off" id="rely-off" style="background-image:url(assets/retail-off.webp?v=r47)"></div>
-        <div class="rely__ph rely__ph--on" id="rely-on" style="background-image:url(assets/retail-on.webp?v=r47)"></div>
+        <div class="rely__ph rely__ph--off" id="rely-off" style="background-image:url(assets/retail-off.webp?v=r49)"></div>
+        <div class="rely__ph rely__ph--on" id="rely-on" style="background-image:url(assets/retail-on.webp?v=r49)"></div>
         <div class="rely__handle" id="rely-handle" role="slider" tabindex="0"
              aria-label="Drag to compare dead screens with working screens"
              aria-valuemin="0" aria-valuemax="100" aria-valuenow="76"
@@ -196,8 +196,8 @@
 </section>
 
 <!-- 8 - THIN LOGO BAND (real logo-orbit component) -->
-<section id="clients" aria-label="Trusted by">
-  <h2 class="t clients__title">Trusted by</h2>
+<section id="clients" aria-label="Relied on by">
+  <h2 class="t clients__title">Relied on by</h2>
   <div class="clients__row">
     <div class="orbit" data-theme="dark" data-orbit-rings="1" data-orbit-slots="5" aria-label="Clients and partners"></div>
     <figure class="quote">
@@ -211,16 +211,16 @@
 <section class="sec" id="numbers">
   <canvas class="pixfield" data-fx="pixfield" aria-hidden="true"></canvas>
   <div class="beats" data-wipe>
-    <p class="sr-only">99.99% uptime. Under 20 minutes to a reply. Support 24/7. Training in 1 hour. One team, end to end. Screens in 60+ countries. 100+ integrations. SOC 2 Type II.</p>
+    <p class="sr-only">One team. Start to finish. Your screens. Our responsibility. Every feature. Included. Remote Publishing. Real support. 24/7. Building relationships since 2006. 20 minute response time. 50,000+ screens managed.</p>
     <div class="beats__stage" id="beats" aria-hidden="true">
-      <div class="beats__line is-on"><span class="beats__fig">99.99%</span><span class="beats__word">Uptime</span></div>
-      <div class="beats__line"><span class="beats__fig">Under 20 min</span><span class="beats__word">Reply</span></div>
-      <div class="beats__line"><span class="beats__fig">24/7</span><span class="beats__word">Support</span></div>
-      <div class="beats__line"><span class="beats__fig">1 hour</span><span class="beats__word">Training</span></div>
-      <div class="beats__line"><span class="beats__fig">One team</span><span class="beats__word">End to end</span></div>
-      <div class="beats__line"><span class="beats__fig">60+</span><span class="beats__word">Countries</span></div>
-      <div class="beats__line"><span class="beats__fig">100+</span><span class="beats__word">Integrations</span></div>
-      <div class="beats__line"><span class="beats__fig">SOC 2</span><span class="beats__word">Type II</span></div>
+      <div class="beats__line is-on"><span class="beats__fig">One team.</span><span class="beats__word">Start to finish.</span></div>
+      <div class="beats__line"><span class="beats__fig">Your screens.</span><span class="beats__word">Our responsibility.</span></div>
+      <div class="beats__line"><span class="beats__fig">Every feature.</span><span class="beats__word">Included.</span></div>
+      <div class="beats__line"><span class="beats__fig">Remote</span><span class="beats__word">Publishing.</span></div>
+      <div class="beats__line"><span class="beats__fig">Real support.</span><span class="beats__word">24/7.</span></div>
+      <div class="beats__line"><span class="beats__fig">Building relationships</span><span class="beats__word">since 2006.</span></div>
+      <div class="beats__line"><span class="beats__fig">20 minute</span><span class="beats__word">response time.</span></div>
+      <div class="beats__line"><span class="beats__fig">50,000+</span><span class="beats__word">screens managed.</span></div>
     </div>
   </div>
 </section>
@@ -229,10 +229,10 @@
 <section class="sec" id="demo">
   <div class="demo__stage">
     <div class="demo__shot">
-      <img class="demo__img" src="assets/demo-wall.webp?v=r47" alt="" width="1774" height="887" decoding="async">
+      <img class="demo__img" src="assets/demo-wall.webp?v=r49" alt="" width="1774" height="887" decoding="async">
     </div>
     <div class="demo__screen">
-      <h2 class="t demo__h">However you grow,<br>your screens keep up.</h2>
+      <h2 class="t demo__h">Start with one screen.<br>Or ten thousand.</h2>
       <form class="form" id="demo-form" novalidate data-wipe>
         <div class="field">
           <label for="f-email">Work email</label>
@@ -247,7 +247,7 @@
             <option>250 or more</option>
           </select>
         </div>
-        <button class="btn btn--wide" type="submit">Send request</button>
+        <button class="btn btn--wide" type="submit">Book a demo</button>
         <p class="form__note" id="form-note" role="status"></p>
       </form>
     </div>
@@ -268,12 +268,12 @@
   </div>
 </footer>
 
-<script src="js/herowall.js?v=r47"></script>
-<script src="js/hero.js?v=r47"></script>
-<script src="js/pixfield.js?v=r47"></script>
-<script src="js/fall.js?v=r47"></script>
-<script src="js/shed.js?v=r47"></script>
-<script src="js/page.js?v=r47"></script>
-<script src="js/orbit.js?v=r47"></script>
+<script src="js/herowall.js?v=r49"></script>
+<script src="js/hero.js?v=r49"></script>
+<script src="js/pixfield.js?v=r49"></script>
+<script src="js/fall.js?v=r49"></script>
+<script src="js/shed.js?v=r49"></script>
+<script src="js/page.js?v=r49"></script>
+<script src="js/orbit.js?v=r49"></script>
 </body>
 </html>

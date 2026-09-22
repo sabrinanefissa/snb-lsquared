@@ -23,6 +23,37 @@
     return () => { if (used) return; used = true; clearTimeout(timer); io.disconnect(); if (played) undo(); };
   };
 
+  /* -------------------------------------------------------------- phone photos
+     Portrait versions made for the phone replace the wide desktop photos.
+     Desktop markup and files are untouched; only the URL changes here. */
+  const PHONE = {
+    'ind-restaurants.webp': ['assets/m/ind-restaurants.webp?v=m1', '.8'],
+    'ind-hospitality.webp': ['assets/m/ind-hospitality.webp?v=m1', '.7584'],
+    'mfg-on.webp': ['assets/m/mfg-on.webp?v=m1', '.7759'],
+    'retail-off.webp': ['assets/m/retail-off.webp?v=m1'],
+    'retail-on.webp': ['assets/m/retail-on.webp?v=m1'],
+    'demo-wall.webp': ['assets/m/demo-wall.webp?v=m1']
+  };
+  const phoneFor = (url) => {
+    if (!url || url.indexOf('assets/m/') >= 0) return null;
+    const k = Object.keys(PHONE).find((n) => url.indexOf(n) >= 0);
+    return k ? PHONE[k] : null;
+  };
+  const swapBg = (el) => {
+    const m = /url\(["']?([^"')]+)/.exec(el.style.backgroundImage || '');
+    const hit = m && phoneFor(m[1]);
+    if (!hit) return;
+    el.style.backgroundImage = 'url(' + hit[0] + ')';
+    if (hit[1]) el.style.setProperty('--kw', hit[1]);
+  };
+  $$('.rely__ph').forEach(swapBg);
+  const wall = $('.demo__img');
+  if (wall) { const hit = phoneFor(wall.getAttribute('src')); if (hit) { wall.src = hit[0]; wall.width = 1080; wall.height = 1080; } }
+  $$('.ind__ph').forEach((ph) => {
+    swapBg(ph);
+    new MutationObserver(() => swapBg(ph)).observe(ph, { attributes: true, attributeFilter: ['style'] });
+  });
+
   /* -------------------------------------------------------------- publish
      A tap on a toggle both selects AND publishes: page.js's own click
      handler runs first and sets the scene's selection, then this fires the

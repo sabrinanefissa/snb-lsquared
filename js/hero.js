@@ -2,7 +2,7 @@
 /* animated hero: full-width screen count, then One location, One platform, the logo.
    Tap or click anywhere on the hero to jump to the next scene. */
 (function(){
-const A='assets/',V='?v=r47';
+const A='assets/',V='?v=r49';
 /* r18: the count is a code-drawn wall of glowing screens (js/herowall.js), no photographs. 200 removed. */
 const BEATS=[[1,'Screen'],[10,'Screens'],[50,'Screens'],[100,'Screens'],[500,'Screens']];
 const hero=document.getElementById('hero'),num=document.getElementById('h_num'),word=document.getElementById('h_word'),
@@ -30,9 +30,8 @@ async function run(){
   for(const [n,l] of BEATS){word.textContent=l;wall.show(n);await countTo(n,520);await hold(n>=500?3600:1000);}
   num.textContent='';word.textContent='Infinite screens';await wall.show('inf');await hold(4200);
   hero.classList.add('end');await wait(900);wall.stop();
-  bigA.classList.add('on');await hold(2600);
-  bigA.classList.remove('on');bigB.classList.add('on');await hold(3000);
-  bigB.classList.remove('on');await wait(450);
+  bigA.classList.add('on');await hold(3000);
+  bigA.classList.remove('on');await wait(450);
   logo.classList.add('on');await hold(650);
   logo.classList.add('full');await hold(4200);
   logo.classList.remove('on');await wait(1300);
