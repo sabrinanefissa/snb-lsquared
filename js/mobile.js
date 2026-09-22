@@ -33,7 +33,7 @@
     'mfg-on.webp': ['assets/m/mfg-on.webp?v=m1', '.7759'],
     'retail-off.webp': ['assets/m/retail-off.webp?v=m1'],
     'retail-on.webp': ['assets/m/retail-on.webp?v=m1'],
-    'demo-wall.webp': ['assets/m/demo-wall.webp?v=m1']
+    'demo-wall.webp': ['assets/m/demo-wall.webp?v=m2']
   };
   const phoneFor = (url) => {
     if (!url || url.indexOf('assets/m/') >= 0) return null;
@@ -49,11 +49,53 @@
   };
   $$('.rely__ph').forEach(swapBg);
   const wall = $('.demo__img');
-  if (wall) { const hit = phoneFor(wall.getAttribute('src')); if (hit) { wall.src = hit[0]; wall.width = 1080; wall.height = 1080; } }
+  if (wall) { const hit = phoneFor(wall.getAttribute('src')); if (hit) { wall.src = hit[0]; wall.width = 852; wall.height = 1846; } }
   $$('.ind__ph').forEach((ph) => {
     swapBg(ph);
     new MutationObserver(() => swapBg(ph)).observe(ph, { attributes: true, attributeFilter: ['style'] });
   });
+
+  /* -------------------------------------------------------------- trusted by
+     two slow rows of logos, moving opposite ways, instead of the orbit */
+  {
+    const row = $('.clients__row'), orbit = $('#clients .orbit');
+    if (row && orbit) {
+      const L = ['ups-store', 'cold-stone-creamery', 'hatch', 'mcmaster-university', 'international-centre', 'cisco', 'best-buy-business', 'lenovo', 'sfm'];
+      const mk = (list, cls) => {
+        const r = document.createElement('div'); r.className = 'mq__row ' + cls;
+        for (let k = 0; k < 2; k++) list.forEach((n) => {
+          const i = document.createElement('img'); i.src = 'assets/logos/' + n + '.png'; i.alt = ''; i.decoding = 'async'; i.className = 'mq__logo mq__logo--' + n; r.appendChild(i);
+        });
+        return r;
+      };
+      const mq = document.createElement('div'); mq.className = 'mq'; mq.setAttribute('aria-hidden', 'true');
+      mq.appendChild(mk(L.slice(0, 5), 'mq__row--a')); mq.appendChild(mk(L.slice(4).concat(L.slice(0, 1)), 'mq__row--b'));
+      orbit.insertAdjacentElement('afterend', mq);
+    }
+  }
+
+  /* -------------------------------------------------------------- phone nav
+     no bar: a floating hamburger top left and Book a demo top right, shown by
+     page.js on a scroll up; the hamburger opens a full screen menu */
+  {
+    const bar = $('#topbar'), inner = $('.topbar__in'), nav = $('.topbar__nav');
+    if (bar && inner && nav) {
+      const burger = document.createElement('button');
+      burger.type = 'button'; burger.className = 'mnav__burger'; burger.setAttribute('aria-label', 'Menu'); burger.setAttribute('aria-expanded', 'false');
+      burger.innerHTML = '<i></i><i></i><i></i>';
+      inner.insertAdjacentElement('afterbegin', burger);
+      const menu = document.createElement('div'); menu.className = 'mnav'; menu.id = 'mnav';
+      const list = document.createElement('nav'); list.className = 'mnav__list'; list.setAttribute('aria-label', 'Main');
+      $$('a', nav).forEach((a) => { list.appendChild(a.cloneNode(true)); });
+      const demo = document.createElement('a'); demo.className = 'btn mnav__demo'; demo.href = '#demo'; demo.textContent = 'Book a demo';
+      menu.appendChild(list); menu.appendChild(demo);
+      document.body.appendChild(menu);
+      const set = (open) => { menu.classList.toggle('is-open', open); burger.classList.toggle('is-open', open); burger.setAttribute('aria-expanded', open ? 'true' : 'false'); document.documentElement.classList.toggle('mnav-open', open); };
+      burger.addEventListener('click', () => set(!menu.classList.contains('is-open')));
+      menu.addEventListener('click', (e) => { if (e.target.closest('a')) set(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
+    }
+  }
 
   /* -------------------------------------------------------------- publish
      A tap on a toggle both selects AND publishes: page.js's own click
@@ -114,12 +156,26 @@
       const onPh = $('.ind__slide.is-on .ind__ph', stage);
       if (onPh) syncKW(onPh);
 
+      const ORDER = [['Restaurants', 'ind-restaurants.webp'], ['Retail', 'ind-retail.webp'], ['Hospitality', 'ind-hospitality.webp'], ['Manufacturing', 'mfg-on.webp']];
       const stop = hint(stage, () => {
-        const on = $('.ind__slide.is-on', stage);
-        if (!on) return;
+        const on = $('.ind__slide.is-on', stage), back = $('.ind__slide:not(.is-on)', stage);
+        if (!on || !back) return;
+        /* the next industry is set up behind the current photo, so sliding
+           the current one aside reveals it, the same as a real swipe would */
+        const cur = ORDER.findIndex((o) => o[0] === ($('#ind-name') || {}).textContent);
+        const nxt = ORDER[(cur + 1) % ORDER.length], hit = PHONE[nxt[1]];
+        const bph = $('.ind__ph', back);
+        if (hit && bph) {
+          bph.style.backgroundImage = 'url(' + hit[0] + ')';
+          if (hit[1]) bph.style.setProperty('--kw', hit[1]);
+          const nm = $('.ind__capname', back); if (nm) nm.textContent = nxt[0];
+        }
+        back.style.transition = 'none'; back.style.transform = 'translateX(0)';
+        stage.classList.add('is-peeking');
         on.style.transition = 'transform 1400ms ' + EASE;
-        on.style.transform = 'translateX(-24%)';
+        on.style.transform = 'translateX(-34%)';
       }, () => {
+        stage.classList.remove('is-peeking');
         const on = $('.ind__slide.is-on', stage);
         if (!on) return;
         on.style.transition = 'transform 420ms ' + EASE;

@@ -276,7 +276,7 @@
         to.classList.add('is-coming');
         void sc.shot.offsetWidth;
         sc.shot.classList.add('is-wiping');
-        setTimeout(settle, 660);
+        setTimeout(settle, matchMedia('(max-width:760px)').matches ? 1560 : 660);   /* r51: slower on a phone */
       }
 
       go.addEventListener('click', () => {

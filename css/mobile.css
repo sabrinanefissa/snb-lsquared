@@ -242,7 +242,7 @@
 
 /* r42: the peek-on-scroll-up nav bar reads as a stray dark bar on a phone
    (touch scroll bounce triggers it unpredictably); removed on mobile only */
-#topbar{display:none}
+/* r51: the bar is back as two floating controls, see the r51 block */
 
 /* r45: nothing on a phone is sized in dvh. dvh changes every time the
    browser's address bar slides in or out while scrolling, which resizes the
@@ -328,3 +328,89 @@ html{scroll-behavior:auto}
 .form input,.form select{min-height:38px;height:38px;font-size:16px;padding:0 12px;border-radius:5px}
 .form .btn{min-height:42px;height:42px;border-radius:6px;font-size:13px}
 .demo__h{font-size:min(6.8vw,32px)}
+
+/* ================================================================== r51 */
+
+/* CEO quote fills the screen */
+.fall__line{font-size:9.6vw;line-height:1.08;max-width:calc(100vw - 2 * var(--gut));letter-spacing:-.008em;font-stretch:72%}
+.fall__by{font-size:13px;margin-top:18px;letter-spacing:.16em}
+
+/* contact: the new tall three-screen wall, whole, as tall as the screen allows.
+   Screens: top 12.9-29.7%, middle 31.3-58.8%, bottom 60.2-76.9% of the height,
+   all spanning about 13% to 86% of the width. */
+.demo__stage{width:min(100vw,calc(100svh * .4615));aspect-ratio:852 / 1846;margin:0 auto}
+.demo__h{left:15%;right:15%;top:12.9%;height:16.8%;font-size:min(6.4vw,30px)}
+.form{left:16%;right:16%;top:31.3%;bottom:23.1%;grid-template-rows:27.5fr 1.4fr 16.7fr}
+.form .field:nth-of-type(1){margin-top:5.5%}
+.form .field:nth-of-type(2){margin-bottom:5.5%}
+.form .field{gap:5px}
+.form label{font-size:11px}
+.form input,.form select{min-height:46px;height:46px;font-size:16px}
+.form .btn{min-height:46px;height:46px;font-size:14px;align-self:center}
+.demo__screen,.form,.form *{pointer-events:auto}
+.demo__screen{z-index:3}
+
+/* industries: the current photo is above the one waiting behind it */
+.ind__slide{z-index:1}
+.ind__slide.is-on{z-index:2}
+
+/* publish: the wipe takes its time on a phone */
+.pub__shot.is-wiping .pub__ph.is-coming{transition-duration:1500ms}
+.pub__shot.is-wiping .wipe{animation-duration:1500ms}
+
+/* trusted by: two slow logo rows, then the quote, large */
+#clients .orbit{display:none}
+.clients__row{gap:34px;justify-content:center}
+.mq{width:100vw;margin:0 calc(-1 * var(--gut));overflow:hidden;display:flex;flex-direction:column;gap:26px;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.mq__row{display:flex;align-items:center;gap:52px;width:max-content;padding-right:52px;animation:mq 34s linear infinite}
+.mq__row--b{animation-direction:reverse;animation-duration:40s}
+.mq__logo{height:30px;width:auto;flex:0 0 auto;filter:grayscale(1) brightness(0) invert(1);opacity:.82}
+.mq__logo--cold-stone-creamery,.mq__logo--international-centre{height:40px}
+.mq__logo--ups-store,.mq__logo--mcmaster-university{height:38px}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.mq__row{animation:none}}
+.quote{padding-top:22px;gap:16px;max-width:calc(100vw - 2 * var(--gut))}
+.quote::before{font-size:64px;top:-.42em}
+.quote__text{font-size:5.6vw;line-height:1.36;max-width:none}
+.quote__logo{width:132px}
+
+/* phone nav: two floating controls, no bar. page.js still decides when the
+   topbar is shown (scroll up) and hidden (scroll down, over the hero). */
+#topbar{display:flex;padding:0}
+.topbar__in{width:100%;justify-content:space-between;align-items:center;
+  padding:max(10px,env(safe-area-inset-top)) 12px 0 12px;
+  background:none;border:0;border-radius:0;box-shadow:none}
+.topbar__brand,.topbar__nav{display:none}
+.topbar .btn--sm{min-height:44px;padding:0 18px;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.mnav__burger{
+  width:46px;height:46px;border:0;border-radius:50%;cursor:pointer;
+  background:rgba(6,14,22,.62);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  box-shadow:0 8px 24px rgba(0,0,0,.45);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+}
+.mnav__burger i{display:block;width:20px;height:2px;background:var(--paper);border-radius:1px;transition:transform 260ms var(--ease),opacity 200ms var(--ease)}
+.mnav__burger.is-open i:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.mnav__burger.is-open i:nth-child(2){opacity:0}
+.mnav__burger.is-open i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mnav{
+  position:fixed;inset:0;z-index:119;background:rgba(5,10,16,.96);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;
+  padding:0 var(--gut);opacity:0;visibility:hidden;transition:opacity 260ms var(--ease),visibility 0s linear 260ms;
+}
+.mnav.is-open{opacity:1;visibility:visible;transition:opacity 260ms var(--ease)}
+.mnav__list{display:flex;flex-direction:column;align-items:center;gap:22px}
+.mnav__list a{
+  font-stretch:64%;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;line-height:1;
+  font-size:11vw;color:var(--paper);text-decoration:none;
+}
+.mnav__demo{min-height:52px;padding:0 34px;font-size:15px}
+html.mnav-open{overflow:hidden}
+html.mnav-open .topbar{transform:translateY(0)}
+
+/* r51b: during the peek only the front photo carries its name */
+.ind__stage.is-peeking .ind__slide:not(.is-on) .ind__cap{opacity:0}
+/* r51b: every logo in the same box, so the rows read as one set */
+.mq__row{gap:40px;padding-right:40px}
+.mq__logo,.mq__logo--cold-stone-creamery,.mq__logo--international-centre,.mq__logo--ups-store,.mq__logo--mcmaster-university{
+  width:118px;height:44px;object-fit:contain;object-position:center}
