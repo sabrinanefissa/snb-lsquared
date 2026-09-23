@@ -19,6 +19,13 @@
     so nobody sees the old one from their browser's memory.
   - Industry photos can be any shape; the page measures them itself.
 
+  OPTIONAL LINES AND BACKGROUNDS
+  - Each section has a "line under title" and a "line at end". Leave them
+    empty and nothing shows; write something and it appears.
+  - A "background" takes any colour, for example  #FFFFFF  or  white.
+    Leave it empty to keep the designed background. The words keep their
+    colour, so pick a background they still read on.
+
   LAYOUT
   - 100% is the size it is now. 120% is bigger, 80% is smaller.
   - Laptop and phone are set separately.
@@ -44,9 +51,14 @@ top button: Book a demo
 hero title: One platform.
 
 == BLUE STATEMENT ==
+statement line at end:
+statement background:
 statement: We own the platform.|You own the network.
 
 == WHY LSQUARED ==
+why line under title:
+why line at end:
+why background:
 why title: Who We Are.
 why 1 word: People
 why 1 line: A business built on lasting relationships.
@@ -65,6 +77,9 @@ why 5 line: We grow alongside you. | Keeping up from start to finish.
 why 5 photo: scale.webp
 
 == INDUSTRIES ==
+industries line under title:
+industries line at end:
+industries background:
 # Add an industry 5 (name, photo, phone photo) to add one; delete all three lines of one to remove it.
 industries title: Different industries. One standard.
 industries link: Explore all industries
@@ -84,12 +99,16 @@ industry 4 photo: mfg-on.webp
 industry 4 phone photo: m/mfg-on.webp
 
 == CEO QUOTE ==
+ceo quote line at end:
+ceo quote background:
 ceo quote: Twenty years leading teams in software, IT and engineering. Growing businesses is what drives me. The goal is a company that is truly built to last.
 ceo name: Gaj Ratnavel, CEO
 
 == PUBLISHING ==
+publishing line at end:
+publishing background:
 publishing title: Published in one click.
-publishing line: It's that easy.
+publishing line under title: It's that easy.
 publishing option 1: Breakfast
 publishing option 2: Lunch
 publishing button: Publish
@@ -105,8 +124,10 @@ publishing screen 2 option 1 photo: drivethru.webp
 publishing screen 2 option 2 photo: drivethru-menu.webp
 
 == DEAD SCREEN ==
+dead screen line at end:
+dead screen background:
 dead screen title: Everyone notices a dark screen.
-dead screen line: We keep yours on.
+dead screen line under title: We keep yours on.
 # the off and on photos must be the same scene at the same size, or the slider will not line up
 dead screen off photo: retail-off.webp
 dead screen on photo: retail-on.webp
@@ -114,11 +135,16 @@ dead screen off phone photo: m/retail-off.webp
 dead screen on phone photo: m/retail-on.webp
 
 == TRUSTED BY ==
+trusted by line under title:
+trusted by line at end:
+trusted by background:
 trusted title: Trusted by
 testimonial: Our office and most warehouses are transformed with the new digital displays. It allows us to circulate important business updates and critical information quickly across these facilities. The locations with this technology have quickly realized greater engagement from the employees.
 testimonial logo: logos/purolator.png
 
 == FIGURES (big words | small words) ==
+figures line at end:
+figures background:
 figure 1: One team.| Start to finish.
 figure 2: Independently Owned. 
 figure 3: Every feature included.| No hidden fees.
@@ -130,6 +156,9 @@ figure 8: 20 minute|response time.
 figure 9: Remote Publishing. 
 
 == CONTACT ==
+contact line under title:
+contact line at end:
+contact background:
 contact title: We're here to help.
 contact email label: Work email
 contact email example: you@company.com
@@ -141,6 +170,9 @@ contact sent message: Request sent.
 # the form sits on the screens in this photo, so a new photo needs its screens in the same places
 contact photo: demo-wall.webp
 contact phone photo: m/demo-wall.webp
+
+== FOOTER ==
+footer background:
 
 == LAYOUT: LAPTOP (100% = as it is now) ==
 laptop title size: 100%

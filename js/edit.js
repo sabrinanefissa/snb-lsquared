@@ -131,6 +131,52 @@
     if (has('contact photo')) pick('.demo__img').forEach(function (el) { el.src = file(C['contact photo']); });
     phone('contact phone photo', '.demo__img');
 
+    /* r65: optional lines. A line under a section's title sits inside the
+       title (so no section's layout changes); a line at the end is added as
+       the last thing in the section. Nothing is added when a line is empty. */
+    var line = function (k, parent, cls, where) {
+      if (!has(k) || !parent) return;
+      var el = document.createElement(where === 'in' ? 'span' : 'p');
+      el.className = cls; put(el, C[k]);
+      parent.appendChild(el);
+    };
+    var one = function (s) { return document.querySelector(s); };
+    var SECS = [
+      /* [name in content.js, section id, its title, where its end line goes] */
+      ['statement', 'statement', null, '.statement__wrap'],
+      ['why', 'strips', '.strips__title', '#strips .wrap'],
+      ['industries', 'industries', '.ind__title', '#industries'],
+      ['ceo quote', 'independent', null, '.fall__stage'],
+      ['publishing', 'publish', '.pub__title', '#publish .wrap'],
+      ['dead screen', 'reliability', null, '#reliability .wrap'],   /* its line under the title is its own .rely__sub */
+      ['trusted by', 'clients', '.clients__title', '#clients'],
+      ['figures', 'numbers', null, '#numbers'],
+      ['contact', 'demo', '.demo__h', '#demo']
+    ];
+    SECS.forEach(function (s) {
+      if (s[2]) line(s[0] + ' line under title', one(s[2]), 'sec-sub', 'in');
+      line(s[0] + ' line at end', one(s[3]), 'sec-end');
+    });
+    /* the dead screen section already had its own line under the title */
+    if (has('dead screen line under title')) text('dead screen line under title', '.rely__sub');
+
+    /* r65: section backgrounds. Any colour a browser understands:
+       #FFFFFF, white, rgb(255,255,255). Empty keeps the designed ground. */
+    var bgCss = '';
+    SECS.forEach(function (s) {
+      var v = C[s[0] + ' background'];
+      if (!v || !(window.CSS && CSS.supports('color', v))) return;
+      bgCss += '#' + s[1] + '{background:' + v + '!important}';
+      if (s[1] === 'statement') {
+        /* the pixels that fall from the statement into the next section take its colour */
+        var probe = document.createElement('i'); probe.style.color = v; document.body.appendChild(probe);
+        var rgb = (getComputedStyle(probe).color.match(/\d+(\.\d+)?/g) || []).slice(0, 3).join(',');
+        probe.remove();
+        pick('.shed--into').forEach(function (cv) { if (rgb) cv.style.setProperty('--shed-rgb', rgb); });
+      }
+    });
+    if (has('footer background') && window.CSS && CSS.supports('color', C['footer background'])) bgCss += '.foot{background:' + C['footer background'] + '!important}';
+
     /* layout: 100% is the size it is now. Laptop and phone are separate. */
     var K = [['title size', 'title'], ['space under titles', 'gap'], ['space above and below sections', 'pad'],
              ['statement size', 'statement'], ['ceo quote size', 'quote'], ['why lsquared height', 'strips'],
@@ -150,7 +196,7 @@
     [['statement', 'statement'], ['why lsquared', 'strips'], ['industries', 'industries'], ['ceo quote', 'independent'],
      ['publishing', 'publish'], ['dead screen', 'reliability'], ['trusted by', 'clients'], ['figures', 'numbers'], ['contact', 'demo']
     ].forEach(function (s) { if (has('show ' + s[0]) && /^no/i.test(C['show ' + s[0]])) css += '#' + s[1] + '{display:none!important}'; });
-    var st = document.createElement('style'); st.id = 'lsq-layout'; st.textContent = css; document.head.appendChild(st);
+    var st = document.createElement('style'); st.id = 'lsq-layout'; st.textContent = css + bgCss; document.head.appendChild(st);
   } catch (e) {
     if (window.console) console.warn('content.js could not be applied', e);
   } finally {

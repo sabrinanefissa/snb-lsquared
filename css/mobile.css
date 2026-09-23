@@ -510,3 +510,9 @@ html.mnav-open .topbar{transform:translateY(0)}
 .ind__dot.is-fill::after{animation:indfill var(--every,5000ms) linear both}
 @keyframes indfill{from{clip-path:inset(0 100% 0 0 round 4px)}to{clip-path:inset(0 0 0 0 round 4px)}}
 @media (prefers-reduced-motion:reduce){.ind__dot.is-fill::after{animation:none}}
+
+/* r65: the optional lines on a phone */
+.sec-sub,.sec-end{font-size:17px;padding:0 var(--gut)}
+.sec-sub{padding:0;margin-top:10px}
+.demo__h:has(.sec-sub){flex-direction:column;justify-content:center;gap:0}
+.demo__h .sec-sub{margin-top:6px;font-size:14px}

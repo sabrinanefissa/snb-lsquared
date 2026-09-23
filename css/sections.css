@@ -754,3 +754,20 @@
   .pub__rig{--pubh:calc((100dvh - 2 * var(--pad-sec) - 2 * (var(--title) + var(--gap-title))) * var(--k-pub,1))}
   .rely__frame{width:calc(min(calc(100vw - 40px),2400px) * var(--k-rely,1))}
 }
+
+/* r65: the optional lines from content.js, in the same voice as the dead
+   screen's "Yours stay on." line. Under a title (inside the title itself),
+   and at the end of a section. */
+.sec-sub{
+  display:block;margin:var(--s2) auto 0;max-width:44ch;
+  font-stretch:78%;font-weight:600;text-transform:none;line-height:1.24;letter-spacing:.01em;
+  font-size:clamp(17px,1.7vw,24px);color:var(--paper-soft);
+}
+.sec-end{
+  position:relative;z-index:2;margin:clamp(16px,3dvh,32px) auto 0;max-width:44ch;text-align:center;
+  font-stretch:78%;font-weight:600;line-height:1.24;letter-spacing:.01em;
+  font-size:clamp(17px,1.7vw,24px);color:var(--paper-soft);
+}
+#statement .sec-end,#independent .sec-end{color:var(--ink);opacity:.82}
+.fall__stage .sec-end{margin-top:clamp(14px,2.4dvh,26px)}
+#demo > .sec-end{position:absolute;left:0;right:0;bottom:clamp(14px,3dvh,28px);margin:0 auto;padding:0 20px}
