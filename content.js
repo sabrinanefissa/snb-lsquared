@@ -76,7 +76,7 @@ why 4 line: Less escalation. More resolution.
 why 4 photo: support.webp
 why 5 word: Scale
 why 5 line: We grow alongside you. | Keeping up from start to finish. 
-why 5 photo: scale.webp
+why 5 photo: scalewhoweare.png
 
 == INDUSTRIES ==
 industries line under title:
