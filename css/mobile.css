@@ -517,9 +517,10 @@ html.mnav-open .topbar{transform:translateY(0)}
 .demo__h:has(.sec-sub){flex-direction:column;justify-content:center;gap:0}
 .demo__h .sec-sub{margin-top:6px;font-size:14px}
 
-/* r68: the phone gets the same wall */
-.lw{padding:4px;border-radius:8px}
-.lw-room__say{font-size:clamp(24px,7.4vw,32px)}
-.lw-card__t{font-size:18px}
+/* r69: the phone gets the same wall */
+.lw,.lw-room{padding:4px;border-radius:8px}
+.lw-room::before{inset:4px}
+.lw-room__say{font-size:clamp(20px,6vw,24px);padding:0 8px}
+.lw-card__t{font-size:15px}
 #clients .clients__row{gap:0}
 #clients{justify-content:center}

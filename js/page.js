@@ -547,13 +547,17 @@
   }
 
   /* ------------------------------------------------------------ 6b. trusted by: the wall fills up
-     r68: the whole section becomes a wall of client logos, edge to edge. It
-     starts slow: one logo comes towards you in the middle, then 2 join, then
-     4, 8, 16, each wave sooner than the last, until the wall is full. The
-     wall then steps back, "Room for one more." fades in across the middle,
-     holds, fades out, and in its place an empty card comes forward with a
-     pulsing glow: the way in. Laptop and phone, one list from content.js
-     (logos repeat, never side by side, until there are enough to fill it). */
+     r69: the section is a wall of client logos, edge to edge, and it builds
+     itself in front of you. It starts slow: one logo comes towards you in
+     the middle, then the two beside it, then 4, then 8, then the rest, each
+     wave sooner than the last, until the ENTIRE wall is full. Then the three
+     middle screens power down and become one wide dark screen that says
+     "Room for one more.", holds, fades slowly, and narrows to one empty
+     screen: the card, "Take your place.", with a glow that breathes. The two
+     logos beside it come towards you again as the screen narrows. Nothing
+     dims, no words float over logos. Laptop and phone, one list from
+     content.js (logos repeat, never beside, above or in line with the same
+     one, until there are enough to fill it). Plays once per visit. */
   {
     const DEF = [['The UPS Store', 'ups-store'], ['Cold Stone Creamery', 'cold-stone-creamery'], ['Hatch', 'hatch'],
       ['McMaster University', 'mcmaster-university'], ['International Centre', 'international-centre'], ['Cisco', 'cisco'],
@@ -572,47 +576,57 @@
       LOGOS.forEach((l) => { if (!l.name) return; const li = document.createElement('li'); li.textContent = l.name; names.appendChild(li); });
       orbit.replaceWith(wall); wall.after(names);   /* the old orbit never starts */
 
+      /* the room: one wide screen over the three middle tiles; it holds the
+         line, then narrows into the card. The card is the one part a
+         keyboard or screen reader needs, so it lives outside the hidden wall */
       const room = document.createElement('div'); room.className = 'lw-room';
       const say = document.createElement('p'); say.className = 'lw-room__say';
       say.textContent = T['trusted by invite line'] || 'Room for one more.';
-      const card = document.createElement('a'); card.className = 'lw-card'; card.href = '#demo';
+      const card = document.createElement('a'); card.className = 'lw-card'; card.href = '#demo'; card.tabIndex = -1;
       const cardT = document.createElement('span'); cardT.className = 'lw-card__t';
       cardT.textContent = T['trusted by card text'] || 'Take your place.';
       card.appendChild(cardT); card.setAttribute('aria-label', cardT.textContent + ' Book a demo');
       room.append(say, card);
-      /* the card is the one part a keyboard or screen reader needs */
       wall.after(room);
 
-      let played = false, tiles = [], W0 = 0;
+      let played = false, tiles = [], mid = [], W0 = 0;
       const appH = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-h')) || innerHeight;
       const build = () => {
         wall.textContent = '';
         const W = wall.clientWidth; W0 = innerWidth;
-        const tw = PHONE ? Math.round(W * .36) : Math.round(Math.min(230, Math.max(140, W * .125)));
+        const tw = PHONE ? Math.round(W * .40) : Math.round(Math.min(215, W * .14));
         const th = Math.round(tw / 2.1), g = PHONE ? 10 : 12;
         const cs = getComputedStyle(sec), title = $('.clients__title', sec);
         const used = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + (title ? title.offsetHeight + parseFloat(getComputedStyle(title).marginBottom) : 0);
         const avail = (PHONE ? appH() : innerHeight) - used;
         let rows = Math.floor((avail + g) / (th + g)); if (rows % 2 === 0) rows--;
-        rows = Math.max(3, Math.min(PHONE ? 11 : 7, rows));
+        rows = PHONE ? Math.max(5, Math.min(7, rows)) : 3;   /* the phone wall fills its screen: no dead space above or below */
         let cols = Math.ceil((W + g) / (tw + g)); if (cols % 2 === 0) cols++; cols += 2;   /* past both edges */
         const H = rows * (th + g) - g, r0 = (rows - 1) / 2, c0 = (cols - 1) / 2, N = LOGOS.length;
         wall.style.height = H + 'px';
-        sec.style.setProperty('--tw', tw + 'px'); sec.style.setProperty('--th', th + 'px');
+        sec.style.setProperty('--tw', tw + 'px'); sec.style.setProperty('--th', th + 'px'); sec.style.setProperty('--g', g + 'px');
         const list = [], grid = [], count = LOGOS.map(() => 0);
+        const at = (r, c) => (r < 0 || c < 0 || c >= cols) ? undefined : grid[r * cols + c];
         for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
           const x = W / 2 + (c - c0) * (tw + g) - tw / 2, y = H / 2 + (r - r0) * (th + g) - th / 2;
           if (x + tw < 0 || x > W) continue;
-          /* logos are dealt out evenly, never next to or above the same one, so
-             repeats (until there are enough logos) do not line up */
-          const near = [grid[(r) * cols + c - 1], grid[(r - 1) * cols + c], grid[(r - 1) * cols + c - 1], grid[(r - 1) * cols + c + 1], grid[(r) * cols + c - 2], grid[(r - 2) * cols + c]];
+          /* logos are dealt out evenly: never the same one twice in a row or a
+             column, never touching on the diagonal, so repeats (until there
+             are enough logos) do not line up */
+          const row = [], col = [];
+          for (let k = 0; k < c; k++) row.push(at(r, k));
+          for (let k = 0; k < r; k++) col.push(at(k, c));
+          const diag = [at(r - 1, c - 1), at(r - 1, c + 1)];
+          const tiers = [row.concat(col, diag), row.concat(col), row, []];
           let best = -1;
-          for (let j = 0; j < N; j++) {
-            const q = (j + r * 4 + c * 7) % N;
-            if (N > 6 && near.includes(q)) continue;
-            if (best < 0 || count[q] < count[best]) best = q;
+          for (const ban of tiers) {
+            for (let j = 0; j < N; j++) {
+              const q = (j + r * 4 + c * 7) % N;
+              if (ban.includes(q)) continue;
+              if (best < 0 || count[q] < count[best]) best = q;
+            }
+            if (best >= 0) break;
           }
-          if (best < 0) best = (r * 4 + c * 7) % N;
           grid[r * cols + c] = best; count[best]++;
           const l = LOGOS[best];
           const t = document.createElement('div'); t.className = 'lw';
@@ -620,34 +634,59 @@
           const p = document.createElement('div'); p.className = 'lw__panel';
           const im = document.createElement('img'); im.src = l.src; im.alt = ''; im.decoding = 'async';
           p.appendChild(im); t.appendChild(p); wall.appendChild(t);
-          list.push([Math.hypot(x + tw / 2 - W / 2, (y + th / 2 - H / 2) * 1.6), t]);
+          /* rings out from the middle tile; inside a ring the two beside the
+             middle come first, then above and below, then the corners */
+          const dc = c - c0, dr = r - r0;
+          list.push([Math.max(Math.abs(dc), Math.abs(dr)) * 10 + Math.hypot(dc, dr * 1.4), t, dc, dr, x, y]);
         }
-        tiles = list.sort((p, q) => p[0] - q[0]).map((p) => p[1]);
-        if (played || RM.matches) finish(true);
+        list.sort((p, q) => p[0] - q[0]);
+        tiles = list.map((p) => p[1]);
+        mid = list.filter((p) => p[3] === 0 && Math.abs(p[2]) <= 1).sort((p, q) => p[2] - q[2]);   /* left, middle, right */
+        const c = mid[1] || mid[0];
+        room.style.left = (wall.offsetLeft + c[4] + tw / 2) + 'px';
+        room.style.top = (wall.offsetTop + c[5]) + 'px';
+        mid = mid.map((p) => p[1]);
+        if (played || RM.matches) finish();
       };
-      const finish = (now) => {
-        tiles.forEach((t) => { t.style.transition = now ? 'none' : ''; t.classList.add('is-in'); });
-        sec.classList.add('is-full', 'is-card');
+      const finish = () => {
+        /* the end state, at once: full wall, middle screen off, card present */
+        tiles.forEach((t) => { t.style.transition = 'none'; t.classList.add('is-in'); });
+        mid.forEach((t, i) => { if (i === 1 || mid.length === 1) t.classList.add('is-off'); });
+        room.style.transition = 'none'; say.style.transition = 'none';
+        sec.classList.add('is-full', 'is-room', 'is-card'); card.tabIndex = 0;
+      };
+      const again = (t, dur) => {
+        /* a logo that comes towards you a second time */
+        t.style.transition = 'none'; t.classList.remove('is-in', 'is-off'); t.classList.add('is-again');
+        void t.offsetWidth;
+        t.style.transition = ''; t.style.transitionDuration = dur + 'ms'; t.classList.add('is-in');
       };
       const play = () => {
         played = true;
-        /* waves of 1, 2, 4, 8, 16, then the rest, each sooner than the last */
-        const START = [0, 1150, 1950, 2550, 3000, 3350, 3600];
-        let k = 0, w = 0, size = 1;
+        /* waves of 1, 2, 4, 8, then the rest: the first one slow, each wave
+           sooner than the last, every logo coming towards you */
+        const START = [0, 800, 1450, 2000, 2450], DUR = [1100, 900, 820, 720, 720], GAP = [90, 70, 50, 30, 30];
+        let k = 0, w = 0, size = 1, full = 0;
         while (k < tiles.length) {
-          const at = START[Math.min(w, START.length - 1)], dur = w === 0 ? 1200 : Math.max(760, 1050 - w * 60);   /* every logo comes towards you, the later ones only a little quicker */
-          const group = tiles.slice(k, w >= START.length - 1 ? tiles.length : k + size);
-          group.forEach((t, i) => setTimeout(() => {
-            t.style.transitionDuration = dur + 'ms';
-            t.classList.add('is-in');
-          }, at + i * Math.max(18, 110 - w * 18)));
+          const i = Math.min(w, START.length - 1);
+          const group = tiles.slice(k, i === START.length - 1 ? tiles.length : k + size);
+          group.forEach((t, n) => {
+            const at = START[i] + n * GAP[i];
+            full = Math.max(full, at + DUR[i]);
+            setTimeout(() => { t.style.transitionDuration = DUR[i] + 'ms'; t.classList.add('is-in'); }, at);
+          });
           k += group.length; w++; size *= 2;
         }
-        const FULL = START[Math.min(w - 1, START.length - 1)] + 900;
-        setTimeout(() => sec.classList.add('is-full'), FULL);              /* the wall steps back */
-        setTimeout(() => sec.classList.add('is-say'), FULL + 350);         /* Room for one more. */
-        setTimeout(() => sec.classList.remove('is-say'), FULL + 2900);     /* ...fades slowly */
-        setTimeout(() => sec.classList.add('is-card'), FULL + 3800);       /* the empty card comes forward */
+        const FULL = full;
+        const OFF = FULL + 300, ROOM = OFF + 200, SAY = ROOM + 300, GONE = SAY + 700 + 2000, CARD = GONE + 1000 + 150;
+        setTimeout(() => { sec.classList.add('is-full'); mid.forEach((t) => t.classList.add('is-off')); }, OFF);   /* the three middle screens power down */
+        setTimeout(() => sec.classList.add('is-room'), ROOM);            /* one wide screen over them */
+        setTimeout(() => sec.classList.add('is-say'), SAY);              /* Room for one more. */
+        setTimeout(() => sec.classList.remove('is-say'), GONE);          /* ...fades slowly */
+        setTimeout(() => {                                               /* the screen narrows into the card, the two beside it come back */
+          sec.classList.add('is-card'); card.tabIndex = 0;
+          if (mid.length === 3) { again(mid[0], 720); again(mid[2], 720); }
+        }, CARD);
       };
       build();
       if (!RM.matches) {
