@@ -22,7 +22,8 @@
     var pick = function (sel, i) { var els = $$(sel); return i == null ? els : (els[i] ? [els[i]] : []); };
     /* photos are named by their file in the assets folder; ?e=1 makes sure a
        browser never shows an older copy it kept from before this system */
-    var file = function (v) { return 'assets/' + v.replace(/^\/+/, '').replace(/^assets\//, '') + (v.indexOf('?') < 0 ? '?e=1' : ''); };
+    /* any file name works, spaces included, and .png or .jpg as well as .webp */
+    var file = function (v) { return encodeURI('assets/' + v.replace(/^\/+/, '').replace(/^assets\//, '')) + (v.indexOf('?') < 0 ? '?e=1' : ''); };
     /* a | in the text is a line break */
     var put = function (el, v) {
       el.textContent = '';
@@ -32,7 +33,7 @@
       });
     };
     var text = function (k, sel, i) { if (has(k)) pick(sel, i).forEach(function (el) { put(el, C[k]); }); };
-    var bg = function (k, sel, i) { if (has(k)) pick(sel, i).forEach(function (el) { el.style.backgroundImage = 'url(' + file(C[k]) + ')'; }); };
+    var bg = function (k, sel, i) { if (has(k)) pick(sel, i).forEach(function (el) { el.style.backgroundImage = 'url("' + file(C[k]) + '")'; }); };
     var phone = function (k, sel, i) { if (has(k)) pick(sel, i).forEach(function (el) { el.setAttribute('data-phone', file(C[k])); }); };
 
     /* page */
@@ -100,6 +101,11 @@
     if (has('testimonial logo')) pick('.quote__logo').forEach(function (el) { el.removeAttribute('width'); el.removeAttribute('height'); el.src = file(C['testimonial logo']); });
 
     /* figures: "big words | small words" */
+    /* as many figures as are listed: extra ones are added after the last */
+    var bl = $$('.beats__line');
+    for (var fn = bl.length + 1; bl.length && has('figure ' + fn); fn++) {
+      var cp = bl[bl.length - 1].cloneNode(true); cp.classList.remove('is-on'); bl[0].parentNode.appendChild(cp);
+    }
     var beats = $$('.beats__line'), said = [];
     beats.forEach(function (line, b) {
       var k = 'figure ' + (b + 1);

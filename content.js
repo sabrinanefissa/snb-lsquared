@@ -52,8 +52,8 @@ why 1 word: People
 why 1 line: A business built on lasting relationships.
 why 1 photo: team.webp
 why 2 word: Trust
-why 2 why line: 20+ years of expertise. | You can depend on.
-why 2 photo: Ceotalking.webp
+why 2 line: 20+ years of expertise. | You can depend on.
+why 2 photo: ceo-talking.webp
 why 3 word: Security
 why 3 line: SOC 2 Type II. ISO 27001.|Enterprise-grade security built in.
 why 3 photo: security.webp
