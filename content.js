@@ -95,7 +95,7 @@ industry 2 name: Retail
 industry 2 photo: ind-retail.webp
 industry 2 phone photo: m/ind-retail.webp
 industry 3 name: Enterprise 
-industry 3 photo: Enterprise.png
+industry 3 photo: assets/C2AB4C32-14F7-4A1F-BA37-BABA7A1356B5.jpeg
 industry 3 phone photo: m/ind-hospitality.webp
 industry 4 name: Manufacturing
 industry 4 photo: mfg-on.webp
