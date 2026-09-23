@@ -592,8 +592,12 @@
       const cardT = document.createElement('span'); cardT.className = 'lw-card__t';
       cardT.textContent = T['trusted by card text'] || 'Take your place.';
       card.appendChild(cardT); card.setAttribute('aria-label', cardT.textContent + ' Book a demo');
-      room.append(say, card);
-      wall.after(room);
+      /* r75: the line has its own soft shadow over the middle of the wall; the
+         card waits in the open slot. Nothing about the logos changes. */
+      const shade = document.createElement('div'); shade.className = 'lw-say';
+      shade.appendChild(say);
+      room.append(card);
+      wall.after(room); room.after(shade);
 
       let played = false, tiles = [], mid = [], W0 = 0;
       const appH = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-h')) || innerHeight;
@@ -649,8 +653,15 @@
         tiles = list.map((p) => p[1]);
         mid = list.filter((p) => p[3] === 0 && Math.abs(p[2]) <= 1).sort((p, q) => p[2] - q[2]);   /* left, middle, right */
         const c = mid[1] || mid[0];
+        /* r75: the middle screen is never filled: its place stays open while the
+           logos arrive, and the card later appears in it */
+        c[1].remove(); list.splice(list.indexOf(c), 1);
         room.style.left = (wall.offsetLeft + c[4] + tw / 2) + 'px';
         room.style.top = (wall.offsetTop + c[5]) + 'px';
+        shade.style.left = (wall.offsetLeft + c[4] + tw / 2) + 'px';
+        shade.style.top = (wall.offsetTop + c[5] + th / 2) + 'px';
+        shade.style.width = (tw * 5) + 'px';     /* wide and soft, so the line always reads */
+        shade.style.height = (th * 3.4) + 'px';
         /* r72: the card's orange glow lives in the wall and is blended as light,
            so it shines on the dark around the card and never stains a logo */
         const glow = document.createElement('i'); glow.className = 'lw-glow';
@@ -669,9 +680,8 @@
       const finish = () => {
         /* the end state, at once: full wall, middle screen off, card present */
         tiles.forEach((t) => { t.style.transition = 'none'; t.classList.add('is-in'); });
-        mid.forEach((t, i) => { if (i === 1 || mid.length === 1) t.classList.add('is-off'); });
         room.style.transition = 'none'; say.style.transition = 'none';
-        sec.classList.add('is-full', 'is-room', 'is-card'); card.tabIndex = 0;
+        sec.classList.add('is-full', 'is-card'); card.tabIndex = 0;
       };
       const again = (t, dur) => {
         /* a logo that comes towards you a second time */
@@ -693,14 +703,15 @@
           at += gap; gap = Math.max(63, gap * .86);   /* r72: speeds up gently, then keeps a steady pace */
         });
         const FULL = full;
-        const OFF = FULL + 200, ROOM = OFF + 150, SAY = ROOM + 200, GONE = SAY + 900 + 150, CARD = GONE + 280;   /* r73: the line comes and goes sooner */   /* r71: the hero's slow dissolve: 1.5s in, a short hold, 1.5s out, the card rising as the words leave */
-        setTimeout(() => { sec.classList.add('is-full'); mid.forEach((t) => t.classList.add('is-off')); }, OFF);   /* the three middle screens power down */
-        setTimeout(() => sec.classList.add('is-room'), ROOM);            /* one wide screen over them */
+        /* r75: the wall is full with one open screen; a soft shadow brings
+           "Room for one more." in over the logos, it holds, and as it fades the
+           card fades into the open screen. The logos never move again. */
+        const SAY = FULL + 250, GONE = SAY + 900 + 700, CARD = GONE + 350;   /* r73: the line comes and goes sooner */   /* r71: the hero's slow dissolve: 1.5s in, a short hold, 1.5s out, the card rising as the words leave */
+        setTimeout(() => sec.classList.add('is-full'), FULL);
         setTimeout(() => sec.classList.add('is-say'), SAY);              /* Room for one more. */
         setTimeout(() => sec.classList.remove('is-say'), GONE);          /* ...fades slowly */
         setTimeout(() => {                                               /* the screen narrows into the card, the two beside it come back */
           sec.classList.add('is-card'); card.tabIndex = 0;
-          if (mid.length === 3) { again(mid[0], 720); again(mid[2], 720); }
         }, CARD);
       };
       build();

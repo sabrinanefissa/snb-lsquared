@@ -888,3 +888,19 @@
   50%{box-shadow:0 0 26px 6px rgba(255,153,0,.72),0 0 60px 18px rgba(255,153,0,.3)}
 }
 @media (prefers-reduced-motion:reduce){#pub-go.is-pulsing{animation:none;box-shadow:0 0 24px 4px rgba(255,153,0,.55)}.pub__ptr{display:none}}
+
+/* ================================================================== r75
+   Trusted by, the ending. The middle screen stays open while the wall fills.
+   Then a soft shadow with no edge darkens the middle and holds the line; as
+   it fades, the card fades into the open screen. */
+.lw-room,#clients.is-room .lw-room,#clients.is-card .lw-room{width:var(--tw,190px);height:var(--th,90px);padding:0;
+  background:transparent;box-shadow:none;opacity:1;transition:none}
+.lw-room::before{content:none}
+.lw-card{opacity:0;transition:opacity 900ms var(--ease),transform 140ms var(--ease)}
+#clients.is-card .lw-card{opacity:1}
+.lw-say{position:absolute;z-index:4;transform:translate(-50%,-50%);display:grid;place-items:center;pointer-events:none;opacity:0;
+  background:radial-gradient(closest-side,rgba(3,7,12,.97) 0%,rgba(3,7,12,.95) 52%,rgba(3,7,12,.7) 70%,rgba(3,7,12,.3) 86%,rgba(3,7,12,0) 100%);
+  transition:opacity 900ms var(--ease)}
+#clients.is-say .lw-say{opacity:1}
+.lw-say .lw-room__say{padding:0 12px;text-shadow:0 2px 18px rgba(0,0,0,.6)}
+@media (prefers-reduced-motion:reduce){.lw-say,.lw-card{transition:none}}
