@@ -95,7 +95,7 @@ industry 2 name: Retail
 industry 2 photo: ind-retail.webp
 industry 2 phone photo: m/ind-retail.webp
 industry 3 name: Enterprise 
-industry 3 photo: breakroompc
+industry 3 photo: breakroompc.png
 industry 3 phone photo: m/ind-hospitality.webp
 industry 4 name: Manufacturing
 industry 4 photo: mfg-on.webp
