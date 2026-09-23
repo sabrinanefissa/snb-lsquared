@@ -195,40 +195,8 @@
       const onPh = $('.ind__slide.is-on .ind__ph', stage);
       if (onPh) syncKW(onPh);
 
-      const ORDER = window.LSQ_INDLIST || [];
-      const stop = hint(stage, () => {
-        const on = $('.ind__slide.is-on', stage), back = $('.ind__slide:not(.is-on)', stage);
-        if (!on || !back) return;
-        /* the next industry is set up behind the current photo, so sliding
-           the current one aside reveals it, the same as a real swipe would */
-        const cur = ORDER.findIndex((o) => o.name === ($('#ind-name') || {}).textContent);
-        const nxt = ORDER[(cur + 1) % ORDER.length];
-        const bph = $('.ind__ph', back);
-        const url = nxt && (nxt.phone || (phoneFor(nxt.photo) || [])[0]);
-        if (url && bph) {
-          bph.dataset.phone = url;
-          swapBg(bph);
-          const nm = $('.ind__capname', back); if (nm) nm.textContent = nxt.name;
-        }
-        back.style.transition = 'none'; back.style.transform = 'translateX(0)';
-        stage.classList.add('is-peeking');
-        on.style.transition = 'transform 1400ms ' + EASE;
-        on.style.transform = 'translateX(-34%)';
-        /* the name rides inside the photo, so it is moved back by the same
-           distance at the same pace: on screen only the photo travels */
-        const cap = $('.ind__cap', on);
-        if (cap) { cap.style.transition = 'transform 1400ms ' + EASE; cap.style.transform = 'translateX(' + (on.offsetWidth * .34) + 'px)'; }
-      }, () => {
-        stage.classList.remove('is-peeking');
-        const cap = $('.ind__slide.is-on .ind__cap', stage);
-        if (cap) { cap.style.transition = 'transform 420ms ' + EASE; cap.style.transform = ''; }
-        const on = $('.ind__slide.is-on', stage);
-        if (!on) return;
-        on.style.transition = 'transform 420ms ' + EASE;
-        on.style.transform = 'translateX(0)';
-        setTimeout(() => { on.style.transition = ''; }, 440);
-      });
-      stage.addEventListener('pointerdown', stop, { once: true });
+      /* r62: no half-slide hint any more; the dots under the photo fill up
+         and the photos move on by themselves (js/page.js) */
     }
   }
 

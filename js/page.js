@@ -162,8 +162,10 @@
          one of the four is showing. The phone keeps its sideways slide. */
       const FADE = !matchMedia('(max-width:760px)').matches;
       let dots = [];
-      if (FADE) {
-        stage.classList.add('ind--fade');
+      /* r62: the phone gets the same dots; its current dot fills up while the
+         photo waits, then the next one slides in */
+      if (FADE) stage.classList.add('ind--fade');
+      {
         const row = document.createElement('div');
         row.className = 'ind__dots';
         row.setAttribute('aria-label', 'Industries');
@@ -230,26 +232,32 @@
         else if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1, -1); }
       });
       /* a sideways swipe on the photo does the same on touch */
-      let sx = null;
-      stage.addEventListener('pointerdown', (e) => { sx = e.clientX; });
+      let sx = null, sy = 0;
+      stage.addEventListener('pointerdown', (e) => { sx = e.clientX; sy = e.clientY; });
+      stage.addEventListener('pointercancel', () => { sx = null; });
       stage.addEventListener('pointerup', (e) => {
         if (sx === null) return;
-        const dx = e.clientX - sx; sx = null;
+        const dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
         if (Math.abs(dx) > 44) go(cur + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
-        else if (FADE && e.button === 0) go(cur + 1, 1);   /* a click on the photo: next industry */
+        else if (e.button === 0 && Math.abs(dy) < 12) go(cur + 1, 1);   /* a tap or click on the photo: next industry */
       });
       go(0, 1);
       /* r61: on a computer the industries move on by themselves, in a loop,
          while the section is on screen. Any click restarts the wait, so a
          photo someone picked always gets its full time. The seconds are set
          in content.js. */
-      if (FADE && !RM.matches) {
+      if (!RM.matches) {
         const secs = parseFloat((window.LSQ || {})['industries seconds per photo']);
         const EVERY = (isFinite(secs) && secs >= 2 ? secs : 5) * 1000;
+        if (dots[0]) dots[0].parentNode.style.setProperty('--every', EVERY + 'ms');
         let timer = 0, inView = false;
         const arm = () => {
-          clearTimeout(timer);
+          clearTimeout(timer); timer = 0;
           if (inView && !document.hidden) timer = setTimeout(() => { go(cur + 1, 1); arm(); }, EVERY);
+          /* the current dot fills over the same time (the phone shows it) */
+          dots.forEach((b) => b.classList.remove('is-fill'));
+          const d = dots[cur];
+          if (d && timer) { void d.offsetWidth; d.classList.add('is-fill'); }
         };
         new IntersectionObserver(([e]) => { inView = e.isIntersecting; arm(); }, { threshold: .5 }).observe(stage);
         document.addEventListener('visibilitychange', arm);

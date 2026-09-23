@@ -499,3 +499,14 @@ html.mnav-open .topbar{transform:translateY(0)}
 .ind__ph{width:var(--indw);height:calc(var(--indw) / var(--kw,.8))}
 .pub__shot{width:calc(100% * var(--k-pub,1));justify-self:center;margin-left:auto;margin-right:auto}
 .rely__frame{width:calc((100vw - 2 * var(--gut)) * var(--k-rely,1))}
+
+/* ================================================================== r62
+   industries: dots under the photo; the current one fills up in gold while
+   the photo waits, then the next photo slides in */
+.ind__dots{margin:10px 0 0}
+.ind__dot{position:relative}
+.ind__dot.is-on::before{background:var(--paper);opacity:.32}
+.ind__dot.is-on::after{content:"";position:absolute;left:2px;top:50%;width:24px;height:8px;margin-top:-4px;border-radius:4px;background:var(--gold)}
+.ind__dot.is-fill::after{animation:indfill var(--every,5000ms) linear both}
+@keyframes indfill{from{clip-path:inset(0 100% 0 0 round 4px)}to{clip-path:inset(0 0 0 0 round 4px)}}
+@media (prefers-reduced-motion:reduce){.ind__dot.is-fill::after{animation:none}}
