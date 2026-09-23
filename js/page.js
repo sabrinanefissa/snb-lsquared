@@ -679,16 +679,16 @@
         /* r71: one logo at a time, every one coming towards you. The first
            waits longest; each next one arrives sooner than the last (the gap
            shrinks by a fifth each time) until they pour in. */
-        let gap = 650, at = 0, full = 0;
+        let gap = 420, at = 0, full = 0;   /* r73: the whole build runs about a third faster, same slow-to-fast shape */
         tiles.forEach((t, k) => {
-          const dur = Math.max(720, 1150 - k * 45);
+          const dur = Math.max(470, 750 - k * 29);
           full = Math.max(full, at + dur);
           const when = at;
           setTimeout(() => { t.style.transitionDuration = dur + 'ms'; t.classList.add('is-in'); }, when);
-          at += gap; gap = Math.max(110, gap * .86);   /* r72: speeds up gently, then keeps a steady pace */
+          at += gap; gap = Math.max(72, gap * .86);   /* r72: speeds up gently, then keeps a steady pace */
         });
         const FULL = full;
-        const OFF = FULL + 300, ROOM = OFF + 200, SAY = ROOM + 300, GONE = SAY + 1500 + 600, CARD = GONE + 450;   /* r71: the hero's slow dissolve: 1.5s in, a short hold, 1.5s out, the card rising as the words leave */
+        const OFF = FULL + 200, ROOM = OFF + 150, SAY = ROOM + 200, GONE = SAY + 1000 + 250, CARD = GONE + 300;   /* r73: the line comes and goes sooner */   /* r71: the hero's slow dissolve: 1.5s in, a short hold, 1.5s out, the card rising as the words leave */
         setTimeout(() => { sec.classList.add('is-full'); mid.forEach((t) => t.classList.add('is-off')); }, OFF);   /* the three middle screens power down */
         setTimeout(() => sec.classList.add('is-room'), ROOM);            /* one wide screen over them */
         setTimeout(() => sec.classList.add('is-say'), SAY);              /* Room for one more. */
