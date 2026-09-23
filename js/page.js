@@ -546,6 +546,86 @@
     }
   }
 
+  /* ------------------------------------------------------------ 6b. trusted by: the client wall
+     r66: the clients' logos, in colour, on a 3 by 3 wall of screens with the
+     L Squared mark on the middle screen. Every few seconds one screen changes
+     to another client, the way a real display switches content, so every
+     logo in the list gets its turn however many there are. Phones get their
+     own two moving rows (js/mobile.js); both read the same list, which
+     content.js can change. */
+  {
+    const DEF = [['The UPS Store', 'ups-store'], ['Cold Stone Creamery', 'cold-stone-creamery'], ['Hatch', 'hatch'],
+      ['McMaster University', 'mcmaster-university'], ['International Centre', 'international-centre'], ['Cisco', 'cisco'],
+      ['Best Buy Business', 'best-buy-business'], ['Lenovo', 'lenovo'], ['SFM', 'sfm']]
+      .map(([name, k]) => ({ name, src: 'assets/logos/' + k + '-hq.png?v=r55' }));
+    const LOGOS = (window.LSQ_LOGOS && window.LSQ_LOGOS.length) ? window.LSQ_LOGOS : DEF;
+    window.LSQ_LOGOLIST = LOGOS;
+    const orbit = $('#clients .orbit');
+    if (orbit) {
+      const wall = document.createElement('div');
+      wall.className = 'lwall'; wall.setAttribute('aria-hidden', 'true');
+      const names = document.createElement('ul');
+      names.className = 'sr-only'; names.setAttribute('aria-label', 'Clients');
+      LOGOS.forEach((l) => { if (!l.name) return; const li = document.createElement('li'); li.textContent = l.name; names.appendChild(li); });
+      orbit.replaceWith(wall); wall.after(names);   /* the old orbit never starts */
+
+      if (!matchMedia('(max-width:760px)').matches) {
+        const SLOTS = 8;
+        const logoImg = (l) => { const im = document.createElement('img'); im.src = l.src; im.alt = ''; im.decoding = 'async'; return im; };
+        const screen = (l) => {
+          const s = document.createElement('div'); s.className = 'lw';
+          const p = document.createElement('div'); p.className = 'lw__panel';
+          if (l) p.appendChild(logoImg(l));
+          const scan = document.createElement('i'); scan.className = 'lw__scan';
+          s.append(p, scan); return s;
+        };
+        const mark = () => {
+          const s = screen(null); s.classList.add('lw--mark');
+          const m = document.createElement('span'); m.className = 'lw__mark';
+          ['b', 'g', 'g', 'b', 'o', 'g', 'b', 'b', 'g'].forEach((c) => { const i = document.createElement('i'); i.className = c; m.appendChild(i); });
+          s.firstChild.appendChild(m); return s;
+        };
+        const shown = LOGOS.slice(0, SLOTS), queue = LOGOS.slice(SLOTS);
+        const screens = shown.map((l) => screen(l));
+        if (LOGOS.length >= SLOTS) {
+          screens.slice(0, 4).forEach((s) => wall.appendChild(s));
+          wall.appendChild(mark());
+          screens.slice(4).forEach((s) => wall.appendChild(s));
+        } else {
+          wall.classList.add('lwall--few');
+          const mid = Math.floor(screens.length / 2);
+          screens.forEach((s, i) => { if (i === mid) wall.appendChild(mark()); wall.appendChild(s); });
+          if (!screens.length) wall.appendChild(mark());
+        }
+        const current = shown.slice();
+        const change = (i, l) => {
+          const s = screens[i], p = s.firstChild, old = p.querySelector('img:not(.is-out)');
+          const im = logoImg(l); im.classList.add('is-in');
+          if (old) { old.classList.add('is-out'); setTimeout(() => old.remove(), 460); }
+          p.appendChild(im); current[i] = l;
+          s.classList.remove('is-changing'); void s.offsetWidth; s.classList.add('is-changing');
+          setTimeout(() => { im.classList.remove('is-in'); s.classList.remove('is-changing'); }, 760);
+        };
+        LOGOS.forEach((l) => warm(l.src));
+        if (!RM.matches && screens.length > 1) {
+          let last = -1, timer = 0, inView = false;
+          const tick = () => {
+            let i; do { i = Math.floor(Math.random() * screens.length); } while (i === last && screens.length > 1);
+            last = i;
+            if (queue.length) { queue.push(current[i]); change(i, queue.shift()); }
+            else {   /* no logo waiting: two screens trade places */
+              let j; do { j = Math.floor(Math.random() * screens.length); } while (j === i);
+              const a = current[i], b = current[j]; change(i, b); setTimeout(() => change(j, a), 180);
+            }
+          };
+          const arm = () => { clearTimeout(timer); if (inView && !document.hidden) timer = setTimeout(() => { tick(); arm(); }, 2600); };
+          new IntersectionObserver(([e]) => { inView = e.isIntersecting; arm(); }, { threshold: .3 }).observe(wall);
+          document.addEventListener('visibilitychange', arm);
+        }
+      }
+    }
+  }
+
   /* ------------------------------------------------------------ 7. the form */
   {
     const form = $('#demo-form');

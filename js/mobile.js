@@ -93,18 +93,21 @@
   /* -------------------------------------------------------------- trusted by
      two slow rows of logos, moving opposite ways, instead of the orbit */
   {
-    const row = $('.clients__row'), orbit = $('#clients .orbit');
+    const row = $('.clients__row'), orbit = $('#clients .lwall') || $('#clients .orbit');
     if (row && orbit) {
-      const L = ['ups-store', 'cold-stone-creamery', 'hatch', 'mcmaster-university', 'international-centre', 'cisco', 'best-buy-business', 'lenovo', 'sfm'];
+      /* r66: the list comes from content.js (through page.js) */
+      const L = (window.LSQ_LOGOLIST || []).map((l) => l.src);
       const mk = (list, cls) => {
         const r = document.createElement('div'); r.className = 'mq__row ' + cls;
-        for (let k = 0; k < 2; k++) list.forEach((n) => {
-          const i = document.createElement('img'); i.src = 'assets/logos/' + n + '-hq.png?v=r55'; i.alt = ''; i.decoding = 'async'; i.className = 'mq__logo mq__logo--' + n; r.appendChild(i);
+        for (let k = 0; k < 2; k++) list.forEach((src) => {
+          const n = (src.split('/').pop() || '').split('?')[0].replace(/(-hq)?\.[a-z]+$/i, '');
+          const i = document.createElement('img'); i.src = src; i.alt = ''; i.decoding = 'async'; i.className = 'mq__logo mq__logo--' + n; r.appendChild(i);
         });
         return r;
       };
       const mq = document.createElement('div'); mq.className = 'mq'; mq.setAttribute('aria-hidden', 'true');
-      mq.appendChild(mk(L.slice(0, 5), 'mq__row--a')); mq.appendChild(mk(L.slice(5), 'mq__row--b'));
+      const half = Math.ceil(L.length / 2);
+      mq.appendChild(mk(L.slice(0, half), 'mq__row--a')); mq.appendChild(mk(L.slice(half), 'mq__row--b'));
       orbit.insertAdjacentElement('afterend', mq);
     }
   }

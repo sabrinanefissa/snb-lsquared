@@ -177,6 +177,50 @@
     });
     if (has('footer background') && window.CSS && CSS.supports('color', C['footer background'])) bgCss += '.foot{background:' + C['footer background'] + '!important}';
 
+    /* r66: text colour per section. Only words that sit on the section's own
+       background change; words on top of photos and screens never do. */
+    var TXT = {
+      statement: ['.statement__h'], why: ['.strips__title'], industries: ['.ind__title', '.ind__cta'],
+      'ceo quote': ['.fall__line', '.fall__line i.is-on', '.fall__by'], publishing: ['.pub__title'],
+      'dead screen': ['.rely__h'], 'trusted by': ['.clients__title', '.quote__text'], figures: ['.beats__fig'], contact: []
+    };
+    SECS.forEach(function (s) {
+      var v = C[s[0] + ' text colour'] || C[s[0] + ' text color'];
+      if (!v || !(window.CSS && CSS.supports('color', v))) return;
+      var soft = 'color-mix(in srgb,' + v + ' 80%,transparent)';
+      TXT[s[0]].forEach(function (sel) { bgCss += sel + '{color:' + v + '!important}'; });
+      bgCss += '#' + s[1] + ' .sec-end{color:' + soft + '!important;opacity:1!important}';
+      if (s[1] !== 'demo') bgCss += '#' + s[1] + ' .sec-sub{color:' + soft + '!important}';
+      if (s[1] === 'reliability') bgCss += '.rely__sub{color:' + soft + '!important}';
+      if (s[1] === 'independent') bgCss += '.fall__line i:not(.is-on){color:color-mix(in srgb,' + v + ' 38%,transparent)!important}';
+    });
+
+    /* r66: the order of the sections. The hero always opens the page; any
+       section left out of the list keeps its place after the listed ones. */
+    if (has('section order')) {
+      var main = document.getElementById('main'), ids = {}, seen = {}, seq = [];
+      SECS.forEach(function (s) { ids[s[0]] = s[1]; });
+      ids['why lsquared'] = 'strips'; ids.why = 'strips'; ids.ceo = 'independent'; ids.quote = 'independent';
+      ids.trusted = 'clients'; ids.logos = 'clients'; ids.clients = 'clients'; ids.publish = 'publish'; ids['blue statement'] = 'statement';
+      C['section order'].split(',').forEach(function (nm) {
+        var id = ids[nm.trim().toLowerCase()];
+        if (id && !seen[id]) { seen[id] = 1; seq.push(id); }
+      });
+      SECS.forEach(function (s) { if (!seen[s[1]]) seq.push(s[1]); });
+      seq.forEach(function (id) {
+        var sec = document.getElementById(id); if (!sec || !main) return;
+        var nx = sec.nextElementSibling;
+        main.appendChild(sec);
+        /* the pixels falling out of the statement travel with it */
+        if (nx && nx.classList && nx.classList.contains('shed')) main.appendChild(nx);
+      });
+    }
+
+    /* r66: the client logos, as many as are listed */
+    var logos = [];
+    for (var q = 1; has('logo ' + q + ' file'); q++) logos.push({ name: C['logo ' + q + ' name'] || '', src: file(C['logo ' + q + ' file']) });
+    if (logos.length) window.LSQ_LOGOS = logos;
+
     /* layout: 100% is the size it is now. Laptop and phone are separate. */
     var K = [['title size', 'title'], ['space under titles', 'gap'], ['space above and below sections', 'pad'],
              ['statement size', 'statement'], ['ceo quote size', 'quote'], ['why lsquared height', 'strips'],

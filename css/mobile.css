@@ -516,3 +516,6 @@ html.mnav-open .topbar{transform:translateY(0)}
 .sec-sub{padding:0;margin-top:10px}
 .demo__h:has(.sec-sub){flex-direction:column;justify-content:center;gap:0}
 .demo__h .sec-sub{margin-top:6px;font-size:14px}
+
+/* r66: the phone shows its two moving rows, not the wall */
+#clients .lwall{display:none}
