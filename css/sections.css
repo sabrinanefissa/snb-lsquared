@@ -806,6 +806,13 @@
 .lw-room::before{content:"";position:absolute;inset:5px;border-radius:5px;background:radial-gradient(ellipse at 50% 45%,#12344F 0%,#06121E 78%)}
 #clients.is-room .lw-room{opacity:1}
 #clients.is-card .lw-room{width:var(--tw,190px)}   /* the card is exactly one screen, like every other */
+/* r70: once the card is there it is the only frame: the wide screen's bezel and
+   panel step aside, and the card fills the slot exactly, so its glow sits even
+   on all four sides */
+#clients.is-card .lw-room{padding:0;background:transparent;box-shadow:none}
+#clients.is-card .lw-room::before{opacity:0}
+.lw-room::before{transition:opacity 500ms var(--ease)}
+#clients.is-card .lw-card{background:radial-gradient(ellipse at 50% 45%,#12344F 0%,#06121E 78%);border:1px solid rgba(124,194,236,.28)}
 .lw-room > *{grid-area:1 / 1}
 .lw-room__say{position:relative;margin:0;padding:0 12px;text-align:center;font-stretch:70%;font-weight:800;text-transform:uppercase;letter-spacing:-.005em;line-height:1;
   font-size:clamp(26px,2.4vw,34px);color:var(--paper);opacity:0;transition:opacity 1000ms var(--ease)}
