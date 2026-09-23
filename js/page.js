@@ -367,67 +367,72 @@
 
       syncGo();
 
-      /* r58: show the order. On PC, when the section is first reached, each
-         scene previews Breakfast, then Lunch (the toggle lights and the screen
-         wipes half way), then Publish glows. The moment a visitor picks a
-         menu themselves, Publish glows again so the next step is obvious.
-         Phones publish on the tap itself, so this is PC only; mobile.js has
-         the phone's own preview. */
+      /* r74: a cursor shows what to do. When the section is first reached, and
+         only if the visitor has not started, a pointer glides onto Breakfast on
+         the first scene (left on a computer, top on a phone), clicks it, then
+         clicks Publish, and the menu goes live on the screens. On a phone a tap
+         on the menu publishes by itself, so the pointer is a fingertip that
+         taps once. The moment the visitor touches anything, it steps aside.
+         After a menu is chosen, Publish glows orange until it is clicked. */
       const PHONE = matchMedia('(max-width:760px)').matches;
       const pulseGo = () => { go.classList.remove('is-pulsing'); void go.offsetWidth; go.classList.add('is-pulsing'); };
       go.addEventListener('click', () => go.classList.remove('is-pulsing'));
-      let demoTimers = [], demoOn = false;
-      const clearDemo = () => {
-        demoTimers.forEach(clearTimeout); demoTimers = [];
-        if (!demoOn) return; demoOn = false;
-        $$('#publish .seg button.is-demo').forEach((o) => o.classList.remove('is-demo'));
-        $$('#publish .pub__ph.is-demo').forEach((ph) => { ph.classList.remove('is-demo', 'is-coming'); ph.style.clipPath = ''; ph.style.transition = ''; });
-      };
       state.forEach((sc) => sc.seg.forEach((btn) => btn.addEventListener('click', () => {
-        clearDemo();
         if (!PHONE && !RM.matches) setTimeout(pulseGo, 120);
       })));
-      const peek = (sc, menu, open) => {
-        const ph = $$('.pub__ph', sc.shot).find((x) => x.dataset.menu === menu);
-        const b = sc.seg.find((x) => x.dataset.menu === menu);
-        if (b) b.classList.toggle('is-demo', open);
-        if (!ph) return;
-        if (open) {
-          ph.classList.add('is-demo', 'is-coming');
-          ph.style.transition = 'none'; ph.style.clipPath = 'inset(0 100% 0 0)';
-          void ph.offsetWidth;
-          ph.style.transition = 'clip-path 1100ms var(--ease)'; ph.style.clipPath = 'inset(0 50% 0 0)';
-        } else {
-          ph.style.transition = 'clip-path 700ms var(--ease)'; ph.style.clipPath = 'inset(0 100% 0 0)';
-          demoTimers.push(setTimeout(() => { ph.classList.remove('is-demo', 'is-coming'); ph.style.clipPath = ''; ph.style.transition = ''; }, 720));
-        }
-      };
-      if (!RM.matches && !PHONE) {
+      const sec = $('#publish'), sc0 = state[0];
+      const bf = sc0 && sc0.seg.find((x) => x.dataset.menu === 'breakfast');
+      if (!RM.matches && sec && bf) {
+        const ptr = document.createElement('div');
+        ptr.className = 'pub__ptr' + (PHONE ? ' pub__ptr--tap' : '');
+        ptr.setAttribute('aria-hidden', 'true');
+        ptr.innerHTML = PHONE ? '<i class="pub__ptr-ring"></i>'
+          : '<svg viewBox="0 0 24 24" width="30" height="30"><path d="M5 2.5v17.2l4.6-4.3 2.9 6.6 3-1.3-2.9-6.5h6.3z" fill="#F3F1EC" stroke="#06121E" stroke-width="1.4" stroke-linejoin="round"/></svg><i class="pub__ptr-ring"></i>';
+        sec.appendChild(ptr);
+        let timers = [], alive = false, pos = [0, 0];
+        const T = (ms, fn) => timers.push(setTimeout(() => { if (alive) fn(); }, ms));
+        const at = (el, fx, fy) => {
+          const s0 = sec.getBoundingClientRect(), r = el.getBoundingClientRect();
+          return [r.left - s0.left + r.width * (fx == null ? .5 : fx), r.top - s0.top + r.height * (fy == null ? .5 : fy)];
+        };
+        const place = (p) => { pos = p; ptr.getAnimations().forEach((x) => x.cancel()); ptr.style.transform = 'translate(' + p[0] + 'px,' + p[1] + 'px)'; };
+        const move = (p, ms) => {
+          ptr.animate([{ transform: 'translate(' + pos[0] + 'px,' + pos[1] + 'px)' }, { transform: 'translate(' + p[0] + 'px,' + p[1] + 'px)' }],
+            { duration: ms, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
+          pos = p;
+        };
+        const press = () => { ptr.classList.remove('is-press'); void ptr.offsetWidth; ptr.classList.add('is-press'); };
+        const leave = () => { alive = false; timers.forEach(clearTimeout); timers = []; ptr.classList.remove('is-on'); };
+        const run = () => {
+          if (state.some((x) => x.selected) || alive) return;   /* they already started */
+          alive = true;
+          place(at(sc0.shot, PHONE ? .62 : .7, PHONE ? .55 : .5));
+          ptr.classList.add('is-on');
+          if (PHONE) {
+            T(350, () => move(at(bf), 900));
+            T(1400, press);
+            T(1550, () => bf.click());                            /* the tap publishes */
+            T(2500, () => { ptr.classList.remove('is-on'); alive = false; });
+          } else {
+            T(450, () => move(at(bf), 1000));
+            T(1550, press);
+            T(1700, () => bf.click());                            /* Breakfast ready, Publish glows */
+            T(2550, () => move(at(go, .5, .55), 1050));
+            T(3700, press);
+            T(3850, () => go.click());                            /* the menu goes live */
+            T(4500, () => { move([pos[0] + 46, pos[1] + 40], 700); ptr.classList.remove('is-on'); });
+            T(5300, () => { alive = false; });
+          }
+        };
+        /* anything the visitor does takes over at once */
+        sec.addEventListener('pointerdown', leave, true);
+        sec.addEventListener('keydown', leave, true);
         const io = new IntersectionObserver(([e]) => {
           if (!e.isIntersecting) return;
           io.disconnect();
-          if (state.some((sc) => sc.selected)) return;       /* they already started */
-          demoOn = true;
-          const T = (ms, fn) => demoTimers.push(setTimeout(fn, ms));
-          state.forEach((sc, i) => {
-            const d = 500 + i * 250;
-            T(d, () => peek(sc, 'breakfast', true));
-            T(d + 1500, () => { peek(sc, 'breakfast', false); peek(sc, 'lunch', true); });
-            T(d + 3000, () => peek(sc, 'lunch', false));
-          });
-          T(3500, () => { go.setAttribute('data-demo', ''); pulseGo(); });
-          T(5200, () => { go.removeAttribute('data-demo'); demoOn = false; });
-        }, { threshold: .5 });
-        io.observe($('#publish'));
-      } else if (!RM.matches) {
-        const io = new IntersectionObserver(([e]) => {
-          if (!e.isIntersecting) return;
-          io.disconnect();
-          setTimeout(() => state.forEach((sc) => {
-            sc.seg.forEach((o) => { if (o.dataset.menu !== sc.selected) o.classList.add('is-hinted'); });
-          }), 400);
-        }, { threshold: .4 });
-        io.observe($('#publish'));
+          setTimeout(run, 350);
+        }, { threshold: .6 });
+        io.observe(sc0.el);
       }
     }
   }
@@ -649,7 +654,7 @@
         /* r72: the card's orange glow lives in the wall and is blended as light,
            so it shines on the dark around the card and never stains a logo */
         const glow = document.createElement('i'); glow.className = 'lw-glow';
-        glow.style.cssText = 'left:' + (c[4] + tw / 2) + 'px;top:' + (c[5] + th / 2) + 'px;width:' + (tw * 2.6) + 'px;height:' + (th * 3.6) + 'px';
+        glow.style.cssText = 'left:' + (c[4] + tw / 2) + 'px;top:' + (c[5] + th / 2) + 'px;width:' + (tw * 1.85) + 'px;height:' + (th * 2.5) + 'px';   /* r74: the glow stays close to the card */
         wall.appendChild(glow);
         mid = mid.map((p) => p[1]);
         /* r72: the logos arrive in a random order, never the same twice. The
@@ -679,16 +684,16 @@
         /* r71: one logo at a time, every one coming towards you. The first
            waits longest; each next one arrives sooner than the last (the gap
            shrinks by a fifth each time) until they pour in. */
-        let gap = 420, at = 0, full = 0;   /* r73: the whole build runs about a third faster, same slow-to-fast shape */
+        let gap = 370, at = 0, full = 0;   /* r73: the whole build runs about a third faster, same slow-to-fast shape */
         tiles.forEach((t, k) => {
-          const dur = Math.max(470, 750 - k * 29);
+          const dur = Math.max(415, 660 - k * 26);   /* r74: a touch faster again, same shape */
           full = Math.max(full, at + dur);
           const when = at;
           setTimeout(() => { t.style.transitionDuration = dur + 'ms'; t.classList.add('is-in'); }, when);
-          at += gap; gap = Math.max(72, gap * .86);   /* r72: speeds up gently, then keeps a steady pace */
+          at += gap; gap = Math.max(63, gap * .86);   /* r72: speeds up gently, then keeps a steady pace */
         });
         const FULL = full;
-        const OFF = FULL + 200, ROOM = OFF + 150, SAY = ROOM + 200, GONE = SAY + 1000 + 250, CARD = GONE + 300;   /* r73: the line comes and goes sooner */   /* r71: the hero's slow dissolve: 1.5s in, a short hold, 1.5s out, the card rising as the words leave */
+        const OFF = FULL + 200, ROOM = OFF + 150, SAY = ROOM + 200, GONE = SAY + 900 + 150, CARD = GONE + 280;   /* r73: the line comes and goes sooner */   /* r71: the hero's slow dissolve: 1.5s in, a short hold, 1.5s out, the card rising as the words leave */
         setTimeout(() => { sec.classList.add('is-full'); mid.forEach((t) => t.classList.add('is-off')); }, OFF);   /* the three middle screens power down */
         setTimeout(() => sec.classList.add('is-room'), ROOM);            /* one wide screen over them */
         setTimeout(() => sec.classList.add('is-say'), SAY);              /* Room for one more. */

@@ -524,3 +524,6 @@ html.mnav-open .topbar{transform:translateY(0)}
 .lw-card__t{font-size:15px}
 #clients .clients__row{gap:0}
 #clients{justify-content:center}
+
+/* r74: the side screens of the wide contact wall are a laptop thing */
+.demo__side{display:none}

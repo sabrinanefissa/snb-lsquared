@@ -130,6 +130,16 @@
       C['contact screens choices'].split(',').forEach(function (o) { var op = document.createElement('option'); op.textContent = o.trim(); sel.appendChild(op); });
     });
     text('contact button', '.form .btn');
+    /* r74: the two side screens of the contact wall (laptop) */
+    text('contact next title', '.demo__side-h');
+    for (var cs = 1; cs <= 3; cs++) {
+      text('contact next ' + cs, '.demo__steps li span', cs - 1);
+      if (has('contact fact ' + cs)) pick('.demo__stat', cs - 1).forEach(function (el) {
+        var parts = C['contact fact ' + cs].split('|');
+        el.querySelector('b').textContent = parts[0].trim();
+        el.querySelector('span').textContent = parts.slice(1).join(' ').trim();
+      });
+    }
     if (has('contact photo')) pick('.demo__img').forEach(function (el) { el.src = file(C['contact photo']); });
     phone('contact phone photo', '.demo__img');
 

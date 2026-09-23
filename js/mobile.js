@@ -31,7 +31,8 @@
     'mfg-on.webp': ['assets/m/mfg-on.webp?v=m1', '.7759'],
     'retail-off.webp': ['assets/m/retail-off.webp?v=m1'],
     'retail-on.webp': ['assets/m/retail-on.webp?v=m1'],
-    'demo-wall.webp': ['assets/m/demo-wall.webp?v=m2']
+    'demo-wall.webp': ['assets/m/demo-wall.webp?v=m2'],
+    'contact-wide.webp': ['assets/m/demo-wall.webp?v=m2']
   };
   const phoneFor = (url) => {
     if (!url || url.indexOf('assets/m/') >= 0) return null;
@@ -158,25 +159,7 @@
         const shot = $('.pub__shot', sc);
         return shot && $$('.pub__ph', shot).find((p) => !p.classList.contains('is-on'));
       }).filter(Boolean);
-      stop = hint($('#publish'), () => {
-        others().forEach((other, i) => setTimeout(() => {
-          other.classList.add('is-coming');
-          other.style.transition = 'none';
-          other.style.clipPath = 'inset(0 100% 0 0)';
-          void other.offsetWidth;
-          other.style.transition = 'clip-path 1600ms ' + EASE;
-          other.style.clipPath = 'inset(0 46% 0 0)';
-          const sc = other.closest('.pub__scene');
-          const btn = sc && $$('.seg button', sc).find((x) => x.dataset.menu === other.dataset.menu);
-          if (btn) btn.classList.add('is-demo');
-        }, i * 300));
-      }, () => {
-        $$('#publish .seg button.is-demo').forEach((x) => x.classList.remove('is-demo'));
-        $$('#publish .pub__ph.is-coming').forEach((other) => {
-          other.style.transition = ''; other.style.clipPath = '';
-          other.classList.remove('is-coming');
-        });
-      });
+      /* r74: the old half-slide hint is gone; page.js shows a fingertip tapping the menu */
     }
   }
 

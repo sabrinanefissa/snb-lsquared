@@ -202,8 +202,16 @@ contact button: Book a demo
 contact error message: Enter a work email address.
 contact sent message: Request sent.
 # the form sits on the screens in this photo, so a new photo needs its screens in the same places
-contact photo: demo-wall.webp
+contact photo: contact-wide.webp
 contact phone photo: m/demo-wall.webp
+# the two side screens of the wall (laptop only): what happens next, and three facts (big | small)
+contact next title: What happens next
+contact next 1: Tell us about your screens.
+contact next 2: See the platform live.
+contact next 3: We handle the rest.
+contact fact 1: 50,000+|screens managed
+contact fact 2: 24/7|real support
+contact fact 3: 20 min|response time
 
 == SECTION ORDER ==
 # Write the sections in the order you want them. The hero always comes first.

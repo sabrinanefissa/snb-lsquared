@@ -620,7 +620,7 @@
 
 @media (min-width:760px){
   #demo{padding:0;display:flex;align-items:center;justify-content:center;background:#05090f;isolation:isolate}
-  #demo::before{content:"";position:absolute;inset:-40px;z-index:-1;background:url(../assets/demo-wall.webp?v=r23) center/cover no-repeat;filter:blur(34px) brightness(.72)}
+  #demo::before{content:"";position:absolute;inset:-40px;z-index:-1;background:url(../assets/contact-wide.webp?v=r74) center/cover no-repeat;filter:blur(34px) brightness(.72)}
   #demo .demo__shot{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 4%,#000 96%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 4%,#000 96%,transparent 100%)}
 }
 /* ---- the screen itself. r8 item 8: it now holds at short windows too, so the
@@ -815,7 +815,7 @@
 #clients.is-card .lw-card{background:radial-gradient(ellipse at 50% 45%,#12344F 0%,#06121E 78%);border:1px solid rgba(255,170,60,.34)}
 .lw-room > *{grid-area:1 / 1}
 .lw-room__say{position:relative;margin:0;padding:0 12px;text-align:center;font-stretch:70%;font-weight:800;text-transform:uppercase;letter-spacing:-.005em;line-height:1;
-  font-size:clamp(26px,2.4vw,34px);color:var(--paper);opacity:0;transition:opacity 1000ms var(--ease)}
+  font-size:clamp(26px,2.4vw,34px);color:var(--paper);opacity:0;transition:opacity 900ms var(--ease)}
 #clients.is-say .lw-room__say{opacity:1}
 /* the card: the empty screen, with a glow that breathes around it */
 .lw-card{position:absolute;inset:0;display:grid;place-items:center;border-radius:inherit;text-decoration:none;
@@ -829,7 +829,7 @@
    blended as light so white logos stay white. It pulses until the card is clicked. */
 .lw-glow{position:absolute;z-index:1;display:block;pointer-events:none;border-radius:50%;opacity:0;mix-blend-mode:screen;
   transform:translate(-50%,-50%) scale(.9);
-  background:radial-gradient(closest-side,rgba(255,153,0,.95) 0%,rgba(255,153,0,.55) 40%,rgba(255,153,0,.2) 68%,rgba(255,153,0,0) 100%);
+  background:radial-gradient(closest-side,rgba(255,153,0,.95) 0%,rgba(255,153,0,.6) 45%,rgba(255,153,0,.18) 72%,rgba(255,153,0,0) 92%);
   transition:opacity 900ms var(--ease)}
 #clients.is-card .lw-glow{animation:cardglow 2.6s ease-in-out 600ms infinite both}
 @keyframes cardglow{0%,100%{opacity:.45;transform:translate(-50%,-50%) scale(.9)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}}
@@ -841,3 +841,50 @@
   .lw,.lw__panel,.lw__panel img,.lw-room,.lw-room__say,.lw-card__t,.lw-card::after{transition:none}
   #clients.is-card .lw-glow{animation:none;opacity:.8}
 }
+
+/* ================================================================== r74 */
+/* contact: the wide wall (1942 x 809, 2.4:1) runs the full width of a laptop.
+   Measured screens: left x 2.7-21.7%, middle 23.6-76.3%, right 78.2-96.9%,
+   all y 13.1-78.4%. The form sits in the middle; the side screens carry what
+   happens next and three facts. */
+@media (min-width:760px){
+  .demo__stage{aspect-ratio:1942 / 809;width:min(100vw,calc(100dvh * 2.4))}
+  .demo__screen{left:24.4%;top:14.4%;width:51.1%;height:62.2%}
+  .demo__side{position:absolute;top:14.4%;height:62.2%;display:flex;flex-direction:column;justify-content:center;align-items:center;
+    gap:2.4cqw;text-align:center;color:var(--paper);padding:0 1.2cqw}
+  .demo__side--l{left:3.5%;width:17.4%}
+  .demo__side--r{left:79%;width:17.1%}
+  .demo__side-h{margin:0;font-stretch:70%;font-weight:800;text-transform:uppercase;letter-spacing:-.005em;line-height:.95;
+    font-size:1.75cqw;text-wrap:balance;text-shadow:0 2px 14px rgba(3,12,24,.5)}
+  .demo__side-h::after{content:"";display:block;width:2.6cqw;height:2px;margin:1.1cqw auto 0;border-radius:1px;background:var(--gold)}
+  .demo__steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1.7cqw}
+  .demo__steps li{display:flex;flex-direction:column;align-items:center;gap:.4cqw}
+  .demo__steps b{font-stretch:78%;font-weight:800;font-size:1cqw;letter-spacing:.14em;color:var(--gold)}
+  .demo__steps span{font-stretch:78%;font-weight:700;font-size:1.3cqw;line-height:1.18;text-wrap:balance;color:var(--paper)}
+  .demo__stat{margin:0;display:flex;flex-direction:column;align-items:center;gap:.3cqw}
+  .demo__stat b{font-stretch:64%;font-weight:800;font-size:3.1cqw;line-height:.9;letter-spacing:-.01em;color:var(--paper);text-shadow:0 2px 14px rgba(3,12,24,.5)}
+  .demo__stat span{font-stretch:78%;font-weight:700;font-size:.95cqw;text-transform:uppercase;letter-spacing:.14em;color:var(--paper-soft)}
+}
+
+/* publish: the pointer that shows what to do */
+.pub__ptr{position:absolute;left:0;top:0;z-index:30;pointer-events:none;opacity:0;transition:opacity 420ms var(--ease);will-change:transform}
+.pub__ptr.is-on{opacity:1}
+.pub__ptr svg{display:block;margin:-3px 0 0 -6px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5));transform-origin:6px 3px}
+.pub__ptr.is-press svg{animation:ptrpress 280ms var(--ease)}
+@keyframes ptrpress{45%{transform:scale(.84)}}
+.pub__ptr-ring{position:absolute;left:0;top:0;width:38px;height:38px;margin:-19px 0 0 -19px;border-radius:50%;
+  border:2px solid rgba(255,153,0,.9);opacity:0;transform:scale(.35)}
+.pub__ptr.is-press .pub__ptr-ring{animation:ptrring 640ms var(--ease)}
+@keyframes ptrring{0%{opacity:.95;transform:scale(.35)}100%{opacity:0;transform:scale(1.5)}}
+/* on a phone: a fingertip */
+.pub__ptr--tap::before{content:"";position:absolute;left:0;top:0;width:42px;height:42px;margin:-21px 0 0 -21px;border-radius:50%;
+  background:rgba(243,241,236,.34);border:2px solid rgba(243,241,236,.85);box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.pub__ptr--tap.is-press::before{animation:tappress 320ms var(--ease)}
+@keyframes tappress{45%{transform:scale(.8);background:rgba(243,241,236,.55)}}
+/* Publish glows the soft orange of the logo card, with no edge, until it is clicked */
+#pub-go.is-pulsing{animation:goglow 2.6s ease-in-out infinite}
+@keyframes goglow{
+  0%,100%{box-shadow:0 0 18px 2px rgba(255,153,0,.38),0 0 42px 10px rgba(255,153,0,.16)}
+  50%{box-shadow:0 0 26px 6px rgba(255,153,0,.72),0 0 60px 18px rgba(255,153,0,.3)}
+}
+@media (prefers-reduced-motion:reduce){#pub-go.is-pulsing{animation:none;box-shadow:0 0 24px 4px rgba(255,153,0,.55)}.pub__ptr{display:none}}
