@@ -47,21 +47,21 @@ hero title: One platform.
 statement: We own the platform.|You own the network.
 
 == WHY LSQUARED ==
-why title: Why LSQUARED.
+why title: Who We Are.
 why 1 word: People
-why 1 line: Every client, known by name.
+why 1 line: A business built on lasting relationships.
 why 1 photo: team.webp
 why 2 word: Trust
-why 2 line: Every problem has an owner.
+why 2 line: 20+ years of expertise, you can rely on.
 why 2 photo: team-logos.webp
-why 3 word: Standard
-why 3 line: High standards. Not negotiable.
+why 3 word: Security
+why 3 line: SOC 2 Type II. ISO 27001. Enterprise-grade security built in.
 why 3 photo: security.webp
 why 4 word: Support
 why 4 line: Less escalation. More resolution.
 why 4 photo: support.webp
 why 5 word: Scale
-why 5 line: Central control. Local freedom.
+why 5 line: We keep up, from start to finish. 
 why 5 photo: scale.webp
 
 == INDUSTRIES ==
@@ -76,7 +76,7 @@ industry 1 phone photo: m/ind-restaurants.webp
 industry 2 name: Retail
 industry 2 photo: ind-retail.webp
 industry 2 phone photo: m/ind-retail.webp
-industry 3 name: Hospitality
+industry 3 name: Enterprise 
 industry 3 photo: ind-hospitality.webp
 industry 3 phone photo: m/ind-hospitality.webp
 industry 4 name: Manufacturing
@@ -88,7 +88,8 @@ ceo quote: Twenty years leading teams in software, IT and engineering. Growing b
 ceo name: Gaj Ratnavel, CEO
 
 == PUBLISHING ==
-publishing title: Publishing made easy.
+publishing title: Published in one click.
+publishing line: It's that easy.
 publishing option 1: Breakfast
 publishing option 2: Lunch
 publishing button: Publish
@@ -105,7 +106,7 @@ publishing screen 2 option 2 photo: drivethru-menu.webp
 
 == DEAD SCREEN ==
 dead screen title: Everyone notices a dark screen.
-dead screen line: Yours stay on.
+dead screen line: We keep yours on.
 # the off and on photos must be the same scene at the same size, or the slider will not line up
 dead screen off photo: retail-off.webp
 dead screen on photo: retail-on.webp
@@ -121,14 +122,14 @@ testimonial logo: logos/purolator.png
 figure 1: One team.|Start to finish.
 figure 2: Your screens.|Our responsibility.
 figure 3: Every feature.|Included.
-figure 4: Remote|Publishing.
+figure 4: Remote Publishing.
 figure 5: Real support.|24/7.
 figure 6: Building relationships|since 2006.
 figure 7: 20 minute|response time.
 figure 8: 50,000+|screens managed.
 
 == CONTACT ==
-contact title: Talk to our team.
+contact title: We're here to help.
 contact email label: Work email
 contact email example: you@company.com
 contact screens label: Number of screens
