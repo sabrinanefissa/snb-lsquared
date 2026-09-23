@@ -4,9 +4,9 @@
 
 /* ---------------------------------------------------------------- tokens */
 :root{
-  --title:clamp(28px,8.4vw,36px);      /* one size for every section title on a phone */
-  --gap-title:26px;                     /* one gap from every title to its content */
-  --pad-sec:64px;
+  --title:calc(clamp(28px,8.4vw,36px) * var(--k-title,1));      /* one size for every section title on a phone */
+  --gap-title:calc(26px * var(--k-gap,1));                     /* one gap from every title to its content */
+  --pad-sec:calc(64px * var(--k-pad,1));
 }
 .t{text-wrap:balance}
 
@@ -166,13 +166,13 @@
 
 /* r39: no dead space around the photos. Sections sit closer, the industry
    name sits right under its photo and the link right under the name. */
-:root{--pad-sec:36px}
+:root{--pad-sec:calc(36px * var(--k-pad,1))}
 #industries,#reliability,#clients,#demo,#publish{padding-top:var(--pad-sec);padding-bottom:var(--pad-sec)}
 .ind__stage{--caprow:56px;margin-bottom:0}
 .ind__cap{top:calc(100% + 4px)}
 .ind__cta{margin-top:2px}
 .rely__frame{margin-bottom:0}
-#reliability{--pad-sec:36px}
+#reliability{--pad-sec:calc(36px * var(--k-pad,1))}
 
 /* r40: the three type sections fill their screen. Lines may break on a phone;
    the words are set big enough to own the section, not float in it. */
@@ -489,3 +489,13 @@ html.mnav-open .topbar{transform:translateY(0)}
 
 /* r55: the hero and its type are locked to the measured height too */
 #hero{height:var(--app-h,100svh)}
+
+/* ================================================================== r60
+   the size dials in content.js (100% = as designed), phone */
+.statement__h{font-size:calc(18.5vw * var(--k-statement,1))}
+.fall__line{font-size:calc(9.6vw * var(--k-quote,1))}
+.strips{height:calc((var(--app-h,100svh) - 2 * var(--pad-sec) - var(--gap-title) - 2.2 * var(--title)) * var(--k-strips,1))}
+.ind__stage{--indw:calc((100vw - 2 * var(--gut)) * var(--k-ind,1));height:calc(var(--indw) / var(--kw,.8) + var(--caprow))}
+.ind__ph{width:var(--indw);height:calc(var(--indw) / var(--kw,.8))}
+.pub__shot{width:calc(100% * var(--k-pub,1));justify-self:center;margin-left:auto;margin-right:auto}
+.rely__frame{width:calc((100vw - 2 * var(--gut)) * var(--k-rely,1))}

@@ -2,7 +2,7 @@
 /* animated hero: full-width screen count, then One location, One platform, the logo.
    Tap or click anywhere on the hero to jump to the next scene. */
 (function(){
-const A='assets/',V='?v=r59';
+const A='assets/',V='?v=r60';
 /* r18: the count is a code-drawn wall of glowing screens (js/herowall.js), no photographs. 200 removed. */
 const BEATS=[[1,'Screen'],[10,'Screens'],[100,'Screens'],[500,'Screens']];
 const hero=document.getElementById('hero'),num=document.getElementById('h_num'),word=document.getElementById('h_word'),

@@ -335,7 +335,7 @@
    edge with a thin seam, each toggle and its live line sit on the bottom edge of their own photo (the menu
    boards are at the top, so nothing is covered), and Publish sits centred under the seam. Photos stay WHOLE. */
 @media (min-width:761px){
-  #publish{--pad-sec:clamp(20px,3.6dvh,36px);padding-left:20px;padding-right:20px}
+  #publish{--pad-sec:calc(clamp(20px,3.6dvh,36px) * var(--k-pad,1));padding-left:20px;padding-right:20px}
   .pub__rig{
     /* r28: the photos sit at the exact centre of the section, so the same room is kept above them (title)
        and below them (Publish) */
@@ -392,7 +392,7 @@
   font-size:clamp(17px,1.7vw,24px);color:var(--paper-soft);
 }
 /* r16: less empty padding here, so the image gets the height (and with it the width) */
-#reliability{--pad-sec:clamp(30px,6dvh,56px)}
+#reliability{--pad-sec:calc(clamp(30px,6dvh,56px) * var(--k-pad,1))}
 .rely__frame{
   position:relative;overflow:hidden;border:0;border-radius:10px;
   margin-top:var(--gap-title);
@@ -743,3 +743,14 @@
 @media (hover:hover) and (pointer:fine){.ind__dot:not(.is-on):hover::before{opacity:.7}}
 .ind__dot:focus-visible{outline:2px solid var(--gold);outline-offset:-4px;border-radius:14px}
 @media (prefers-reduced-motion:reduce){.ind--fade .ind__slide,.ind__dot::before{transition:none}}
+
+/* r60: the size dials in content.js (100% = as designed). Laptop only here;
+   the phone has its own at the end of mobile.css. */
+@media (min-width:761px){
+  .statement__h{font-size:calc(clamp(38px,7.2vw,108px) * var(--k-statement,1))}
+  .fall__line{font-size:calc(clamp(28px,3.7vw,72px) * var(--k-quote,1))}
+  .strips{--rowh:calc(min(calc(100dvh - 2 * var(--pad-sec) - var(--gap-title) - 1.1 * var(--title)),720px) * var(--k-strips,1))}
+  .ind__stage{height:calc(min(80dvh,calc(100vw / 3)) * var(--k-ind,1))}
+  .pub__rig{--pubh:calc((100dvh - 2 * var(--pad-sec) - 2 * (var(--title) + var(--gap-title))) * var(--k-pub,1))}
+  .rely__frame{width:calc(min(calc(100vw - 40px),2400px) * var(--k-rely,1))}
+}

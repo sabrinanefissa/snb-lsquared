@@ -26,9 +26,9 @@
      Nothing outside this scale, and the two section level rhythms below. */
   --s1:8px;  --s2:12px; --s3:16px; --s4:20px;
   --s5:32px; --s6:48px; --s7:72px;
-  --pad-sec:clamp(30px,7dvh,96px);      /* even top and bottom on every section */
-  --title:clamp(24px,3.5vw,50px);         /* r20: every section title is this one size */
-  --gap-title:clamp(24px,5.5dvh,52px);    /* title group to its content */
+  --pad-sec:calc(clamp(30px,7dvh,96px) * var(--k-pad,1));      /* even top and bottom on every section */
+  --title:calc(clamp(24px,3.5vw,50px) * var(--k-title,1));         /* r20: every section title is this one size */
+  --gap-title:calc(clamp(24px,5.5dvh,52px) * var(--k-gap,1));    /* title group to its content */
   --shadow:0 16px 32px rgba(0,0,0,.55);
 }
 

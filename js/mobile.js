@@ -38,8 +38,25 @@
     const k = Object.keys(PHONE).find((n) => url.indexOf(n) >= 0);
     return k ? PHONE[k] : null;
   };
+  /* r60: a phone photo named in content.js (data-phone) wins over the list
+     above; its shape is measured, so any portrait photo works */
+  const RATIO = {};
+  const ratioOf = (url, cb) => {
+    if (RATIO[url]) return cb(RATIO[url]);
+    const im = new Image();
+    im.onload = () => { if (im.naturalHeight) { RATIO[url] = (im.naturalWidth / im.naturalHeight).toFixed(4); cb(RATIO[url]); } };
+    im.src = url;
+  };
   const swapBg = (el) => {
     const m = /url\(["']?([^"')]+)/.exec(el.style.backgroundImage || '');
+    const want = el.dataset.phone;
+    if (want) {
+      if (m && m[1] === want) return;
+      el.style.backgroundImage = 'url(' + want + ')';
+      if (RATIO[want]) el.style.setProperty('--kw', RATIO[want]);
+      ratioOf(want, (x) => { if ((el.style.backgroundImage || '').indexOf(want) >= 0) el.style.setProperty('--kw', x); });
+      return;
+    }
     const hit = m && phoneFor(m[1]);
     if (!hit) return;
     el.style.backgroundImage = 'url(' + hit[0] + ')';
@@ -47,7 +64,10 @@
   };
   $$('.rely__ph').forEach(swapBg);
   const wall = $('.demo__img');
-  if (wall) { const hit = phoneFor(wall.getAttribute('src')); if (hit) { wall.src = hit[0]; wall.width = 852; wall.height = 1846; } }
+  if (wall) {
+    const hit = wall.dataset.phone ? [wall.dataset.phone] : phoneFor(wall.getAttribute('src'));
+    if (hit) { wall.src = hit[0]; wall.width = 852; wall.height = 1846; }
+  }
   /* the wall photo covers the whole screen; the layer that holds the headline,
      the fields and the link is sized to the photo as displayed, so the screen
      positions (measured on the photo) stay true whatever the phone's shape */
@@ -55,8 +75,9 @@
     const stage = $('.demo__stage'), screen = $('.demo__screen'), h = $('.demo__h');
     if (stage && screen) {
       const fit = () => {
-        const W = stage.clientWidth, H = stage.clientHeight, R = 852 / 1846;
-        const k = Math.max(W / 852, H / 1846), iw = 852 * k, ih = 1846 * k;
+        const pw = (wall && wall.naturalWidth) || 852, pht = (wall && wall.naturalHeight) || 1846;
+        const W = stage.clientWidth, H = stage.clientHeight;
+        const k = Math.max(W / pw, H / pht), iw = pw * k, ih = pht * k;
         screen.style.left = ((W - iw) / 2) + 'px'; screen.style.top = ((H - ih) / 2) + 'px';
         screen.style.width = iw + 'px'; screen.style.height = ih + 'px';
       };
@@ -101,7 +122,7 @@
       const menu = document.createElement('div'); menu.className = 'mnav'; menu.id = 'mnav';
       const list = document.createElement('nav'); list.className = 'mnav__list'; list.setAttribute('aria-label', 'Main');
       $$('a', nav).forEach((a) => { list.appendChild(a.cloneNode(true)); });
-      const demo = document.createElement('a'); demo.className = 'btn mnav__demo'; demo.href = '#demo'; demo.textContent = 'Book a demo';
+      const demo = document.createElement('a'); demo.className = 'btn mnav__demo'; demo.href = '#demo'; demo.textContent = ($('.topbar .btn') || {}).textContent || 'Book a demo';
       menu.appendChild(list); menu.appendChild(demo);
       document.body.appendChild(menu);
       const set = (open) => { menu.classList.toggle('is-open', open); burger.classList.toggle('is-open', open); burger.setAttribute('aria-expanded', open ? 'true' : 'false'); document.documentElement.classList.toggle('mnav-open', open); };
@@ -174,19 +195,20 @@
       const onPh = $('.ind__slide.is-on .ind__ph', stage);
       if (onPh) syncKW(onPh);
 
-      const ORDER = [['Restaurants', 'ind-restaurants.webp'], ['Retail', 'ind-retail.webp'], ['Hospitality', 'ind-hospitality.webp'], ['Manufacturing', 'mfg-on.webp']];
+      const ORDER = window.LSQ_INDLIST || [];
       const stop = hint(stage, () => {
         const on = $('.ind__slide.is-on', stage), back = $('.ind__slide:not(.is-on)', stage);
         if (!on || !back) return;
         /* the next industry is set up behind the current photo, so sliding
            the current one aside reveals it, the same as a real swipe would */
-        const cur = ORDER.findIndex((o) => o[0] === ($('#ind-name') || {}).textContent);
-        const nxt = ORDER[(cur + 1) % ORDER.length], hit = PHONE[nxt[1]];
+        const cur = ORDER.findIndex((o) => o.name === ($('#ind-name') || {}).textContent);
+        const nxt = ORDER[(cur + 1) % ORDER.length];
         const bph = $('.ind__ph', back);
-        if (hit && bph) {
-          bph.style.backgroundImage = 'url(' + hit[0] + ')';
-          if (hit[1]) bph.style.setProperty('--kw', hit[1]);
-          const nm = $('.ind__capname', back); if (nm) nm.textContent = nxt[0];
+        const url = nxt && (nxt.phone || (phoneFor(nxt.photo) || [])[0]);
+        if (url && bph) {
+          bph.dataset.phone = url;
+          swapBg(bph);
+          const nm = $('.ind__capname', back); if (nm) nm.textContent = nxt.name;
         }
         back.style.transition = 'none'; back.style.transform = 'translateX(0)';
         stage.classList.add('is-peeking');

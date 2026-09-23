@@ -138,6 +138,18 @@
       ['Hospitality', 'assets/ind-hospitality.webp?v=r50', 'Guests know where to go the moment they walk in.', 'center top', '2.990', '2.990'],
       ['Manufacturing', 'assets/mfg-on.webp?v=r50', 'Today’s targets, where the whole floor can see them.', 'center top', '3.000', '3.000']
     ];
+    /* r60: the list in content.js wins: its names, photos and phone photos,
+       in its order. Each photo's shape is measured, so any shape works. */
+    if (window.LSQ_IND) IND.splice(0, IND.length, ...window.LSQ_IND.map((x) => [x.name, x.photo, '', 'center top', '3.000', '3.000', x.phone]));
+    window.LSQ_INDLIST = IND.map((d) => ({ name: d[0], photo: d[1], phone: d[6] || '' }));
+    const RATIO = {};
+    const ratioOf = (url, cb) => {
+      if (RATIO[url]) return cb(RATIO[url]);
+      const im = new Image();
+      im.onload = () => { if (im.naturalHeight) { RATIO[url] = (im.naturalWidth / im.naturalHeight).toFixed(4); cb(RATIO[url]); } };
+      im.src = url;
+    };
+    const PHONE_W = matchMedia('(max-width:760px)').matches;
     /* r30: the photographs are the carousel. They slide sideways, always in the direction of travel, and loop.
        Each photo carries its industry name and its line on its own bottom edge. */
     const name = $('#ind-name'), stage = $('#ind-stage'), prev = $('#ind-prev'), next = $('#ind-next');
@@ -166,10 +178,15 @@
       }
       const fill = (slide, d) => {
         const ph = $('.ind__ph', slide);
+        if (d[6]) ph.dataset.phone = d[6]; else delete ph.dataset.phone;
+        ph.dataset.src = d[1];
         ph.style.backgroundImage = 'url(' + d[1] + ')';
         ph.style.backgroundPosition = d[3];
-        ph.style.setProperty('--kw', d[4]);
-        ph.style.setProperty('--ar', d[5]);
+        const r = RATIO[d[1]] || d[4];
+        ph.style.setProperty('--kw', r);
+        ph.style.setProperty('--ar', r);
+        /* the phone sets its own shape from its own photo (js/mobile.js) */
+        if (!PHONE_W) ratioOf(d[1], (x) => { if (ph.dataset.src === d[1]) { ph.style.setProperty('--kw', x); ph.style.setProperty('--ar', x); } });
         $('.ind__capname', slide).textContent = d[0];
       };
       function go(n, dir) {
@@ -234,9 +251,12 @@
     const go = $('#pub-go');
     const scenes = $$('.pub__scene');
     if (go && scenes.length) {
-      const LIVE = { breakfast: 'Breakfast live', lunch: 'Lunch live' };
-      const READY = { breakfast: 'Breakfast ready', lunch: 'Lunch ready' };
-      const NONE = 'Nothing published';
+      /* r60: the words come from content.js: the option's own name plus a word */
+      const T = window.LSQ || {};
+      const optName = (menu) => { const b = $('#publish .seg button[data-menu="' + menu + '"]'); return b ? b.textContent.trim() : menu; };
+      const LIVE = { breakfast: optName('breakfast') + ' ' + (T['publishing live word'] || 'live'), lunch: optName('lunch') + ' ' + (T['publishing live word'] || 'live') };
+      const READY = { breakfast: optName('breakfast') + ' ' + (T['publishing ready word'] || 'ready'), lunch: optName('lunch') + ' ' + (T['publishing ready word'] || 'ready') };
+      const NONE = T['publishing status before'] || 'Nothing published';
       let busy = false;
 
       const state = scenes.map((el) => ({
@@ -511,7 +531,7 @@
         const email = $('#f-email');
         const ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim());
         if (!ok) {
-          note.textContent = 'Enter a work email address.';
+          note.textContent = (window.LSQ || {})['contact error message'] || 'Enter a work email address.';
           note.classList.add('is-error');
           email.setAttribute('aria-invalid', 'true');
           email.focus();
@@ -519,7 +539,7 @@
         }
         email.removeAttribute('aria-invalid');
         note.classList.remove('is-error');
-        note.textContent = 'Request sent.';
+        note.textContent = (window.LSQ || {})['contact sent message'] || 'Request sent.';
       });
     }
   }
