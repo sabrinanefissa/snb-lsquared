@@ -145,6 +145,25 @@
     if (stage && prev && next && A && B) {
       IND.forEach((d) => warm(d[1]));
       let front = A, back = B, cur = -1, busy = false;
+      /* r59: on a computer the photos fade into each other, a click on the
+         photo shows the next industry, and a row of dots under it says which
+         one of the four is showing. The phone keeps its sideways slide. */
+      const FADE = !matchMedia('(max-width:760px)').matches;
+      let dots = [];
+      if (FADE) {
+        stage.classList.add('ind--fade');
+        const row = document.createElement('div');
+        row.className = 'ind__dots';
+        row.setAttribute('aria-label', 'Industries');
+        dots = IND.map((d, i) => {
+          const b = document.createElement('button');
+          b.type = 'button'; b.className = 'ind__dot';
+          b.setAttribute('aria-label', d[0]);
+          b.addEventListener('click', () => go(i, i > cur ? 1 : -1));
+          row.appendChild(b); return b;
+        });
+        stage.after(row);
+      }
       const fill = (slide, d) => {
         const ph = $('.ind__ph', slide);
         ph.style.backgroundImage = 'url(' + d[1] + ')';
@@ -160,6 +179,19 @@
         cur = n;
         fill(back, IND[n]);
         if (name) name.textContent = IND[n][0];
+        dots.forEach((b, i) => { b.classList.toggle('is-on', i === n); if (i === n) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); });
+        if (FADE) {
+          /* the new photo fades in over the old one, which stays whole behind it */
+          const old = front;
+          if (!first && !RM.matches) {
+            busy = true;
+            old.classList.add('is-under');
+            setTimeout(() => { old.classList.remove('is-under'); busy = false; }, 820);
+          }
+          back.classList.add('is-on'); old.classList.remove('is-on');
+          front = back; back = old;
+          return;
+        }
         if (first || RM.matches) {
           back.style.transition = 'none'; front.style.transition = 'none';
           back.style.transform = 'translateX(0)'; front.style.transform = 'translateX(100%)';
@@ -187,6 +219,7 @@
         if (sx === null) return;
         const dx = e.clientX - sx; sx = null;
         if (Math.abs(dx) > 44) go(cur + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+        else if (FADE && e.button === 0) go(cur + 1, 1);   /* a click on the photo: next industry */
       });
       go(0, 1);
     }

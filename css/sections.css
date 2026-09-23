@@ -726,3 +726,20 @@
   45%{box-shadow:0 0 0 9px rgba(240,162,74,.26),0 0 28px 6px rgba(240,162,74,.38)}
 }
 @media (prefers-reduced-motion:reduce){#pub-go.is-pulsing{animation:none}}
+
+/* r59: industries on a computer. The photos fade into each other, a click on
+   the photo moves to the next one, and the dots under it show where you are. */
+.ind--fade{cursor:pointer}
+.ind--fade .ind__slide,.ind--fade .ind__slide.is-on{transform:none}
+.ind--fade .ind__slide{opacity:0;z-index:1;transition:opacity 800ms var(--ease)}
+.ind--fade .ind__slide.is-under{opacity:1;z-index:1;transition:none}
+.ind--fade .ind__slide.is-on{opacity:1;z-index:2}
+.ind--fade .ind__arrow{display:none}
+.ind__dots{flex:0 0 auto;display:flex;justify-content:center;align-items:center;gap:2px;margin:calc(-1 * var(--s1)) 0 0}
+.ind__dot{width:28px;height:28px;padding:0;border:0;background:none;cursor:pointer;display:grid;place-items:center}
+.ind__dot::before{content:"";display:block;width:8px;height:8px;border-radius:4px;background:var(--paper);opacity:.32;
+  transition:width 360ms var(--ease),opacity 240ms var(--ease),background-color 240ms var(--ease)}
+.ind__dot.is-on::before{width:24px;background:var(--gold);opacity:1}
+@media (hover:hover) and (pointer:fine){.ind__dot:not(.is-on):hover::before{opacity:.7}}
+.ind__dot:focus-visible{outline:2px solid var(--gold);outline-offset:-4px;border-radius:14px}
+@media (prefers-reduced-motion:reduce){.ind--fade .ind__slide,.ind__dot::before{transition:none}}
