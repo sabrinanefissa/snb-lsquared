@@ -772,30 +772,41 @@
 .fall__stage .sec-end{margin-top:clamp(14px,2.4dvh,26px)}
 #demo > .sec-end{position:absolute;left:0;right:0;bottom:clamp(14px,3dvh,28px);margin:0 auto;padding:0 20px}
 
-/* r66: trusted by, the client wall. A 3 by 3 wall of screens, logos in their
-   own colours on white screens, the L Squared mark glowing on the middle one.
-   One screen at a time changes content with a scan line. */
-.lwall{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,1.1vw,16px);width:100%;max-width:720px;margin:0 auto}
-.lwall--few{display:flex;flex-wrap:wrap;justify-content:center}
-.lwall--few .lw{width:clamp(150px,14vw,210px)}
-.lw{position:relative;aspect-ratio:2 / 1;padding:5px;border-radius:9px;background:#0B1826;
-  box-shadow:0 0 0 1px rgba(124,194,236,.16),0 0 26px rgba(86,176,228,.2);
-  transition:transform 260ms var(--ease),box-shadow 260ms var(--ease)}
-.lw__panel{position:relative;height:100%;border-radius:5px;background:#fff;overflow:hidden}
+/* r67: trusted by. A thin section: the title, a wall of screens that fills up
+   with client logos, one free screen that lights up, and the invitation. */
+#clients .quote{display:none}
+.lsq-quote #clients .quote{display:flex}
+.clients__row{display:flex;flex-direction:column;align-items:center;max-width:none}
+.lwall{--cols:5;--gap:clamp(10px,1vw,14px);display:flex;flex-wrap:wrap;justify-content:center;gap:var(--gap);
+  width:min(100%,1180px);margin:0 auto}
+.lw{position:relative;display:block;flex:0 0 auto;width:calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols));
+  aspect-ratio:2.1 / 1;padding:5px;border-radius:9px;background:#0B1826;
+  box-shadow:0 0 0 1px rgba(124,194,236,.16),0 0 24px rgba(86,176,228,.18)}
+.lw__panel{position:relative;display:block;height:100%;border-radius:5px;background:#fff;overflow:hidden}
 .lw__panel img{position:absolute;left:13%;top:17%;width:74%;height:66%;object-fit:contain}
-.lw--mark{box-shadow:0 0 0 1px rgba(124,194,236,.3),0 0 34px rgba(86,176,228,.45)}
-.lw--mark .lw__panel{background:radial-gradient(ellipse at 50% 45%,#12334F 0%,#06121E 72%);display:grid;place-items:center}
-.lw__mark{display:grid;grid-template-columns:repeat(3,1fr);gap:4%;width:30%;aspect-ratio:1}
-.lw__mark i{display:block;border-radius:1px;background:var(--blue);box-shadow:0 0 10px rgba(86,176,228,.55)}
-.lw__mark i.g{background:#8E9BA8;box-shadow:none}
-.lw__mark i.o{background:none;box-shadow:none}
-.lw__scan{position:absolute;left:5px;right:5px;top:5px;height:2px;border-radius:1px;pointer-events:none;opacity:0;
-  background:linear-gradient(90deg,rgba(86,176,228,0),rgba(124,194,236,1),rgba(86,176,228,0));box-shadow:0 0 12px rgba(86,176,228,.9)}
-.lw.is-changing .lw__scan{animation:lwscan 700ms var(--ease) both}
-.lw__panel img.is-in{animation:lwin 700ms var(--ease) both}
-.lw__panel img.is-out{animation:lwout 440ms var(--ease) both}
-@keyframes lwscan{0%{top:5px;opacity:1}88%{opacity:1}100%{top:calc(100% - 7px);opacity:0}}
-@keyframes lwin{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
-@keyframes lwout{to{opacity:0;transform:translateY(-8%)}}
-@media (hover:hover) and (pointer:fine){.lw:not(.lw--mark):hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(124,194,236,.3),0 0 34px rgba(86,176,228,.4)}}
-@media (prefers-reduced-motion:reduce){.lw.is-changing .lw__scan,.lw__panel img.is-in,.lw__panel img.is-out{animation:none}}
+.lwall.is-armed .lw{opacity:0;transform:scale(.9)}
+.lwall.is-armed .lw.is-in{opacity:1;transform:none;transition:opacity 380ms var(--ease),transform 520ms var(--ease)}
+/* the free screen: dark until it is its turn, then it switches on */
+.lw--you .lw__panel{background:radial-gradient(ellipse at 50% 45%,#0F2C45 0%,#06121E 75%);transition:background-color 400ms var(--ease)}
+.lw--you{cursor:pointer;transition:box-shadow 500ms var(--ease),opacity 380ms var(--ease),transform 520ms var(--ease)}
+.lw__plus{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;opacity:0;transform:scale(.6);
+  transition:opacity 420ms var(--ease),transform 520ms var(--ease)}
+.lw__plus::before,.lw__plus::after{content:"";position:absolute;left:50%;top:50%;background:var(--blue);border-radius:1px;box-shadow:0 0 12px rgba(86,176,228,.9)}
+.lw__plus::before{width:26px;height:3px;margin:-1.5px 0 0 -13px}
+.lw__plus::after{width:3px;height:26px;margin:-13px 0 0 -1.5px}
+.lw--you.is-lit{box-shadow:0 0 0 1px rgba(124,194,236,.5),0 0 34px rgba(86,176,228,.55);animation:youglow 2.8s var(--ease) 600ms infinite}
+.lw--you.is-lit .lw__plus{opacity:1;transform:none}
+@keyframes youglow{0%,100%{box-shadow:0 0 0 1px rgba(124,194,236,.5),0 0 34px rgba(86,176,228,.55)}50%{box-shadow:0 0 0 1px rgba(124,194,236,.7),0 0 46px rgba(86,176,228,.8)}}
+@media (hover:hover) and (pointer:fine){.lw--you.is-lit:hover{transform:translateY(-2px)}}
+/* the invitation */
+.clients__invite{display:flex;flex-direction:column;align-items:center;gap:var(--s1);margin-top:clamp(18px,3.4dvh,34px)}
+.clients__invite.is-armed{opacity:0;transform:translateY(8px)}
+.clients__invite.is-armed.is-in{opacity:1;transform:none;transition:opacity 480ms var(--ease),transform 560ms var(--ease)}
+.clients__invite-h{margin:0;font-stretch:70%;font-weight:800;text-transform:uppercase;letter-spacing:-.005em;line-height:1;
+  font-size:clamp(22px,2.3vw,34px);color:var(--paper)}
+.clients__invite-go{position:relative;display:inline-flex;align-items:center;min-height:44px;padding:0 2px;
+  font-stretch:78%;font-weight:700;font-size:clamp(15px,1.3vw,18px);letter-spacing:.02em;color:var(--hi);text-decoration:none}
+.clients__invite-go::after{content:"";position:absolute;left:0;right:0;bottom:8px;height:2px;border-radius:1px;background:var(--gold)}
+.clients__invite-go:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){.clients__invite-go:hover{color:var(--paper)}}
+@media (prefers-reduced-motion:reduce){.lw--you.is-lit{animation:none}}

@@ -94,7 +94,7 @@
      two slow rows of logos, moving opposite ways, instead of the orbit */
   {
     const row = $('.clients__row'), orbit = $('#clients .lwall') || $('#clients .orbit');
-    if (row && orbit) {
+    if (row && orbit && !$('#clients .lwall')) {   /* r67: the wall replaces the rows */
       /* r66: the list comes from content.js (through page.js) */
       const L = (window.LSQ_LOGOLIST || []).map((l) => l.src);
       const mk = (list, cls) => {

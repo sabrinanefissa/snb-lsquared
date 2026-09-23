@@ -98,6 +98,8 @@
     text('trusted title', '.clients__title');
     if (has('trusted title')) { var cl = document.getElementById('clients'); if (cl) cl.setAttribute('aria-label', C['trusted title']); }
     text('testimonial', '.quote__text');
+    /* r67: the testimonial is off unless content.js turns it back on */
+    if (/^yes/i.test(C['show testimonial'] || '')) root.classList.add('lsq-quote');
     if (has('testimonial logo')) pick('.quote__logo').forEach(function (el) { el.removeAttribute('width'); el.removeAttribute('height'); el.src = file(C['testimonial logo']); });
 
     /* figures: "big words | small words" */
@@ -182,7 +184,7 @@
     var TXT = {
       statement: ['.statement__h'], why: ['.strips__title'], industries: ['.ind__title', '.ind__cta'],
       'ceo quote': ['.fall__line', '.fall__line i.is-on', '.fall__by'], publishing: ['.pub__title'],
-      'dead screen': ['.rely__h'], 'trusted by': ['.clients__title', '.quote__text'], figures: ['.beats__fig'], contact: []
+      'dead screen': ['.rely__h'], 'trusted by': ['.clients__title', '.quote__text', '.clients__invite-h', '.clients__invite-go'], figures: ['.beats__fig'], contact: []
     };
     SECS.forEach(function (s) {
       var v = C[s[0] + ' text colour'] || C[s[0] + ' text color'];

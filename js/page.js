@@ -546,82 +546,76 @@
     }
   }
 
-  /* ------------------------------------------------------------ 6b. trusted by: the client wall
-     r66: the clients' logos, in colour, on a 3 by 3 wall of screens with the
-     L Squared mark on the middle screen. Every few seconds one screen changes
-     to another client, the way a real display switches content, so every
-     logo in the list gets its turn however many there are. Phones get their
-     own two moving rows (js/mobile.js); both read the same list, which
-     content.js can change. */
+  /* ------------------------------------------------------------ 6b. trusted by: the wall fills up
+     r67: the section is a wall of screens. When it comes into view one client
+     logo lights up in the middle, then more join, faster and faster, spreading
+     out until the wall is full, all in about a second and a half. The last
+     screen stays free: it lights up blue with a plus, and the invitation and a
+     Book a demo link appear under the wall. Laptop and phone, one list from
+     content.js. */
   {
     const DEF = [['The UPS Store', 'ups-store'], ['Cold Stone Creamery', 'cold-stone-creamery'], ['Hatch', 'hatch'],
       ['McMaster University', 'mcmaster-university'], ['International Centre', 'international-centre'], ['Cisco', 'cisco'],
       ['Best Buy Business', 'best-buy-business'], ['Lenovo', 'lenovo'], ['SFM', 'sfm']]
       .map(([name, k]) => ({ name, src: 'assets/logos/' + k + '-hq.png?v=r55' }));
     const LOGOS = (window.LSQ_LOGOS && window.LSQ_LOGOS.length) ? window.LSQ_LOGOS : DEF;
+    const T = window.LSQ || {};
     window.LSQ_LOGOLIST = LOGOS;
-    const orbit = $('#clients .orbit');
-    if (orbit) {
+    const orbit = $('#clients .orbit'), sec = $('#clients');
+    if (orbit && sec) {
+      const PHONE = matchMedia('(max-width:760px)').matches;
       const wall = document.createElement('div');
-      wall.className = 'lwall'; wall.setAttribute('aria-hidden', 'true');
+      wall.className = 'lwall';
       const names = document.createElement('ul');
       names.className = 'sr-only'; names.setAttribute('aria-label', 'Clients');
       LOGOS.forEach((l) => { if (!l.name) return; const li = document.createElement('li'); li.textContent = l.name; names.appendChild(li); });
       orbit.replaceWith(wall); wall.after(names);   /* the old orbit never starts */
+      wall.setAttribute('aria-hidden', 'true');
 
-      if (!matchMedia('(max-width:760px)').matches) {
-        const SLOTS = 8;
-        const logoImg = (l) => { const im = document.createElement('img'); im.src = l.src; im.alt = ''; im.decoding = 'async'; return im; };
-        const screen = (l) => {
-          const s = document.createElement('div'); s.className = 'lw';
-          const p = document.createElement('div'); p.className = 'lw__panel';
-          if (l) p.appendChild(logoImg(l));
-          const scan = document.createElement('i'); scan.className = 'lw__scan';
-          s.append(p, scan); return s;
-        };
-        const mark = () => {
-          const s = screen(null); s.classList.add('lw--mark');
-          const m = document.createElement('span'); m.className = 'lw__mark';
-          ['b', 'g', 'g', 'b', 'o', 'g', 'b', 'b', 'g'].forEach((c) => { const i = document.createElement('i'); i.className = c; m.appendChild(i); });
-          s.firstChild.appendChild(m); return s;
-        };
-        const shown = LOGOS.slice(0, SLOTS), queue = LOGOS.slice(SLOTS);
-        const screens = shown.map((l) => screen(l));
-        if (LOGOS.length >= SLOTS) {
-          screens.slice(0, 4).forEach((s) => wall.appendChild(s));
-          wall.appendChild(mark());
-          screens.slice(4).forEach((s) => wall.appendChild(s));
-        } else {
-          wall.classList.add('lwall--few');
-          const mid = Math.floor(screens.length / 2);
-          screens.forEach((s, i) => { if (i === mid) wall.appendChild(mark()); wall.appendChild(s); });
-          if (!screens.length) wall.appendChild(mark());
-        }
-        const current = shown.slice();
-        const change = (i, l) => {
-          const s = screens[i], p = s.firstChild, old = p.querySelector('img:not(.is-out)');
-          const im = logoImg(l); im.classList.add('is-in');
-          if (old) { old.classList.add('is-out'); setTimeout(() => old.remove(), 460); }
-          p.appendChild(im); current[i] = l;
-          s.classList.remove('is-changing'); void s.offsetWidth; s.classList.add('is-changing');
-          setTimeout(() => { im.classList.remove('is-in'); s.classList.remove('is-changing'); }, 760);
-        };
-        LOGOS.forEach((l) => warm(l.src));
-        if (!RM.matches && screens.length > 1) {
-          let last = -1, timer = 0, inView = false;
-          const tick = () => {
-            let i; do { i = Math.floor(Math.random() * screens.length); } while (i === last && screens.length > 1);
-            last = i;
-            if (queue.length) { queue.push(current[i]); change(i, queue.shift()); }
-            else {   /* no logo waiting: two screens trade places */
-              let j; do { j = Math.floor(Math.random() * screens.length); } while (j === i);
-              const a = current[i], b = current[j]; change(i, b); setTimeout(() => change(j, a), 180);
-            }
-          };
-          const arm = () => { clearTimeout(timer); if (inView && !document.hidden) timer = setTimeout(() => { tick(); arm(); }, 2600); };
-          new IntersectionObserver(([e]) => { inView = e.isIntersecting; arm(); }, { threshold: .3 }).observe(wall);
-          document.addEventListener('visibilitychange', arm);
-        }
+      const tiles = LOGOS.map((l) => {
+        const t = document.createElement('div'); t.className = 'lw';
+        const p = document.createElement('div'); p.className = 'lw__panel';
+        const im = document.createElement('img'); im.src = l.src; im.alt = ''; im.decoding = 'async';
+        p.appendChild(im); t.appendChild(p); wall.appendChild(t); return t;
+      });
+      /* the free screen, last on the wall: it is the way in */
+      const you = document.createElement('a');
+      you.className = 'lw lw--you'; you.href = '#demo'; you.tabIndex = -1;
+      you.innerHTML = '<span class="lw__panel"><i class="lw__plus"></i></span>';
+      wall.appendChild(you);
+      /* the wall is as close to two rows as it can be on a computer, two
+         columns on a phone */
+      const n = tiles.length + 1;
+      const cols = PHONE ? 2 : Math.min(6, Math.max(3, Math.ceil(n / 2)));
+      wall.style.setProperty('--cols', cols);
+
+      const inv = document.createElement('div'); inv.className = 'clients__invite';
+      const h = document.createElement('p'); h.className = 'clients__invite-h';
+      h.textContent = T['trusted by invite line'] || 'Room for one more.';
+      const go = document.createElement('a'); go.className = 'clients__invite-go'; go.href = '#demo';
+      go.textContent = T['trusted by invite button'] || 'Book a demo';
+      inv.append(h, go);
+      names.after(inv);
+
+      const done = () => { tiles.forEach((t) => t.classList.add('is-in')); you.classList.add('is-in', 'is-lit'); inv.classList.add('is-in'); };
+      if (RM.matches) done();
+      else {
+        wall.classList.add('is-armed'); inv.classList.add('is-armed');
+        const io = new IntersectionObserver(([e]) => {
+          if (!e.isIntersecting) return;
+          io.disconnect();
+          /* the order: nearest the middle of the wall first, outward from there */
+          const wr = wall.getBoundingClientRect(), cx = wr.left + wr.width / 2, cy = wr.top + wr.height / 2;
+          const order = tiles.map((t) => { const r = t.getBoundingClientRect(); return [Math.hypot((r.left + r.width / 2 - cx) / wr.width, (r.top + r.height / 2 - cy) / wr.height * .6), t]; })
+            .sort((x, y) => x[0] - y[0]).map((x) => x[1]);
+          const N = order.length, SPAN = 1150;
+          /* one, then a pause, then the rest arriving closer and closer together */
+          order.forEach((t, k) => setTimeout(() => t.classList.add('is-in'), k === 0 ? 0 : 170 + SPAN * Math.pow(k / Math.max(1, N - 1), .62)));
+          setTimeout(() => you.classList.add('is-in'), SPAN + 330);
+          setTimeout(() => you.classList.add('is-lit'), SPAN + 560);
+          setTimeout(() => inv.classList.add('is-in'), SPAN + 700);
+        }, { threshold: .3 });
+        io.observe(wall);
       }
     }
   }

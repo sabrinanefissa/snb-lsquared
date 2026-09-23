@@ -148,6 +148,11 @@ trusted by text colour:
 trusted title: Trusted by
 testimonial: Our office and most warehouses are transformed with the new digital displays. It allows us to circulate important business updates and critical information quickly across these facilities. The locations with this technology have quickly realized greater engagement from the employees.
 testimonial logo: logos/purolator.png
+# the testimonial is hidden; write yes to bring it back
+show testimonial: no
+# after the logos fill the wall, the last screen lights up and this line appears
+trusted by invite line: Room for one more.
+trusted by invite button: Book a demo
 # Logos: upload the file into assets/logos, then add a name and a file line. Add logo 10, 11 and so on for more.
 # A logo with its own colours on a clear or white background works best.
 logo 1 name: The UPS Store

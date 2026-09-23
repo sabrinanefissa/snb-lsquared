@@ -517,5 +517,8 @@ html.mnav-open .topbar{transform:translateY(0)}
 .demo__h:has(.sec-sub){flex-direction:column;justify-content:center;gap:0}
 .demo__h .sec-sub{margin-top:6px;font-size:14px}
 
-/* r66: the phone shows its two moving rows, not the wall */
-#clients .lwall{display:none}
+/* r67: the phone gets the same filling wall, two screens wide */
+.lwall{--gap:10px;width:100%}
+.lw{padding:4px;border-radius:8px}
+.clients__invite-h{font-size:clamp(22px,6.4vw,28px)}
+#clients .clients__row{gap:0}
