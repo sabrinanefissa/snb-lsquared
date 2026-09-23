@@ -289,8 +289,59 @@
 
       syncGo();
 
-      /* one soft pulse on the option that is not currently selected, once */
-      if (!RM.matches) {
+      /* r58: show the order. On PC, when the section is first reached, each
+         scene previews Breakfast, then Lunch (the toggle lights and the screen
+         wipes half way), then Publish glows. The moment a visitor picks a
+         menu themselves, Publish glows again so the next step is obvious.
+         Phones publish on the tap itself, so this is PC only; mobile.js has
+         the phone's own preview. */
+      const PHONE = matchMedia('(max-width:760px)').matches;
+      const pulseGo = () => { go.classList.remove('is-pulsing'); void go.offsetWidth; go.classList.add('is-pulsing'); };
+      go.addEventListener('click', () => go.classList.remove('is-pulsing'));
+      let demoTimers = [], demoOn = false;
+      const clearDemo = () => {
+        demoTimers.forEach(clearTimeout); demoTimers = [];
+        if (!demoOn) return; demoOn = false;
+        $$('#publish .seg button.is-demo').forEach((o) => o.classList.remove('is-demo'));
+        $$('#publish .pub__ph.is-demo').forEach((ph) => { ph.classList.remove('is-demo', 'is-coming'); ph.style.clipPath = ''; ph.style.transition = ''; });
+      };
+      state.forEach((sc) => sc.seg.forEach((btn) => btn.addEventListener('click', () => {
+        clearDemo();
+        if (!PHONE && !RM.matches) setTimeout(pulseGo, 120);
+      })));
+      const peek = (sc, menu, open) => {
+        const ph = $$('.pub__ph', sc.shot).find((x) => x.dataset.menu === menu);
+        const b = sc.seg.find((x) => x.dataset.menu === menu);
+        if (b) b.classList.toggle('is-demo', open);
+        if (!ph) return;
+        if (open) {
+          ph.classList.add('is-demo', 'is-coming');
+          ph.style.transition = 'none'; ph.style.clipPath = 'inset(0 100% 0 0)';
+          void ph.offsetWidth;
+          ph.style.transition = 'clip-path 1100ms var(--ease)'; ph.style.clipPath = 'inset(0 50% 0 0)';
+        } else {
+          ph.style.transition = 'clip-path 700ms var(--ease)'; ph.style.clipPath = 'inset(0 100% 0 0)';
+          demoTimers.push(setTimeout(() => { ph.classList.remove('is-demo', 'is-coming'); ph.style.clipPath = ''; ph.style.transition = ''; }, 720));
+        }
+      };
+      if (!RM.matches && !PHONE) {
+        const io = new IntersectionObserver(([e]) => {
+          if (!e.isIntersecting) return;
+          io.disconnect();
+          if (state.some((sc) => sc.selected)) return;       /* they already started */
+          demoOn = true;
+          const T = (ms, fn) => demoTimers.push(setTimeout(fn, ms));
+          state.forEach((sc, i) => {
+            const d = 500 + i * 250;
+            T(d, () => peek(sc, 'breakfast', true));
+            T(d + 1500, () => { peek(sc, 'breakfast', false); peek(sc, 'lunch', true); });
+            T(d + 3000, () => peek(sc, 'lunch', false));
+          });
+          T(3500, () => { go.setAttribute('data-demo', ''); pulseGo(); });
+          T(5200, () => { go.removeAttribute('data-demo'); demoOn = false; });
+        }, { threshold: .5 });
+        io.observe($('#publish'));
+      } else if (!RM.matches) {
         const io = new IntersectionObserver(([e]) => {
           if (!e.isIntersecting) return;
           io.disconnect();

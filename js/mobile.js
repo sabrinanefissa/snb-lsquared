@@ -142,8 +142,12 @@
           void other.offsetWidth;
           other.style.transition = 'clip-path 1600ms ' + EASE;
           other.style.clipPath = 'inset(0 46% 0 0)';
+          const sc = other.closest('.pub__scene');
+          const btn = sc && $$('.seg button', sc).find((x) => x.dataset.menu === other.dataset.menu);
+          if (btn) btn.classList.add('is-demo');
         }, i * 300));
       }, () => {
+        $$('#publish .seg button.is-demo').forEach((x) => x.classList.remove('is-demo'));
         $$('#publish .pub__ph.is-coming').forEach((other) => {
           other.style.transition = ''; other.style.clipPath = '';
           other.classList.remove('is-coming');

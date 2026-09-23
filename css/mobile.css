@@ -248,7 +248,7 @@
    browser's address bar slides in or out while scrolling, which resizes the
    sections above the one being read and throws the page up or down. svh is
    the fixed small viewport, so the page keeps one height. */
-#independent{height:calc(var(--app-h,100svh) * 1.7)}
+#independent{height:calc(var(--app-h,100svh) * 2.8)}
 .fall{height:var(--app-h,100svh)}
 .fall__line{margin-top:clamp(56px,calc(var(--app-h,100svh) * 0.1),104px)}
 #numbers{min-height:var(--app-h,100svh)}

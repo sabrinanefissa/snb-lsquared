@@ -17,7 +17,7 @@
    sits directly under that line. Runway is short enough that the last word
    lights just before the section ends: no dead static screen at the bottom. */
 #independent{
-  position:relative;height:170dvh;
+  position:relative;height:280dvh;   /* r58: a longer runway so the quote fills slowly */
   background:var(--blue);   /* the second blue moment, flat, clean edges */
 }
 .fall{position:sticky;top:0;height:100dvh;overflow:hidden}
@@ -714,3 +714,15 @@
 .form input:focus,.form select:focus{border-color:var(--gold)}
 .form .btn{border-radius:6px}
 .foot{border-top-color:rgba(240,162,74,.35)}
+
+/* r58: the publish walkthrough. A previewed option looks chosen; Publish glows
+   in the gold accent when it is the next step. */
+.seg button.is-demo{background:var(--paper);color:var(--ink);transition:background-color 350ms var(--ease),color 350ms var(--ease)}
+.pub__under .seg button.is-demo{background:var(--paper);color:var(--ink)}
+#pub-go.is-pulsing{animation:gopulse 1400ms var(--ease) 3}
+#pub-go[data-demo]{background:var(--blue);border-color:var(--blue);color:var(--ink)}
+@keyframes gopulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(240,162,74,0)}
+  45%{box-shadow:0 0 0 9px rgba(240,162,74,.26),0 0 28px 6px rgba(240,162,74,.38)}
+}
+@media (prefers-reduced-motion:reduce){#pub-go.is-pulsing{animation:none}}

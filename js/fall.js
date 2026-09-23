@@ -97,7 +97,7 @@
     words = [...line.querySelectorAll('i')];
   }
   function lightWords(p) {
-    const k = Math.round(clamp((p - .42) / .43, 0, 1) * words.length);
+    const k = Math.round(clamp((p - .30) / .62, 0, 1) * words.length);   /* r58: slower, word by word over most of the pinned scroll */
     for (let i = 0; i < words.length; i++) words[i].classList.toggle('is-on', i < k);
   }
 
