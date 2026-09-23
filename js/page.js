@@ -583,6 +583,7 @@
       const say = document.createElement('p'); say.className = 'lw-room__say';
       say.textContent = T['trusted by invite line'] || 'Room for one more.';
       const card = document.createElement('a'); card.className = 'lw-card'; card.href = '#demo'; card.tabIndex = -1;
+      card.addEventListener('click', () => sec.classList.add('is-seen'));   /* r72: the glow pulses until the card is clicked */
       const cardT = document.createElement('span'); cardT.className = 'lw-card__t';
       cardT.textContent = T['trusted by card text'] || 'Take your place.';
       card.appendChild(cardT); card.setAttribute('aria-label', cardT.textContent + ' Book a demo');
@@ -645,7 +646,19 @@
         const c = mid[1] || mid[0];
         room.style.left = (wall.offsetLeft + c[4] + tw / 2) + 'px';
         room.style.top = (wall.offsetTop + c[5]) + 'px';
+        /* r72: the card's orange glow lives in the wall and is blended as light,
+           so it shines on the dark around the card and never stains a logo */
+        const glow = document.createElement('i'); glow.className = 'lw-glow';
+        glow.style.cssText = 'left:' + (c[4] + tw / 2) + 'px;top:' + (c[5] + th / 2) + 'px;width:' + (tw * 2.6) + 'px;height:' + (th * 3.6) + 'px';
+        wall.appendChild(glow);
         mid = mid.map((p) => p[1]);
+        /* r72: the logos arrive in a random order, never the same twice. The
+           first one is always a whole screen, never one cut by the edge. */
+        const Wn = wall.clientWidth, order = list.slice();
+        for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = order[i]; order[i] = order[j]; order[j] = t; }
+        const fi = order.findIndex((p) => p[4] >= 0 && p[4] + tw <= Wn);
+        if (fi > 0) order.unshift(order.splice(fi, 1)[0]);
+        tiles = order.map((p) => p[1]);
         if (played || RM.matches) finish();
       };
       const finish = () => {
@@ -672,7 +685,7 @@
           full = Math.max(full, at + dur);
           const when = at;
           setTimeout(() => { t.style.transitionDuration = dur + 'ms'; t.classList.add('is-in'); }, when);
-          at += gap; gap = Math.max(24, gap * .79);
+          at += gap; gap = Math.max(110, gap * .86);   /* r72: speeds up gently, then keeps a steady pace */
         });
         const FULL = full;
         const OFF = FULL + 300, ROOM = OFF + 200, SAY = ROOM + 300, GONE = SAY + 1500 + 600, CARD = GONE + 450;   /* r71: the hero's slow dissolve: 1.5s in, a short hold, 1.5s out, the card rising as the words leave */
