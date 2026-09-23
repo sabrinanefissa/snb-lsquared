@@ -663,22 +663,19 @@
       };
       const play = () => {
         played = true;
-        /* waves of 1, 2, 4, 8, then the rest: the first one slow, each wave
-           sooner than the last, every logo coming towards you */
-        const START = [0, 800, 1450, 2000, 2450], DUR = [1100, 900, 820, 720, 720], GAP = [90, 70, 50, 30, 30];
-        let k = 0, w = 0, size = 1, full = 0;
-        while (k < tiles.length) {
-          const i = Math.min(w, START.length - 1);
-          const group = tiles.slice(k, i === START.length - 1 ? tiles.length : k + size);
-          group.forEach((t, n) => {
-            const at = START[i] + n * GAP[i];
-            full = Math.max(full, at + DUR[i]);
-            setTimeout(() => { t.style.transitionDuration = DUR[i] + 'ms'; t.classList.add('is-in'); }, at);
-          });
-          k += group.length; w++; size *= 2;
-        }
+        /* r71: one logo at a time, every one coming towards you. The first
+           waits longest; each next one arrives sooner than the last (the gap
+           shrinks by a fifth each time) until they pour in. */
+        let gap = 650, at = 0, full = 0;
+        tiles.forEach((t, k) => {
+          const dur = Math.max(720, 1150 - k * 45);
+          full = Math.max(full, at + dur);
+          const when = at;
+          setTimeout(() => { t.style.transitionDuration = dur + 'ms'; t.classList.add('is-in'); }, when);
+          at += gap; gap = Math.max(24, gap * .79);
+        });
         const FULL = full;
-        const OFF = FULL + 300, ROOM = OFF + 200, SAY = ROOM + 300, GONE = SAY + 700 + 2000, CARD = GONE + 1000 + 150;
+        const OFF = FULL + 300, ROOM = OFF + 200, SAY = ROOM + 300, GONE = SAY + 1500 + 600, CARD = GONE + 450;   /* r71: the hero's slow dissolve: 1.5s in, a short hold, 1.5s out, the card rising as the words leave */
         setTimeout(() => { sec.classList.add('is-full'); mid.forEach((t) => t.classList.add('is-off')); }, OFF);   /* the three middle screens power down */
         setTimeout(() => sec.classList.add('is-room'), ROOM);            /* one wide screen over them */
         setTimeout(() => sec.classList.add('is-say'), SAY);              /* Room for one more. */

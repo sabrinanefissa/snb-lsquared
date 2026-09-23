@@ -815,8 +815,8 @@
 #clients.is-card .lw-card{background:radial-gradient(ellipse at 50% 45%,#12344F 0%,#06121E 78%);border:1px solid rgba(124,194,236,.28)}
 .lw-room > *{grid-area:1 / 1}
 .lw-room__say{position:relative;margin:0;padding:0 12px;text-align:center;font-stretch:70%;font-weight:800;text-transform:uppercase;letter-spacing:-.005em;line-height:1;
-  font-size:clamp(26px,2.4vw,34px);color:var(--paper);opacity:0;transition:opacity 1000ms var(--ease)}
-#clients.is-say .lw-room__say{opacity:1;transition-duration:700ms}
+  font-size:clamp(26px,2.4vw,34px);color:var(--paper);opacity:0;transition:opacity 1500ms var(--ease)}
+#clients.is-say .lw-room__say{opacity:1}
 /* the card: the empty screen, with a glow that breathes around it */
 .lw-card{position:absolute;inset:0;display:grid;place-items:center;border-radius:inherit;text-decoration:none;
   pointer-events:none;transition:transform 140ms var(--ease)}
@@ -824,7 +824,7 @@
   box-shadow:0 0 0 1px rgba(124,194,236,.75),0 0 16px rgba(86,176,228,.45);
   transition:opacity 600ms var(--ease)}
 .lw-card__t{position:relative;font-stretch:72%;font-weight:800;text-transform:uppercase;letter-spacing:.01em;line-height:1;text-align:center;
-  font-size:clamp(14px,1.3vw,19px);color:var(--paper);padding:0 8px;text-wrap:balance;opacity:0;transition:opacity 600ms var(--ease) 450ms}
+  font-size:clamp(14px,1.3vw,19px);color:var(--paper);padding:0 8px;text-wrap:balance;opacity:0;transition:opacity 1200ms var(--ease) 250ms}
 #clients.is-card .lw-card{pointer-events:auto}
 #clients.is-card .lw-card__t{opacity:1}
 #clients.is-card .lw-card::after{opacity:.35;animation:cardglow 2.8s ease-in-out 800ms infinite}
