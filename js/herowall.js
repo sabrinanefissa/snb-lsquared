@@ -7,7 +7,10 @@ const hero=document.getElementById('hero'),num=document.getElementById('h_num'),
 if(!cv||!hero)return;
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PHONE=matchMedia('(max-width: 760px)');
-const BLUE=[86,176,228],GOLD=[255,153,0],WHITE=[208,222,238],OFF=[9,13,19];           // L Squared blue, and an orange pushed toward yellow gold
+/* r63: the orange must LOOK like lsquared.com's #FF9900 once lit. The glow and bloom add light on top, which pushes an orange
+   toward yellow, so it is drawn a little redder (255,140,0), with no white sheen and a rim in its own colour.
+   Measured on screen: the lit core averages 241,150,10 (hue 36.4) against #FF9900 (hue 36.0). */
+const BLUE=[86,176,228],GOLD=[255,140,0],WHITE=[208,222,238],OFF=[9,13,19];           // L Squared blue, and lsquared.com's orange
 let W=0,H=0,D=1;
 function size(){D=Math.min(2,window.devicePixelRatio||1);W=hero.clientWidth;H=hero.clientHeight;cv.width=W*D;cv.height=H*D;bl.width=Math.ceil(W/4);bl.height=Math.ceil(H/4);cx.setTransform(D,0,0,D,0,0);sprites={};if(state)(state.inf?layoutInf():layout(state.n));}
 addEventListener('resize',size);
@@ -31,9 +34,9 @@ function sprite(col,w,h){
   lg.addColorStop(0,`rgba(${col.map(v=>Math.round(v*.94)).join(',')},1)`);lg.addColorStop(.6,`rgba(${col.map(v=>Math.round(v*.84)).join(',')},1)`);lg.addColorStop(1,`rgba(${col.map(v=>Math.round(v*.7)).join(',')},1)`);
   g.fillStyle=lg;rr(g,pad,pad,w,h,r);g.fill();
   const rg=g.createRadialGradient(pad+w*.5,pad+h*.42,0,pad+w*.5,pad+h*.42,w*.62);rg.addColorStop(0,'rgba(255,255,255,.12)');rg.addColorStop(.6,'rgba(255,255,255,.04)');rg.addColorStop(1,'rgba(255,255,255,0)');
-  g.fillStyle=rg;rr(g,pad,pad,w,h,r);g.fill();
+  if(col!==GOLD){g.fillStyle=rg;rr(g,pad,pad,w,h,r);g.fill();}
   // no dark bezel: a lit neon rim that spills over the frame
-  g.lineWidth=Math.max(1,w*.02);g.strokeStyle=`rgba(${col.map(v=>Math.min(255,v+24)).join(',')},.75)`;g.shadowColor=`rgba(${rgb},1)`;g.shadowBlur=pad*.35;
+  g.lineWidth=Math.max(1,w*.02);g.strokeStyle=`rgba(${(col===GOLD?col:col.map(v=>Math.min(255,v+24))).join(',')},.75)`;g.shadowColor=`rgba(${rgb},1)`;g.shadowBlur=pad*.35;
   rr(g,pad,pad,w,h,r);g.stroke();g.shadowBlur=0;
   return sprites[key]={c,pad};
 }
@@ -79,7 +82,7 @@ function layoutConvey(cols,n,inf){
 function layoutInf(){bl.style.opacity=.45;state={n:Infinity,inf:true,persp:true,born:performance.now()};}
 const PAINT=new Map();
 function paint(col){let p=PAINT.get(col);if(!p){p=col===OFF?{face:'rgb(9,13,19)',rim:'rgba(120,150,180,.16)',glow:null}:
-  {face:`rgb(${col.map(v=>Math.round(v*.86)).join(',')})`,rim:`rgba(${col.map(v=>Math.min(255,v+24)).join(',')},.8)`,glow:`rgba(${col.join(',')},.95)`};p.id=(PAINT.size+1)*10;PAINT.set(col,p);}return p;}
+  {face:`rgb(${col.map(v=>Math.round(v*.86)).join(',')})`,rim:`rgba(${(col===GOLD?col:col.map(v=>Math.min(255,v+24))).join(',')},.8)`,glow:`rgba(${col.join(',')},.95)`};p.id=(PAINT.size+1)*10;PAINT.set(col,p);}return p;}
 function drawPersp(t,age){
   // every screen stays a true 16:9 rectangle. Depth comes from scale alone: each row is a fixed step smaller than the one before,
   // and all of them converge on the horizon at the centre. Floor and ceiling travel away together.
