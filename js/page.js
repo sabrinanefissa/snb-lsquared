@@ -547,12 +547,13 @@
   }
 
   /* ------------------------------------------------------------ 6b. trusted by: the wall fills up
-     r67: the section is a wall of screens. When it comes into view one client
-     logo lights up in the middle, then more join, faster and faster, spreading
-     out until the wall is full, all in about a second and a half. The last
-     screen stays free: it lights up blue with a plus, and the invitation and a
-     Book a demo link appear under the wall. Laptop and phone, one list from
-     content.js. */
+     r68: the whole section becomes a wall of client logos, edge to edge. It
+     starts slow: one logo comes towards you in the middle, then 2 join, then
+     4, 8, 16, each wave sooner than the last, until the wall is full. The
+     wall then steps back, "Room for one more." fades in across the middle,
+     holds, fades out, and in its place an empty card comes forward with a
+     pulsing glow: the way in. Laptop and phone, one list from content.js
+     (logos repeat, never side by side, until there are enough to fill it). */
   {
     const DEF = [['The UPS Store', 'ups-store'], ['Cold Stone Creamery', 'cold-stone-creamery'], ['Hatch', 'hatch'],
       ['McMaster University', 'mcmaster-university'], ['International Centre', 'international-centre'], ['Cisco', 'cisco'],
@@ -562,61 +563,100 @@
     const T = window.LSQ || {};
     window.LSQ_LOGOLIST = LOGOS;
     const orbit = $('#clients .orbit'), sec = $('#clients');
-    if (orbit && sec) {
+    if (orbit && sec && LOGOS.length) {
       const PHONE = matchMedia('(max-width:760px)').matches;
       const wall = document.createElement('div');
-      wall.className = 'lwall';
+      wall.className = 'lwall'; wall.setAttribute('aria-hidden', 'true');
       const names = document.createElement('ul');
       names.className = 'sr-only'; names.setAttribute('aria-label', 'Clients');
       LOGOS.forEach((l) => { if (!l.name) return; const li = document.createElement('li'); li.textContent = l.name; names.appendChild(li); });
       orbit.replaceWith(wall); wall.after(names);   /* the old orbit never starts */
-      wall.setAttribute('aria-hidden', 'true');
 
-      const tiles = LOGOS.map((l) => {
-        const t = document.createElement('div'); t.className = 'lw';
-        const p = document.createElement('div'); p.className = 'lw__panel';
-        const im = document.createElement('img'); im.src = l.src; im.alt = ''; im.decoding = 'async';
-        p.appendChild(im); t.appendChild(p); wall.appendChild(t); return t;
-      });
-      /* the free screen, last on the wall: it is the way in */
-      const you = document.createElement('a');
-      you.className = 'lw lw--you'; you.href = '#demo'; you.tabIndex = -1;
-      you.innerHTML = '<span class="lw__panel"><i class="lw__plus"></i></span>';
-      wall.appendChild(you);
-      /* the wall is as close to two rows as it can be on a computer, two
-         columns on a phone */
-      const n = tiles.length + 1;
-      const cols = PHONE ? 2 : Math.min(6, Math.max(3, Math.ceil(n / 2)));
-      wall.style.setProperty('--cols', cols);
+      const room = document.createElement('div'); room.className = 'lw-room';
+      const say = document.createElement('p'); say.className = 'lw-room__say';
+      say.textContent = T['trusted by invite line'] || 'Room for one more.';
+      const card = document.createElement('a'); card.className = 'lw-card'; card.href = '#demo';
+      const cardT = document.createElement('span'); cardT.className = 'lw-card__t';
+      cardT.textContent = T['trusted by card text'] || 'Take your place.';
+      card.appendChild(cardT); card.setAttribute('aria-label', cardT.textContent + ' Book a demo');
+      room.append(say, card);
+      /* the card is the one part a keyboard or screen reader needs */
+      wall.after(room);
 
-      const inv = document.createElement('div'); inv.className = 'clients__invite';
-      const h = document.createElement('p'); h.className = 'clients__invite-h';
-      h.textContent = T['trusted by invite line'] || 'Room for one more.';
-      const go = document.createElement('a'); go.className = 'clients__invite-go'; go.href = '#demo';
-      go.textContent = T['trusted by invite button'] || 'Book a demo';
-      inv.append(h, go);
-      names.after(inv);
-
-      const done = () => { tiles.forEach((t) => t.classList.add('is-in')); you.classList.add('is-in', 'is-lit'); inv.classList.add('is-in'); };
-      if (RM.matches) done();
-      else {
-        wall.classList.add('is-armed'); inv.classList.add('is-armed');
-        const io = new IntersectionObserver(([e]) => {
-          if (!e.isIntersecting) return;
-          io.disconnect();
-          /* the order: nearest the middle of the wall first, outward from there */
-          const wr = wall.getBoundingClientRect(), cx = wr.left + wr.width / 2, cy = wr.top + wr.height / 2;
-          const order = tiles.map((t) => { const r = t.getBoundingClientRect(); return [Math.hypot((r.left + r.width / 2 - cx) / wr.width, (r.top + r.height / 2 - cy) / wr.height * .6), t]; })
-            .sort((x, y) => x[0] - y[0]).map((x) => x[1]);
-          const N = order.length, SPAN = 1150;
-          /* one, then a pause, then the rest arriving closer and closer together */
-          order.forEach((t, k) => setTimeout(() => t.classList.add('is-in'), k === 0 ? 0 : 170 + SPAN * Math.pow(k / Math.max(1, N - 1), .62)));
-          setTimeout(() => you.classList.add('is-in'), SPAN + 330);
-          setTimeout(() => you.classList.add('is-lit'), SPAN + 560);
-          setTimeout(() => inv.classList.add('is-in'), SPAN + 700);
-        }, { threshold: .3 });
+      let played = false, tiles = [], W0 = 0;
+      const appH = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-h')) || innerHeight;
+      const build = () => {
+        wall.textContent = '';
+        const W = wall.clientWidth; W0 = innerWidth;
+        const tw = PHONE ? Math.round(W * .36) : Math.round(Math.min(230, Math.max(140, W * .125)));
+        const th = Math.round(tw / 2.1), g = PHONE ? 10 : 12;
+        const cs = getComputedStyle(sec), title = $('.clients__title', sec);
+        const used = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + (title ? title.offsetHeight + parseFloat(getComputedStyle(title).marginBottom) : 0);
+        const avail = (PHONE ? appH() : innerHeight) - used;
+        let rows = Math.floor((avail + g) / (th + g)); if (rows % 2 === 0) rows--;
+        rows = Math.max(3, Math.min(PHONE ? 11 : 7, rows));
+        let cols = Math.ceil((W + g) / (tw + g)); if (cols % 2 === 0) cols++; cols += 2;   /* past both edges */
+        const H = rows * (th + g) - g, r0 = (rows - 1) / 2, c0 = (cols - 1) / 2, N = LOGOS.length;
+        wall.style.height = H + 'px';
+        sec.style.setProperty('--tw', tw + 'px'); sec.style.setProperty('--th', th + 'px');
+        const list = [], grid = [], count = LOGOS.map(() => 0);
+        for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+          const x = W / 2 + (c - c0) * (tw + g) - tw / 2, y = H / 2 + (r - r0) * (th + g) - th / 2;
+          if (x + tw < 0 || x > W) continue;
+          /* logos are dealt out evenly, never next to or above the same one, so
+             repeats (until there are enough logos) do not line up */
+          const near = [grid[(r) * cols + c - 1], grid[(r - 1) * cols + c], grid[(r - 1) * cols + c - 1], grid[(r - 1) * cols + c + 1], grid[(r) * cols + c - 2], grid[(r - 2) * cols + c]];
+          let best = -1;
+          for (let j = 0; j < N; j++) {
+            const q = (j + r * 4 + c * 7) % N;
+            if (N > 6 && near.includes(q)) continue;
+            if (best < 0 || count[q] < count[best]) best = q;
+          }
+          if (best < 0) best = (r * 4 + c * 7) % N;
+          grid[r * cols + c] = best; count[best]++;
+          const l = LOGOS[best];
+          const t = document.createElement('div'); t.className = 'lw';
+          t.style.cssText = 'left:' + x + 'px;top:' + y + 'px;width:' + tw + 'px;height:' + th + 'px';
+          const p = document.createElement('div'); p.className = 'lw__panel';
+          const im = document.createElement('img'); im.src = l.src; im.alt = ''; im.decoding = 'async';
+          p.appendChild(im); t.appendChild(p); wall.appendChild(t);
+          list.push([Math.hypot(x + tw / 2 - W / 2, (y + th / 2 - H / 2) * 1.6), t]);
+        }
+        tiles = list.sort((p, q) => p[0] - q[0]).map((p) => p[1]);
+        if (played || RM.matches) finish(true);
+      };
+      const finish = (now) => {
+        tiles.forEach((t) => { t.style.transition = now ? 'none' : ''; t.classList.add('is-in'); });
+        sec.classList.add('is-full', 'is-card');
+      };
+      const play = () => {
+        played = true;
+        /* waves of 1, 2, 4, 8, 16, then the rest, each sooner than the last */
+        const START = [0, 1150, 1950, 2550, 3000, 3350, 3600];
+        let k = 0, w = 0, size = 1;
+        while (k < tiles.length) {
+          const at = START[Math.min(w, START.length - 1)], dur = w === 0 ? 1200 : Math.max(760, 1050 - w * 60);   /* every logo comes towards you, the later ones only a little quicker */
+          const group = tiles.slice(k, w >= START.length - 1 ? tiles.length : k + size);
+          group.forEach((t, i) => setTimeout(() => {
+            t.style.transitionDuration = dur + 'ms';
+            t.classList.add('is-in');
+          }, at + i * Math.max(18, 110 - w * 18)));
+          k += group.length; w++; size *= 2;
+        }
+        const FULL = START[Math.min(w - 1, START.length - 1)] + 900;
+        setTimeout(() => sec.classList.add('is-full'), FULL);              /* the wall steps back */
+        setTimeout(() => sec.classList.add('is-say'), FULL + 350);         /* Room for one more. */
+        setTimeout(() => sec.classList.remove('is-say'), FULL + 2900);     /* ...fades slowly */
+        setTimeout(() => sec.classList.add('is-card'), FULL + 3800);       /* the empty card comes forward */
+      };
+      build();
+      if (!RM.matches) {
+        sec.classList.add('is-armed');
+        const io = new IntersectionObserver(([e]) => { if (e.isIntersecting && !played) { io.disconnect(); play(); } }, { threshold: .35 });
         io.observe(wall);
       }
+      let rt = 0;
+      addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (Math.abs(innerWidth - W0) > 40) build(); }, 200); });
     }
   }
 

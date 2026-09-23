@@ -772,41 +772,48 @@
 .fall__stage .sec-end{margin-top:clamp(14px,2.4dvh,26px)}
 #demo > .sec-end{position:absolute;left:0;right:0;bottom:clamp(14px,3dvh,28px);margin:0 auto;padding:0 20px}
 
-/* r67: trusted by. A thin section: the title, a wall of screens that fills up
-   with client logos, one free screen that lights up, and the invitation. */
+/* r68: trusted by. The section is a wall of client logos, edge to edge. It
+   fills from the middle out, steps back, says "Room for one more.", then an
+   empty card comes forward with a pulsing glow. */
 #clients .quote{display:none}
 .lsq-quote #clients .quote{display:flex}
-.clients__row{display:flex;flex-direction:column;align-items:center;max-width:none}
-.lwall{--cols:5;--gap:clamp(10px,1vw,14px);display:flex;flex-wrap:wrap;justify-content:center;gap:var(--gap);
-  width:min(100%,1180px);margin:0 auto}
-.lw{position:relative;display:block;flex:0 0 auto;width:calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols));
-  aspect-ratio:2.1 / 1;padding:5px;border-radius:9px;background:#0B1826;
-  box-shadow:0 0 0 1px rgba(124,194,236,.16),0 0 24px rgba(86,176,228,.18)}
+#clients{justify-content:flex-start}
+.clients__row{display:block;position:relative;width:100%;max-width:none}
+.lwall{position:relative;width:100vw;margin-left:calc(50% - 50vw);overflow:hidden}
+.lw{position:absolute;padding:5px;border-radius:9px;background:#0B1826;
+  box-shadow:0 0 0 1px rgba(124,194,236,.14),0 0 22px rgba(86,176,228,.16);
+  transition-property:opacity,transform,filter;transition-timing-function:var(--ease);transition-duration:700ms}
 .lw__panel{position:relative;display:block;height:100%;border-radius:5px;background:#fff;overflow:hidden}
 .lw__panel img{position:absolute;left:13%;top:17%;width:74%;height:66%;object-fit:contain}
-.lwall.is-armed .lw{opacity:0;transform:scale(.9)}
-.lwall.is-armed .lw.is-in{opacity:1;transform:none;transition:opacity 380ms var(--ease),transform 520ms var(--ease)}
-/* the free screen: dark until it is its turn, then it switches on */
-.lw--you .lw__panel{background:radial-gradient(ellipse at 50% 45%,#0F2C45 0%,#06121E 75%);transition:background-color 400ms var(--ease)}
-.lw--you{cursor:pointer;transition:box-shadow 500ms var(--ease),opacity 380ms var(--ease),transform 520ms var(--ease)}
-.lw__plus{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;opacity:0;transform:scale(.6);
-  transition:opacity 420ms var(--ease),transform 520ms var(--ease)}
-.lw__plus::before,.lw__plus::after{content:"";position:absolute;left:50%;top:50%;background:var(--blue);border-radius:1px;box-shadow:0 0 12px rgba(86,176,228,.9)}
-.lw__plus::before{width:26px;height:3px;margin:-1.5px 0 0 -13px}
-.lw__plus::after{width:3px;height:26px;margin:-13px 0 0 -1.5px}
-.lw--you.is-lit{box-shadow:0 0 0 1px rgba(124,194,236,.5),0 0 34px rgba(86,176,228,.55);animation:youglow 2.8s var(--ease) 600ms infinite}
-.lw--you.is-lit .lw__plus{opacity:1;transform:none}
-@keyframes youglow{0%,100%{box-shadow:0 0 0 1px rgba(124,194,236,.5),0 0 34px rgba(86,176,228,.55)}50%{box-shadow:0 0 0 1px rgba(124,194,236,.7),0 0 46px rgba(86,176,228,.8)}}
-@media (hover:hover) and (pointer:fine){.lw--you.is-lit:hover{transform:translateY(-2px)}}
-/* the invitation */
-.clients__invite{display:flex;flex-direction:column;align-items:center;gap:var(--s1);margin-top:clamp(18px,3.4dvh,34px)}
-.clients__invite.is-armed{opacity:0;transform:translateY(8px)}
-.clients__invite.is-armed.is-in{opacity:1;transform:none;transition:opacity 480ms var(--ease),transform 560ms var(--ease)}
-.clients__invite-h{margin:0;font-stretch:70%;font-weight:800;text-transform:uppercase;letter-spacing:-.005em;line-height:1;
-  font-size:clamp(22px,2.3vw,34px);color:var(--paper)}
-.clients__invite-go{position:relative;display:inline-flex;align-items:center;min-height:44px;padding:0 2px;
-  font-stretch:78%;font-weight:700;font-size:clamp(15px,1.3vw,18px);letter-spacing:.02em;color:var(--hi);text-decoration:none}
-.clients__invite-go::after{content:"";position:absolute;left:0;right:0;bottom:8px;height:2px;border-radius:1px;background:var(--gold)}
-.clients__invite-go:active{transform:scale(.97)}
-@media (hover:hover) and (pointer:fine){.clients__invite-go:hover{color:var(--paper)}}
-@media (prefers-reduced-motion:reduce){.lw--you.is-lit{animation:none}}
+/* each logo comes towards you: from small, soft and far to its place */
+#clients.is-armed .lw{opacity:0;transform:scale(.55);filter:blur(6px)}
+#clients.is-armed .lw.is-in{opacity:1;transform:none;filter:none}
+/* the full wall steps back so the words and the card read */
+#clients.is-full .lwall .lw.is-in{opacity:.28;transition:opacity 1100ms var(--ease)}
+/* the room: a band across the middle of the wall that holds the line, then the card */
+.lw-room{position:absolute;left:50%;top:50%;width:100vw;height:calc(var(--th,90px) + 24px);
+  transform:translate(-50%,-50%);display:grid;place-items:center;pointer-events:none;z-index:2;opacity:0;
+  background:linear-gradient(90deg,rgba(5,10,16,0) 0%,rgba(5,10,16,.94) 18%,rgba(5,10,16,.94) 82%,rgba(5,10,16,0) 100%);
+  transition:opacity 1100ms var(--ease)}
+#clients.is-full .lw-room{opacity:1}
+.lw-room > *{grid-area:1 / 1}
+.lw-room__say{margin:0;font-stretch:70%;font-weight:800;text-transform:uppercase;letter-spacing:-.005em;line-height:1;
+  font-size:clamp(26px,3vw,46px);color:var(--paper);opacity:0;transition:opacity 1100ms var(--ease)}
+#clients.is-say .lw-room__say{opacity:1;transition-duration:900ms}
+/* the empty card: a free screen, dark, with a glow that breathes */
+.lw-card{position:relative;display:grid;place-items:center;width:calc(var(--tw,190px) * 1.7);height:calc(var(--th,90px) + 16px);
+  padding:6px;border-radius:11px;background:#0B1826;text-decoration:none;pointer-events:none;
+  opacity:0;transform:scale(.55);filter:blur(6px);
+  transition:opacity 900ms var(--ease),transform 1000ms var(--ease),filter 900ms var(--ease)}
+.lw-card::before{content:"";position:absolute;inset:6px;border-radius:6px;background:radial-gradient(ellipse at 50% 45%,#12344F 0%,#06121E 78%)}
+.lw-card__t{position:relative;font-stretch:72%;font-weight:800;text-transform:uppercase;letter-spacing:.01em;line-height:1;
+  font-size:clamp(18px,1.9vw,30px);color:var(--paper)}
+#clients.is-card .lw-card{opacity:1;transform:none;filter:none;pointer-events:auto;animation:cardglow 2.4s ease-in-out 900ms infinite}
+@keyframes cardglow{
+  0%,100%{box-shadow:0 0 0 1px rgba(124,194,236,.45),0 0 22px rgba(86,176,228,.45)}
+  50%{box-shadow:0 0 0 1px rgba(124,194,236,.85),0 0 48px 6px rgba(86,176,228,.85)}
+}
+.lw-card:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+@media (hover:hover) and (pointer:fine){#clients.is-card .lw-card:hover .lw-card__t{color:var(--hi)}}
+.lw-card:active{transform:scale(.97)}
+@media (prefers-reduced-motion:reduce){#clients.is-card .lw-card{animation:none;box-shadow:0 0 0 1px rgba(124,194,236,.7),0 0 36px rgba(86,176,228,.7)}}

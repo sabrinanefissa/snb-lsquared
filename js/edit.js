@@ -184,7 +184,7 @@
     var TXT = {
       statement: ['.statement__h'], why: ['.strips__title'], industries: ['.ind__title', '.ind__cta'],
       'ceo quote': ['.fall__line', '.fall__line i.is-on', '.fall__by'], publishing: ['.pub__title'],
-      'dead screen': ['.rely__h'], 'trusted by': ['.clients__title', '.quote__text', '.clients__invite-h', '.clients__invite-go'], figures: ['.beats__fig'], contact: []
+      'dead screen': ['.rely__h'], 'trusted by': ['.clients__title', '.quote__text', '.lw-room__say'], figures: ['.beats__fig'], contact: []
     };
     SECS.forEach(function (s) {
       var v = C[s[0] + ' text colour'] || C[s[0] + ' text color'];
