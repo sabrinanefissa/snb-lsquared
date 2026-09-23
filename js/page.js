@@ -239,6 +239,23 @@
         else if (FADE && e.button === 0) go(cur + 1, 1);   /* a click on the photo: next industry */
       });
       go(0, 1);
+      /* r61: on a computer the industries move on by themselves, in a loop,
+         while the section is on screen. Any click restarts the wait, so a
+         photo someone picked always gets its full time. The seconds are set
+         in content.js. */
+      if (FADE && !RM.matches) {
+        const secs = parseFloat((window.LSQ || {})['industries seconds per photo']);
+        const EVERY = (isFinite(secs) && secs >= 2 ? secs : 5) * 1000;
+        let timer = 0, inView = false;
+        const arm = () => {
+          clearTimeout(timer);
+          if (inView && !document.hidden) timer = setTimeout(() => { go(cur + 1, 1); arm(); }, EVERY);
+        };
+        new IntersectionObserver(([e]) => { inView = e.isIntersecting; arm(); }, { threshold: .5 }).observe(stage);
+        document.addEventListener('visibilitychange', arm);
+        stage.addEventListener('pointerup', arm);
+        dots.forEach((b) => b.addEventListener('click', arm));
+      }
     }
   }
 

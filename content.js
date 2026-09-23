@@ -68,6 +68,8 @@ why 5 photo: scale.webp
 # Add an industry 5 (name, photo, phone photo) to add one; delete all three lines of one to remove it.
 industries title: Made for how you operate.
 industries link: Explore all industries
+# on a laptop the photos move on by themselves; how many seconds each one shows
+industries seconds per photo: 5
 industry 1 name: Restaurants
 industry 1 photo: ind-restaurants.webp
 industry 1 phone photo: m/ind-restaurants.webp
