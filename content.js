@@ -52,24 +52,24 @@ why 1 word: People
 why 1 line: A business built on lasting relationships.
 why 1 photo: team.webp
 why 2 word: Trust
-why 2 line: 20+ years of expertise | you can depend on.
+why 2 why line: 20+ years of expertise. | You can depend on.
 why 2 photo: team-logos.webp
 why 3 word: Security
-why 3 line: SOC 2 Type II. ISO 27001. Enterprise-grade security built in.
+why 3 line: SOC 2 Type II. ISO 27001. | Enterprise-grade security built in.
 why 3 photo: security.webp
 why 4 word: Support
 why 4 line: Less escalation. More resolution.
 why 4 photo: support.webp
 why 5 word: Scale
-why 5 line: We keep up, from start to finish. 
+why 5 line: We grow alongside you. | Keeping up from start to finish. 
 why 5 photo: scale.webp
 
 == INDUSTRIES ==
 # Add an industry 5 (name, photo, phone photo) to add one; delete all three lines of one to remove it.
-industries title: Made for how you operate.
+industries title: Different industries. One standard.
 industries link: Explore all industries
 # the photos move on by themselves (laptop and phone); how many seconds each one shows
-industries seconds per photo: 5
+industries seconds per photo: 2
 industry 1 name: Restaurants
 industry 1 photo: ind-restaurants.webp
 industry 1 phone photo: m/ind-restaurants.webp
@@ -119,14 +119,15 @@ testimonial: Our office and most warehouses are transformed with the new digital
 testimonial logo: logos/purolator.png
 
 == FIGURES (big words | small words) ==
-figure 1: One team.|Start to finish.
-figure 2: Your screens.|Our responsibility.
-figure 3: Every feature.|Included.
-figure 4: Remote Publishing.
-figure 5: Real support.|24/7.
-figure 6: Building relationships|since 2006.
-figure 7: 20 minute|response time.
-figure 8: 50,000+|screens managed.
+figure 1: One team.| Start to finish.
+figure 2: Independently Owned. 
+figure 3: Every feature included.| No hidden fees.
+figure 4: 50,000+|screens managed.
+figure 5: Expert support.| 24/7.
+figure 6: Your screens.| Our responsibility.
+figure 7: Building relationships|since 2006.
+figure 8: 20 minute|response time.
+figure 9: Remote Publishing. 
 
 == CONTACT ==
 contact title: We're here to help.
