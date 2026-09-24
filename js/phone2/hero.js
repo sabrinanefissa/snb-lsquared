@@ -1,4 +1,11 @@
-/* phone2 section 1, the hero (r92).
+/* phone2 section 1, the hero (r94).
+   r94: every loop starts with the phone itself as screen number one: black,
+   the orange pixel boots, the orange edge traces the phone, "1 SCREEN";
+   then 10, 50, 100, 500, infinite. The orange edge shows only while there
+   are screens: it fades out for "One platform." and the logo. The dark
+   behind the words hugs the letters only. The hero is at least the large
+   phone screen tall (no strip of the next section when the toolbar hides);
+   the words and the edge sit in the visible screen.
    Same screen as r77 to r91 (the orange boot pixel, the traced orange edge,
    the wall of glowing 16:9 screens drawn in code, the counts 10, 50, 100,
    500, infinite, the soft #FF9900 glow), but it now behaves like the old
@@ -42,14 +49,16 @@
   plat.appendChild(platT); plat.setAttribute('aria-hidden', 'true');
   const logo = el('div', 'p2h__logo'), lim = el('img');
   lim.src = logoSrc; lim.alt = ''; lim.decoding = 'async'; logo.appendChild(lim); logo.setAttribute('aria-hidden', 'true');
-  const sr = el('p', 'sr-only'); sr.textContent = 'From 10 screens to countless screens. ' + title.replace(/\|/g, ' ') + ' L Squared.';
+  const sr = el('p', 'sr-only'); sr.textContent = 'From 1 screen to countless screens. ' + title.replace(/\|/g, ' ') + ' L Squared.';
   const svgNS = 'http://www.w3.org/2000/svg';
   const edge = document.createElementNS(svgNS, 'svg'); edge.setAttribute('class', 'p2h__edge'); edge.setAttribute('aria-hidden', 'true');
   const eL = document.createElementNS(svgNS, 'path'), eR = document.createElementNS(svgNS, 'path');
   edge.append(eL, eR);
   const px = el('i', 'p2h__px'); px.setAttribute('aria-hidden', 'true');
   screen.append(cvs[0], cvs[1]);
-  stage.append(screen, glow, lock, plat, logo, edge, px, sr);
+  const view = el('div', 'p2h__view');         /* the visible phone screen: words, edge and pixel sit in it */
+  view.append(glow, lock, plat, logo, edge, px);
+  stage.append(screen, view, sr);
   wrap.appendChild(stage);
   hero.appendChild(wrap);
 
@@ -59,7 +68,7 @@
      most 30 times a second and only while the hero is on screen. Moving to
      the next count is a zoom and a cross-fade between the two canvases. */
   const LV = [{ c: 2, r: 5 }, { c: 5, r: 10 }, { c: 7, r: 14 }, { c: 14, r: 36 }, { c: 44, r: 0 }];
-  let W = 0, H = 0, D = 1, geo = [], ratio = [], box = null, w0 = 0;
+  let W = 0, H = 0, VH = 0, D = 1, geo = [], ratio = [], boxes = [], w0 = 0, h0 = 0;
   const IN = 24;
   let sprites = {};
   const fr = (v) => v - Math.floor(v);
@@ -106,11 +115,16 @@
     const seed = i * 73 + j * 131 + 1, f1 = .7 + .6 * hsh(seed, 3), f2 = .7 + .6 * hsh(seed, 4);
     return .8 + .2 * (.6 * Math.sin(t * .0012 * f1 + seed) + .4 * Math.sin(t * .0019 * f2 + seed * 2.3));
   };
-  /* the screens behind the words step back, so the words always read */
-  const dimAt = (x, y) => {
-    if (!box) return 1;
-    const dx = (x - box.cx) / box.rx, dy = (y - box.cy) / box.ry, d = Math.sqrt(dx * dx + dy * dy);
-    return d < 1 ? .2 : Math.min(1, .2 + (d - 1) * 1.1);
+  /* r94: only the screens right behind the letters step back (a 14px ramp
+     from the glyph boxes), so the dark hugs the number and SCREENS */
+  const dimAt = (x, y, sw, sh, lv) => {
+    const bs = boxes[lv]; if (!bs) return 1;
+    let d = 1e9;
+    for (const b of bs) {
+      const dx = Math.max(b.l - (x + sw / 2), (x - sw / 2) - b.r, 0), dy = Math.max(b.t - (y + sh / 2), (y - sh / 2) - b.b, 0);
+      d = Math.min(d, Math.hypot(dx, dy));
+    }
+    return d <= 0 ? .3 : d < 14 ? .3 + .7 * d / 14 : 1;
   };
   const layout = () => {
     geo = LV.map((L, lv) => {
@@ -120,7 +134,7 @@
       const cells = [];
       for (let j = 0; j < rows; j++) for (let i = 0; i < L.c; i++) {
         const x = IN + cw * (i + .5), y = IN + (AH / rows) * (j + .5);
-        cells.push([i, j, x, y, dimAt(x, y)]);
+        cells.push([i, j, x, y, dimAt(x, y, sw, sh, lv)]);
       }
       return { lv, sw, sh, cw, cells };
     });
@@ -149,23 +163,36 @@
   const INSET = 12, RAD = 30;
   let edgeLen = 0;
   const layoutEdge = () => {
-    const x0 = INSET, y0 = INSET, x1 = W - INSET, y1 = H - INSET, cx = W / 2, r = RAD;
-    edge.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    const x0 = INSET, y0 = INSET, x1 = W - INSET, y1 = VH - INSET, cx = W / 2, r = RAD;
+    edge.setAttribute('viewBox', '0 0 ' + W + ' ' + VH);
     eR.setAttribute('d', 'M' + cx + ' ' + y0 + 'H' + (x1 - r) + 'A' + r + ' ' + r + ' 0 0 1 ' + x1 + ' ' + (y0 + r) + 'V' + (y1 - r) + 'A' + r + ' ' + r + ' 0 0 1 ' + (x1 - r) + ' ' + y1 + 'H' + cx);
     eL.setAttribute('d', 'M' + cx + ' ' + y0 + 'H' + (x0 + r) + 'A' + r + ' ' + r + ' 0 0 0 ' + x0 + ' ' + (y0 + r) + 'V' + (y1 - r) + 'A' + r + ' ' + r + ' 0 0 0 ' + (x0 + r) + ' ' + y1 + 'H' + cx);
     edgeLen = eR.getTotalLength();
     [eL, eR].forEach((p) => { p.style.strokeDasharray = edgeLen + ' ' + edgeLen; });
   };
+  /* the visible screen: innerHeight now (it grows when the toolbar hides), never taller than the hero */
+  const fitView = () => {
+    const vh = Math.min(innerHeight, stage.clientHeight);
+    if (Math.abs(vh - VH) < 1) return false;
+    VH = vh; view.style.height = vh + 'px'; return true;
+  };
 
   const build = () => {
-    W = stage.clientWidth; H = stage.clientHeight; w0 = innerWidth;
+    W = stage.clientWidth; H = stage.clientHeight; w0 = innerWidth; h0 = H;
+    VH = 0; fitView();
     D = Math.min(1.5, window.devicePixelRatio || 1);
     cvs.forEach((c) => { c.width = Math.round(W * D); c.height = Math.round(H * D); });
-    const keep = num.innerHTML;
-    num.textContent = '500';   /* the widest count sets the quiet area behind the words */
-    const s = stage.getBoundingClientRect(), b = lock.getBoundingClientRect();
-    num.innerHTML = keep;
-    box = { cx: b.left - s.left + b.width / 2, cy: b.top - s.top + b.height / 2, rx: Math.max(b.width / 2 + 34, W * .36), ry: b.height / 2 + 40 };
+    /* the glyph boxes of each count (the number, or the infinity sign, and SCREENS):
+       the screens under them step back */
+    const keep = num.innerHTML, keepW = word.textContent, inf = num.classList.contains('is-inf');
+    const s = stage.getBoundingClientRect(), rel = (r) => ({ l: r.left - s.left, r: r.right - s.left, t: r.top - s.top, b: r.bottom - s.top });
+    word.textContent = 'Screens';
+    boxes = NUMS.map((n) => {
+      setNum(n);
+      const g = n === 'inf' ? num.firstElementChild.getBoundingClientRect() : num.getBoundingClientRect();
+      return [rel(g), rel(word.getBoundingClientRect())];
+    });
+    num.innerHTML = keep; num.classList.toggle('is-inf', inf); word.textContent = keepW;
     /* "One platform." sits on one line as on PC (a | in content.js makes more
        lines): as large as 16vw, smaller only if a longer title needs it */
     platT.style.fontSize = '';
@@ -251,7 +278,7 @@
     skip = fin;
     const walk = i === 0 ? Promise.resolve() : moveTo(lv, 700);
     if (to === 'inf') { setNum('inf'); walk.then(fin); return; }
-    const s = i === 0 ? 0 : NUMS[i - 1], t0 = performance.now();
+    const s = i === 0 ? 1 : NUMS[i - 1], t0 = performance.now();
     const step = (x) => {
       if (done) return;
       const k = Math.min(1, (x - t0) / 520), e = 1 - Math.pow(1 - k, 3);
@@ -261,15 +288,40 @@
     raf2 = requestAnimationFrame(step);
   });
   const phase = (name) => { stage.dataset.phase = name; };
-  let loops = 0;
+  /* screen number one: the phone itself. Black, the orange pixel boots in
+     the middle, the orange edge traces the phone, then "1 SCREEN" where the
+     pixel was. A tap finishes the trace at once. */
+  const bootOne = () => new Promise((res) => {
+    wallOn = false; mv = null; cur = -1; nxt = -1; drawWall(cvs[0], -1, 0); drawWall(cvs[1], -1, 0);
+    setNum(1); word.textContent = 'Screen';
+    stage.classList.add('is-boot');
+    stage.classList.remove('is-end', 'is-plat', 'is-logo', 'is-full');
+    [eL, eR].forEach((p) => { p.style.strokeDashoffset = edgeLen; });
+    edge.style.transition = 'none'; stage.classList.add('is-edge'); void edge.getBoundingClientRect(); edge.style.transition = '';   /* the dash is hidden, so the edge can show at once */
+    px.animate([{ opacity: 0, transform: 'scale(.3)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 200, easing: P2.EASE_OUT, fill: 'forwards' });
+    const traces = [eL, eR].map((p) => p.animate([{ strokeDashoffset: edgeLen }, { strokeDashoffset: 0 }], { duration: 600, delay: 260, easing: P2.EASE_IO, fill: 'forwards' }));
+    skip = () => traces.forEach((a) => a.finish());
+    const done = () => {
+      skip = null;
+      [eL, eR].forEach((p) => { p.style.strokeDashoffset = '0'; });
+      traces.forEach((a) => a.cancel());
+      px.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, fill: 'forwards' });
+      stage.classList.remove('is-boot');
+      lock.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420, delay: 120, easing: P2.EASE_OUT, fill: 'backwards' });
+      res();
+    };
+    traces[0].finished.then(done).catch(done);
+  });
   const run = async () => {
     await whenVisible();
-    phase('count'); loops++;
-    stage.classList.remove('is-end', 'is-plat', 'is-logo', 'is-full');
-    num.textContent = '';
+    phase('one');
+    await bootOne();
+    await hold(1500);
+    /* then the wall: ten screens refresh on under the orange scanline while the count climbs */
+    phase('count');
+    word.textContent = 'Screens';
     setWall(0);
-    if (loops > 1) P2.scanline(screen, { dur: 620 });   /* each new loop, the screen refreshes on under the orange scanline */
-    await wait(300);
+    P2.scanline(screen, { dur: 620 });
     for (let i = 0; i < NUMS.length; i++) {
       stage.dataset.count = String(NUMS[i]);
       await count(i);
@@ -288,43 +340,23 @@
     run();
   };
 
-  /* ------------------------------------------------------------ power on (once) */
-  const boot = () => new Promise((res) => {
-    edge.style.opacity = '1';
-    if (scrollY > 40) { [eL, eR].forEach((p) => { p.style.strokeDashoffset = '0'; }); res(); return; }
-    stage.classList.add('is-boot');
-    [eL, eR].forEach((p) => { p.style.strokeDashoffset = edgeLen; });
-    px.animate([{ opacity: 0, transform: 'scale(.3)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 200, easing: P2.EASE_OUT, fill: 'forwards' });
-    const traces = [eL, eR].map((p) => p.animate([{ strokeDashoffset: edgeLen }, { strokeDashoffset: 0 }], { duration: 600, delay: 200, easing: P2.EASE_IO, fill: 'forwards' }));
-    const done = () => {
-      [eL, eR].forEach((p) => { p.style.strokeDashoffset = '0'; });
-      traces.forEach((a) => a.cancel());
-      px.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, fill: 'forwards' });
-      stage.classList.remove('is-boot');
-      /* the screen refreshes on: the orange scanline brings the wall and the words in */
-      P2.scanline(screen, { dur: 620 });
-      lock.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420, delay: 260, easing: P2.EASE_OUT, fill: 'backwards' });
-      res();
-    };
-    traces[0].finished.then(done).catch(done);
-  });
-
   /* ------------------------------------------------------------ go */
   const start = () => {
     build();
     let rt = 0;
     addEventListener('resize', () => {
+      /* the toolbar came or went: the words and the edge follow the visible screen */
+      if (fitView()) layoutEdge();
       clearTimeout(rt);
-      rt = setTimeout(() => { if (Math.abs(innerWidth - w0) > 40) { build(); if (wallOn) { if (mv) settle(); setWall(cur); } } }, 200);
+      rt = setTimeout(() => { if (Math.abs(innerWidth - w0) > 40 || Math.abs(stage.clientHeight - h0) > 2) { build(); if (wallOn) { if (mv) settle(); setWall(cur); } } }, 200);
     }, { passive: true });
     if (RM) {
-      /* reduced motion: the end frame, still: the orange edge and the full logo */
-      edge.style.opacity = '1'; [eL, eR].forEach((p) => { p.style.strokeDashoffset = '0'; });
+      /* reduced motion: the end frame, still: the full logo (the orange edge only shows with screens) */
       stage.classList.add('is-end', 'is-logo', 'is-full'); phase('logo');
       glow.style.opacity = '.3';
       return;
     }
-    whenVisible().then(boot).then(run);
+    run();
   };
   /* the lockup is measured for the quiet area behind the words, so wait for Archivo */
   (document.fonts && document.fonts.ready ? Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1200))]) : Promise.resolve()).then(start);

@@ -1,4 +1,4 @@
-/* phone2 Trusted by (r92). js/phone2/trusted.js builds the wall.
+/* phone2 Trusted by (r94: three whole columns inside the phone, full screen top to bottom). js/phone2/trusted.js builds the wall.
    One phone screen, the wall edge to edge and top to bottom, on the r76
    phone ground (#000, measured: computed rgb(0,0,0), every pixel sample 0,0,0).
    The tiles copy the r76 wall (dark bezel, white panel, the logo in its own
@@ -8,7 +8,7 @@
 .p2 #clients{height:auto;min-height:0;padding:0;display:block;background:#000;overflow:hidden}
 .p2 #clients > .clients__row{display:none}
 .p2 .p2t{position:relative}
-.p2 .p2t__stage{position:relative;height:var(--app-h,100svh);overflow:hidden}
+.p2 .p2t__stage{position:relative;height:var(--app-h,100svh);height:max(var(--app-h,100svh),100lvh);overflow:hidden}   /* r94: at least the large phone screen */
 .p2 #clients .quote{padding:0 var(--p2-gut) calc(var(--p2-title) * 1.5)}
 
 .p2 .p2t__grid{position:absolute;inset:0}
@@ -19,9 +19,10 @@
 .p2 .p2t__panel{position:relative;display:block;height:100%;border-radius:5px;background:#fff;overflow:hidden}
 .p2 .p2t__panel img{position:absolute;left:13%;top:17%;width:74%;height:66%;object-fit:contain}
 
-/* each logo comes towards you from the open cell: far and small, then home */
-.p2 .p2t__tile{transition-property:opacity,transform;transition-timing-function:cubic-bezier(.16,1,.3,1);transition-duration:720ms}
-.p2 #clients.is-armed .p2t__tile{opacity:0;transform:translate(var(--fx),var(--fy)) scale(.1)}
+/* r96: each logo switches on in its own cell, rising a few pixels as it
+   lights (the wall fills from the bottom row up, trusted.js sets the order) */
+.p2 .p2t__tile{transition-property:opacity,transform;transition-timing-function:cubic-bezier(.16,1,.3,1);transition-duration:620ms}
+.p2 #clients.is-armed .p2t__tile{opacity:0;transform:translateY(14px) scale(.92)}
 .p2 #clients.is-armed .p2t__tile.is-in{opacity:1;transform:none}
 
 /* the title's screen: one wide dark screen in the wall, running past both

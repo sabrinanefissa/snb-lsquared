@@ -1,41 +1,106 @@
-/* phone2-revert.css (r92): overrides for the sections Sabrina sent back to
+/* phone2-revert.css (r94): overrides for the sections Sabrina sent back to
    the r76 OLD phone design, scoped under .p2 (only active while content.js
    says "phone design: new", so it never touches "phone design: old" or PC).
    Everything else about these sections is the untouched r76 CSS in
    css/mobile.css and css/sections.css; this file only fixes what Sabrina
-   flagged: Who we are centred and filling the screen with no dead band, and
-   the Nine facts turned into a thin band over the top of the contact photo. */
+   flagged. */
+
+/* ---------------------------------------------------------------- full bleed
+   r94: on a real phone the toolbar hides after the page settles, the real
+   visible screen grows past --app-h (measured once at load), and a section
+   sized to exactly --app-h then falls short, showing a strip of the next
+   section at its bottom. max(var(--app-h),100lvh) means the section is
+   never shorter than the LARGEST the real viewport can be. This also fixes
+   the CEO quote: fall.js's own scroll math (js/fall.js "pinned()") reads
+   the LIVE innerHeight, but the section's CSS height was fixed to the
+   stale --app-h; once the toolbar hid, the two fell out of sync and the
+   word-by-word reveal finished over a much shorter scroll than it was built
+   for, reading as "not spread out". Sizing the section itself off the same
+   live-viewport figure keeps fall.js's math and the rendered box in sync,
+   so the r76 pacing is restored. */
+.p2 #statement{
+  height:max(var(--app-h,100svh),100lvh);
+  min-height:max(var(--app-h,100svh),100lvh);
+}
+.p2 #industries,
+.p2 #publish{
+  min-height:max(var(--app-h,100svh),100lvh);
+}
+.p2 #independent{
+  height:calc(max(var(--app-h,100svh),100lvh) * 2.8);
+}
+.p2 .fall{
+  height:max(var(--app-h,100svh),100lvh);
+}
+.p2 #demo{
+  min-height:max(var(--app-h,100svh),100lvh);
+}
+.p2 .demo__stage{
+  height:max(var(--app-h,100svh),100lvh);
+}
+
+/* ---------------------------------------------------------------- industries
+   r94: the phone gets the SAME crossfade as the computer (js/page.js sets
+   .ind--fade on .p2 as well as on a computer now); swipe and tap still move
+   to the next/previous industry (unchanged pointer handlers), only the
+   visual change is a fade instead of a sideways slide. The dots and the
+   gold fill bar under the photo are untouched. */
 
 /* ---------------------------------------------------------------- who we are
    The r76 accordion already centres itself (flex column, justify-content
    center), but leaves an even but noticeable empty band above and below the
-   five strips. Tightening the section padding and reclaiming that slack for
-   the grid itself makes the title and the five strips use the full height,
-   still perfectly centred, with no dead band top or bottom. */
+   five strips. Tightening the section padding and sizing the grid off the
+   same live-viewport figure as the rest of the page reclaims that slack: the
+   title and the five strips use the full height (more room now that the
+   section is never shorter than the real screen), still perfectly centred,
+   with no dead band top or bottom. */
 .p2 #strips{
+  min-height:max(var(--app-h,100svh),100lvh);
   padding-top:clamp(14px,3.2dvh,26px);
   padding-bottom:clamp(14px,3.2dvh,26px);
   overflow:hidden;
 }
 .p2 .strips{
-  height:calc(var(--app-h,100svh) - 2 * clamp(14px,3.2dvh,26px) - var(--gap-title) - 1.25 * var(--title));
+  height:calc(max(var(--app-h,100svh),100lvh) - 2 * clamp(14px,3.2dvh,26px) - var(--gap-title) - 1.25 * var(--title));
+}
+
+/* ---------------------------------------------------------------- publish
+   r94: no 300ms tap-ambiguity wait on the toggles, so the wipe starts the
+   instant a real finger lifts. */
+.p2 #publish .seg button{touch-action:manipulation}
+
+/* r94: the pulsing #FF9900 glow (js/mobile.js adds/removes .is-glow) on the
+   Breakfast toggle of the FIRST (top) screen, same soft PC "goglow" look,
+   no hard edge, until the visitor taps any toggle. */
+.p2 #publish .seg button.is-glow{
+  animation:p2goglow 2.6s ease-in-out infinite;
+}
+@keyframes p2goglow{
+  0%,100%{box-shadow:0 0 14px 2px rgba(255,153,0,.4),0 0 32px 8px rgba(255,153,0,.16)}
+  50%{box-shadow:0 0 20px 5px rgba(255,153,0,.75),0 0 46px 14px rgba(255,153,0,.32)}
+}
+@media (prefers-reduced-motion:reduce){
+  .p2 #publish .seg button.is-glow{animation:none;box-shadow:0 0 18px 4px rgba(255,153,0,.5)}
 }
 
 /* ---------------------------------------------------------------- nine facts
    Old one-at-a-time crossfade (page.js "6. the figures", unchanged JS), but
-   restyled as a thin band (about 20-25% of app-h, no dead space inside it)
-   laid over the TOP of the contact photo. #demo's own top screen (the
+   restyled as a band (about 28-32% of the real screen, no dead space inside
+   it) laid over the TOP of the contact photo. #demo's own top screen (the
    headline) starts at 12.9% of its height (see mobile.css "contact: the new
    tall three-screen wall"), so the band's overlap into #demo is kept well
    under that so the headline screen is never covered. The band keeps a solid
    ground for its own (non-overlapping) height, then fades to transparent
    over the small strip it overlaps, so the seam into the photo reads as one
-   soft transition rather than a hard cut. */
+   soft transition rather than a hard cut. Text is bigger and dead centre,
+   equal space above and below (a single flex-centred box). The coloured
+   word alternates orange/blue fact to fact (the DOM order is fixed and the
+   loop always advances by one, so nth-of-type is a stable alternation). */
 .p2 #numbers{
-  min-height:0;height:clamp(150px,calc(var(--app-h,100svh) * .22),210px);
+  min-height:0;height:clamp(190px,calc(max(var(--app-h,100svh),100lvh) * .30),290px);
   margin-bottom:-52px;   /* overlap: well inside #demo's safe top 12.9% (~109px on a 844px screen) */
   position:relative;z-index:2;
-  padding:0 var(--p2-gut,20px);
+  padding:0 var(--p2-gut,20px) 52px;box-sizing:border-box;   /* r95: centre the text in the visible part, above the 52px overlap */
   display:flex;align-items:center;justify-content:center;text-align:center;
   background:linear-gradient(180deg,#050A10 0%,#050A10 68%,rgba(5,10,16,0) 100%);
 }
@@ -43,18 +108,41 @@
 .p2 .beats{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
 .p2 .beats__stage{position:relative;width:100%;height:auto;padding:0;display:block}
 .p2 .beats__line{
-  position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
+  position:absolute;left:0;right:0;top:50%;
   display:flex!important;flex-direction:row;align-items:baseline;justify-content:center;
   gap:.3em;flex-wrap:nowrap;white-space:nowrap;
-  opacity:0;transition:opacity .35s var(--p2-ease,ease);
+  opacity:0;transform:translateY(calc(-50% - 14px));
+  transition:opacity .38s var(--p2-ease-io,ease),transform .38s var(--p2-ease-io,ease);
 }
-.p2 .beats__line.is-on{opacity:1;transition:opacity .5s var(--p2-ease,ease)}
+/* r96: each fact drops in from above along a thin orange line, the
+   previous one falling away below as it leaves, so the band reads as a
+   ticker running down the page rather than a plain crossfade. page.js
+   (p2-gated) adds .is-out on the outgoing line for the ~360ms handoff
+   before the next .is-on line lands. */
+.p2 .beats__line.is-on{
+  opacity:1;transform:translateY(-50%);
+  transition:opacity .42s var(--p2-ease-io,ease),transform .42s var(--p2-ease-io,ease);
+}
+.p2 .beats__line.is-out{
+  opacity:0;transform:translateY(calc(-50% + 14px));
+  transition:opacity .3s ease-in,transform .3s ease-in;
+}
+.p2 .beats__line::before{
+  content:"";position:absolute;left:50%;top:-10px;width:2px;height:0;
+  transform:translateX(-50%);border-radius:1px;background:var(--p2-orange,#FF9900);
+  box-shadow:0 0 6px rgba(255,153,0,.65),0 0 14px rgba(255,153,0,.3);
+  opacity:0;transition:height .32s var(--p2-ease-io,ease),opacity .32s var(--p2-ease-io,ease);
+}
+.p2 .beats__line.is-on::before{height:12px;opacity:1;transition-delay:.08s}
+.p2 .beats__line.is-out::before{height:0;opacity:0;transition:height .22s ease-in,opacity .22s ease-in}
 .p2 .beats__fig,.p2 .beats__word{
   font-family:'Archivo',sans-serif;font-stretch:64%;font-weight:800;text-transform:uppercase;
-  line-height:.9;letter-spacing:-.01em;font-size:clamp(18px,5.4vw,28px);
+  line-height:.9;letter-spacing:-.01em;font-size:clamp(21px,6.6vw,34px);
 }
 .p2 .beats__fig{color:var(--p2-paper,#F3F1EC)}
-.p2 .beats__word{color:var(--p2-orange,#FF9900);margin-left:0}
+.p2 .beats__word{margin-left:0}
+.p2 .beats__line:nth-of-type(odd) .beats__word{color:var(--p2-orange,#FF9900)}
+.p2 .beats__line:nth-of-type(even) .beats__word{color:var(--p2-blue,#56B0E4)}
 
 /* ---------------------------------------------------------------- contact
    Nothing else changes: the r76 wall, headline, fields and button render
@@ -65,11 +153,36 @@
 
 @media (prefers-reduced-motion:reduce){
   /* page.js shows every beat at once under reduced motion (no rotation); on
-     the thin band that would stack eight lines on the same spot, illegible.
+     the band that would stack eight lines on the same spot, illegible.
      Here they stack normally instead, so the section grows to fit them; the
-     tradeoff is this one section is not thin under reduced motion, but it is
-     readable, and it no longer overlaps the contact photo. */
+     tradeoff is this one section is not a thin band under reduced motion,
+     but it is readable, and it no longer overlaps the contact photo. */
   .p2 #numbers{height:auto;margin-bottom:0;padding:20px var(--p2-gut,20px)}
   .p2 .beats__stage{height:auto}
   .p2 .beats__line{position:static;transform:none;opacity:1;transition:none;margin-bottom:8px}
+  .p2 .beats__line::before{display:none}
+}
+
+/* ---------------------------------------------------------------- contact
+   r96: three scrims over the wall photo (behind .demo__h and .form, which
+   are untouched) switch the "screens" on top to bottom as the section
+   arrives; js/phone2/revert.js adds them and times the reveal. Percentages
+   match .demo__h/.form exactly (see css/mobile.css "contact: the new tall
+   three-screen wall"). Decoration only: the form is never dimmed, disabled
+   or reflowed, and any tap or focus in the section lights everything at
+   once (js/phone2/revert.js). */
+.p2 .p2-cscrim{
+  position:absolute;left:13%;right:14%;
+  background:#05090F;opacity:.82;pointer-events:none;
+  transition:opacity 520ms var(--p2-ease,ease);
+}
+.p2 .p2-cscrim.is-off{opacity:0}
+.p2 .form .btn{transition:text-shadow 640ms var(--p2-ease,ease)}
+.p2 .form .btn::after{transition:box-shadow 640ms var(--p2-ease,ease)}
+/* r97: the glow sits on the words and the gold bar, not on the whole screen-sized button box */
+.p2 .form .btn.p2-cglow{text-shadow:0 0 18px rgba(255,153,0,.5)}
+.p2 .form .btn.p2-cglow::after{box-shadow:0 0 12px 2px rgba(255,153,0,.6),0 0 28px 8px rgba(255,153,0,.28)}
+@media (prefers-reduced-motion:reduce){
+  .p2 .p2-cscrim{transition:none}
+  .p2 .form .btn,.p2 .form .btn::after{transition:none}
 }

@@ -137,16 +137,35 @@
   }
 
   /* -------------------------------------------------------------- publish
-     A tap on a toggle both selects AND publishes: page.js's own click
-     handler runs first and sets the scene's selection, then this fires the
-     hidden Publish button, which is the only thing that ever calls reveal().
-     The status line is moved onto its own photo, bottom corner. */
+     A tap on a toggle both selects AND publishes.
+     r94, redesigned phone page (.p2) ONLY: each scene now publishes
+     independently, the instant its own toggle is tapped. Before, every
+     toggle on the page called the shared, hidden Publish button, which
+     pushes every scene still pending at once (page.js's pending()/go
+     handler has no idea which toggle was actually tapped) - so a tap on
+     scene 2 could also re-wipe a still-pending scene 1, and two screens
+     due together got staggered 180ms apart, reading as lag. Each toggle
+     now dispatches its own scene index and nothing else moves.
+     "phone design: old" keeps the exact original behaviour below
+     (unchanged), so it still matches the r76 backup byte for byte. */
   {
     const go = $('#pub-go');
-    if (go) {
+    const P2 = document.documentElement.classList.contains('p2');
+    if (go && P2) {
       let stop = () => {};
-      $$('#publish .seg button').forEach((btn) => {
-        btn.addEventListener('click', () => { stop(); go.click(); });
+      /* the redesigned phone page pulses a soft #FF9900 glow on the FIRST
+         screen's Breakfast toggle (the PC "goglow" look, css
+         css/phone2-revert.css .is-glow) until the visitor taps ANY toggle. */
+      const glowBtn = $('.seg button[data-menu="breakfast"]', $('.pub__scene'));
+      if (glowBtn) glowBtn.classList.add('is-glow');
+      $$('.pub__scene').forEach((sc, i) => {
+        $$('.seg button', sc).forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            stop();
+            if (glowBtn && e.isTrusted) glowBtn.classList.remove('is-glow');   /* r95: only a real finger ends the glow, not the demo cursor */
+            document.dispatchEvent(new CustomEvent('pub:tap', { detail: { i } }));
+          });
+        });
       });
       $$('.pub__scene').forEach((sc) => {
         const shot = $('.pub__shot', sc), status = $('.pub__status', sc);
@@ -160,6 +179,16 @@
         return shot && $$('.pub__ph', shot).find((p) => !p.classList.contains('is-on'));
       }).filter(Boolean);
       /* r74: the old half-slide hint is gone; page.js shows a fingertip tapping the menu */
+    } else if (go) {
+      /* "phone design: old" - exact r76 behaviour, unchanged */
+      let stop = () => {};
+      $$('#publish .seg button').forEach((btn) => {
+        btn.addEventListener('click', () => { stop(); go.click(); });
+      });
+      $$('.pub__scene').forEach((sc) => {
+        const shot = $('.pub__shot', sc), status = $('.pub__status', sc);
+        if (shot && status) shot.appendChild(status);
+      });
     }
   }
 

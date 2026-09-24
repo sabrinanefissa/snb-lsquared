@@ -159,8 +159,12 @@
       let front = A, back = B, cur = -1, busy = false;
       /* r59: on a computer the photos fade into each other, a click on the
          photo shows the next industry, and a row of dots under it says which
-         one of the four is showing. The phone keeps its sideways slide. */
-      const FADE = !matchMedia('(max-width:760px)').matches;
+         one of the four is showing.
+         r94: the redesigned phone page (.p2) now gets the SAME crossfade as
+         the computer instead of the old sideways slide; swipe/tap still move
+         to the next/previous industry, only the visual change is different.
+         The old phone page ("phone design: old") keeps its original slide. */
+      const FADE = !PHONE_W || document.documentElement.classList.contains('p2');
       let dots = [];
       /* r62: the phone gets the same dots; its current dot fills up while the
          photo waits, then the next one slides in */
@@ -367,6 +371,17 @@
 
       syncGo();
 
+      /* r94: on a phone (js/mobile.js) each toggle publishes only its own
+         scene, the instant it is tapped, independent of every other scene;
+         the shared Publish button stays desktop-only. mobile.js dispatches
+         this with the scene's own index instead of clicking #pub-go (which
+         pushes EVERY pending scene at once and stagger-delays extras). */
+      document.addEventListener('pub:tap', (e) => {
+        const sc = state[e.detail && e.detail.i];
+        if (!sc || !sc.selected || sc.selected === sc.live) return;
+        reveal(sc);
+      });
+
       /* r74: a cursor shows what to do. When the section is first reached, and
          only if the visitor has not started, a pointer glides onto Breakfast on
          the first scene (left on a computer, top on a phone), clicks it, then
@@ -517,6 +532,11 @@
     const stage = $('#beats');
     if (stage) {
       const lines = $$('.beats__line', stage);
+      /* r96: on the redesigned phone page the outgoing line gets a one-off
+         .is-out class so css/phone2-revert.css can send it downward while
+         the next one drops in from above, instead of a plain crossfade.
+         Unused (and harmless) everywhere else. */
+      const P2 = document.documentElement.classList.contains('p2');
       let i = 0, timer = 0, visible = false;
       /* the outgoing beat is fully gone before the next one arrives, so two
          figures are never on screen together */
@@ -529,8 +549,12 @@
           lines.forEach((el, k) => el.classList.toggle('is-on', k === i));
           return;
         }
+        if (P2) lines[i].classList.add('is-out');
         lines.forEach((el) => el.classList.remove('is-on'));
-        handoff = setTimeout(() => { i = next; lines[i].classList.add('is-on'); }, 360);
+        handoff = setTimeout(() => {
+          if (P2) lines.forEach((el) => el.classList.remove('is-out'));
+          i = next; lines[i].classList.add('is-on');
+        }, 360);
       };
       const stop = () => { clearTimeout(timer); timer = 0; };
       const queue = () => { stop(); timer = setTimeout(() => { show(i + 1); queue(); }, 2400); };

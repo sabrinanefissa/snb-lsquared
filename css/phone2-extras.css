@@ -1,0 +1,49 @@
+/* phone2 extras (r96), js/phone2/extras.js. Linked with media="(max-width: 760px)";
+   every rule starts with .p2, so "phone design: old" and the computer are untouched. */
+
+/* ---------------------------------------------------------------- the pixel on the right edge */
+.p2 .p2x-rail{
+  position:fixed;z-index:45;right:5px;top:14%;bottom:14%;width:4px;pointer-events:none;
+  opacity:0;transition:opacity 500ms var(--p2-ease);
+}
+.p2 .p2x-rail.is-on{opacity:1}
+.p2 .p2x-rail__track{position:absolute;left:1.5px;top:0;bottom:0;width:1px;background:rgba(150,160,172,.28)}
+.p2 .p2x-rail__tick{position:absolute;left:0;top:0;width:4px;height:1px;margin-top:-.5px;background:rgba(150,160,172,.4)}
+.p2 .p2x-rail__px{
+  position:absolute;left:0;top:0;width:4px;height:4px;margin-top:-2px;background:var(--p2-orange);
+  box-shadow:0 0 6px 1px rgba(255,153,0,.7),0 0 14px 3px rgba(255,153,0,.22);
+  will-change:transform;
+}
+
+/* ---------------------------------------------------------------- the statement lines rise in */
+.p2 #statement .p2x-w{display:inline-block}
+.p2 #statement.p2x-armed .p2x-w{opacity:0;transform:translateY(.32em)}
+.p2 #statement.p2x-armed.p2x-in .p2x-w{
+  opacity:1;transform:none;
+  transition:opacity 480ms var(--p2-ease),transform 720ms var(--p2-ease);
+  transition-delay:calc(var(--i,0) * 120ms);
+}
+
+/* the hint: one pill, centred near the bottom of the blue */
+.p2 #statement .p2x-hint{
+  position:absolute;z-index:3;left:0;right:0;bottom:max(22px,7%);margin:0 auto;width:max-content;max-width:calc(100% - 2 * var(--p2-gut));
+  display:flex;align-items:center;gap:10px;padding:9px 16px 9px 13px;border-radius:999px;
+  background:rgba(6,18,30,.88);color:var(--p2-paper);
+  font-family:'Archivo',sans-serif;font-size:13px;font-weight:600;letter-spacing:.01em;line-height:1.2;white-space:nowrap;
+  box-shadow:0 6px 18px rgba(6,18,30,.22);
+  pointer-events:none;opacity:0;transform:translateY(8px);
+  transition:opacity 420ms var(--p2-ease),transform 520ms var(--p2-ease);
+}
+.p2 #statement .p2x-hint.is-on{opacity:1;transform:none}
+.p2 .p2x-hint__px{position:relative;flex:none;width:9px;height:9px;background:var(--p2-orange)}
+.p2 .p2x-hint__px::after{
+  content:"";position:absolute;inset:-3px;box-shadow:0 0 10px 3px rgba(255,153,0,.55);opacity:.35;
+  animation:p2x-pulse 1100ms var(--p2-ease-io) infinite alternate;
+}
+@keyframes p2x-pulse{to{opacity:1;transform:scale(1.18)}}
+
+@media (prefers-reduced-motion:reduce){
+  .p2 .p2x-rail{transition:none}
+  .p2 #statement .p2x-hint{transform:none;transition:opacity 200ms linear}
+  .p2 .p2x-hint__px::after{animation:none;opacity:.7}
+}

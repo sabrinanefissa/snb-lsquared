@@ -21,6 +21,12 @@
   };
 
   const line = sec.querySelector('[data-words]');
+  /* r96: phone only. Same release schedule (rel[i], REL0/RELS) and the same
+     word-by-word reveal (lightWords, untouched below); only where each
+     pixel starts moves flush to the very top of the pinned screen instead
+     of already partway down, so the empty top third of the section becomes
+     part of the fall instead of dead space above it. */
+  const P2 = document.documentElement.classList.contains('p2');
 
   /* ---- geometry ---------------------------------------------------- */
   const REL0 = .04, RELS = .50, FALL = .26;
@@ -51,7 +57,7 @@
     sx = new Float32Array(N); sy = new Float32Array(N); rel = new Float32Array(N);
     for (let i = 0; i < N; i++) {
       sx[i] = (.05 + hash(i, 1) * .9) * W;
-      sy[i] = (-.08 + hash(i, 2) * .34) * H;
+      sy[i] = (P2 ? (-.04 + hash(i, 2) * .06) : (-.08 + hash(i, 2) * .34)) * H;
       rel[i] = REL0 + RELS * hash(i, 3);
     }
 

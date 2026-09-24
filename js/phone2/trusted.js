@@ -1,10 +1,13 @@
-/* phone2 section 8, Trusted by (r92).
+/* phone2 section 8, Trusted by (r94: three whole columns, an odd number of
+   rows from under the title to the bottom, the open cell in the true middle).
    One phone screen, filled edge to edge and top to bottom with the logo
    wall (tiles bleed past every edge, like the PC wall). The title sits in
    the wall, in one wide dark screen, centred.
-   The fill is the r77 one: the logos come towards you one at a time from
-   the open middle cell (slow, then faster: 900ms down to 120ms between
-   them). The ending is the old one (page.js 6b, r75): the middle cell stays
+   The fill (r96): the wall switches on from the bottom row up, from where
+   the thumb is, in a loose random order inside that upward flow (slow, then
+   faster: 700ms down to 100ms between them). The first logo lands as soon
+   as the wall is 60% on screen, so the section never reads as a black
+   loading screen. The ending is the old one (page.js 6b, r75): the middle cell stays
    open while the wall fills, a soft shade brings "Room for one more." in
    over the logos, it holds and fades, then the "Take your place." card
    fades into the open cell with its pulsing soft #FF9900 glow, which stops
@@ -59,7 +62,7 @@
   if (quote && document.documentElement.classList.contains('lsq-quote')) wrap.after(quote);
 
   /* ------------------------------------------------------------ the wall */
-  let tiles = [], sched = [], FULL = 0, SAY = 0, GONE = 0, CARD = 0, w0 = 0;
+  let tiles = [], sched = [], FULL = 0, SAY = 0, GONE = 0, CARD = 0, w0 = 0, h0 = 0;
   /* one key per real logo: two list entries with the same file are
      the same logo, so they may not sit side by side either */
   const keyOf = (l) => String(l.src || '').split(/[?#]/)[0].replace(/^.*\//, '').replace(/-hq(?=\.)/, '').toLowerCase() || (l.name || '').trim().toLowerCase();
@@ -86,59 +89,61 @@
   const build = () => {
     w0 = innerWidth;
     grid.textContent = '';
-    const W = stage.clientWidth, H = P2.appH(), gap = 10;
-    /* tiles sized so the middle column is whole and the two beside it run past the edges */
-    const tw = Math.round(W * .36), th = Math.round(tw / 2.1), pw = tw + gap, ph = th + gap;
+    /* r94: three whole columns inside the phone with small even gutters (no
+       logo cut at the edges); the title plain on black at the top; an odd
+       number of rows fills the rest of the screen to the very bottom, so the
+       open cell sits in the middle column of the true middle row */
+    const W = stage.clientWidth, H = stage.clientHeight, gap = 10, cols = 3, K = 1;
+    h0 = H;
+    const tw = Math.floor((W - gap * (cols + 1)) / cols), side = (W - cols * tw - (cols - 1) * gap) / 2;
+    const top = Math.round(gap * 2);
+    band.style.left = '0px'; band.style.width = W + 'px'; band.style.height = ''; band.style.top = top + 'px';
+    const y0 = top + band.offsetHeight + top;   /* the same room above and below the title */
+    let yEnd = H - side;                          /* the last row ends one gutter from the bottom, as at the sides */
+    if (band2) {
+      band2.style.left = '0px'; band2.style.width = W + 'px'; band2.style.height = '';
+      const h2 = band2.offsetHeight;
+      band2.style.top = (H - top - h2) + 'px';
+      yEnd = H - top - h2 - top;
+    }
+    const A = yEnd - y0, th0 = tw / 1.9;
+    let n = Math.max(1, Math.round((A + gap) / (th0 + gap)));
+    if (n % 2 === 0) {
+      const thOf = (k) => (A - (k - 1) * gap) / k;
+      n = Math.abs(thOf(n - 1) - th0) <= Math.abs(thOf(n + 1) - th0) ? n - 1 : n + 1;
+    }
+    const th = Math.floor((A - (n - 1) * gap) / n), rows = n, M = (n - 1) / 2;
+    const gy = rows > 1 ? (A - rows * th) / (rows - 1) : 0;   /* even gaps, the rounding spread over them */
     stage.style.setProperty('--tw', tw + 'px'); stage.style.setProperty('--th', th + 'px'); stage.style.setProperty('--g', gap + 'px');
-    const K = Math.ceil((W / 2 + tw / 2) / pw), M = Math.ceil((H / 2 + th / 2) / ph);   /* columns and rows each side of the middle */
-    const cols = K * 2 + 1, rows = M * 2 + 1;
-    const X = (c) => W / 2 + (c - K) * pw - tw / 2, Y = (r) => H / 2 + (r - M) * ph - th / 2;
-    /* the title's screen: three rows above the open cell (more room if the title
-       has a line under it), clear of the shade that later holds the line */
-    [band, band2].forEach((b) => { if (b) { b.style.left = X(0) + 'px'; b.style.width = (X(cols - 1) + tw - X(0)) + 'px'; b.style.height = ''; } });
-    const need = title.offsetHeight + 16, span = need > th ? 2 : 1;
-    /* r93: the title sits at the top on the black ground, above the wall, as on PC */
-    const bRows = [];
-    let r0 = 0; while (Y(r0) < 0) r0++;   /* first row that is fully on screen */
-    for (let k = 0; k < span; k++) bRows.push(r0 + k);
-    const endRows = [];
-    if (band2) { const need2 = band2.firstChild.offsetHeight + 16, s2 = need2 > th ? 2 : 1; for (let k = 0; k < s2; k++) endRows.push(M + 3 + k); }
-    const place = (b, rs) => {
-      const x0 = X(0), x1 = X(cols - 1) + tw;
-      b.style.left = x0 + 'px'; b.style.width = (x1 - x0) + 'px';
-      b.style.top = Y(rs[0]) + 'px'; b.style.height = (rs.length * ph - gap) + 'px';
-    };
-    place(band, bRows);
-    if (band2) place(band2, endRows);
-    const skip = (r, c) => (r === M && c === K) || r < bRows[0] || bRows.includes(r) || endRows.includes(r);   /* r93: nothing above the title */
+    const X = (c) => side + c * (tw + gap), Y = (r) => y0 + r * (th + gy);
+    const skip = (r, c) => r === M && c === K;
     const g = deal(rows, cols, skip);
-    const cx = W / 2, cy = H / 2;   /* the open cell: where every logo comes from */
+    const cx = X(K) + tw / 2, cy = Y(M) + th / 2;   /* the open cell */
     const list = [];
     for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
       const x = X(c), y = Y(r);
       if (g[r * cols + c] < 0 || x + tw <= 0 || x >= W || y + th <= 0 || y >= H) continue;
       const l = LOGOS[g[r * cols + c]];
       const t = el('div', 'p2t__tile'); t.style.left = x + 'px'; t.style.top = y + 'px';
-      const dx = cx - (x + tw / 2), dy = cy - (y + th / 2);
-      t.style.setProperty('--fx', dx.toFixed(1) + 'px'); t.style.setProperty('--fy', dy.toFixed(1) + 'px');
+      t._y = y + th / 2; t._j = jit(r, c);
       const p = el('span', 'p2t__panel'), im = el('img'); im.src = l.src; im.alt = ''; im.decoding = 'async';
       p.appendChild(im); t.appendChild(p); grid.appendChild(t);
-      /* nearest the open cell first, so the wall grows outwards from it */
-      list.push([Math.hypot(dx * 1.25, dy), t]);
+      list.push(t);
     }
-    list.sort((a, b) => a[0] - b[0]);
-    tiles = list.map((p) => p[1]);
+    pitch = th + gy;
+    tiles = list; order();
     /* the open cell's card, the shade and the glow, as r75 placed them */
     room.style.left = cx + 'px'; room.style.top = (cy - th / 2) + 'px';
     shade.style.left = cx + 'px'; shade.style.top = cy + 'px';
     shade.style.width = (tw * 5) + 'px'; shade.style.height = (th * 3.4) + 'px';
     glow.style.cssText = 'left:' + cx + 'px;top:' + cy + 'px;width:' + (tw * 1.85) + 'px;height:' + (th * 2.5) + 'px';
     grid.appendChild(glow);
-    /* the schedule: the first logo waits 900ms, each gap is a fifth shorter than the last, never under 120ms */
-    sched = []; let at = 0, gapT = 900;
+    /* the schedule (r96): the first logo lands at once, then 700ms, each gap
+       22% shorter than the last, never under 100ms (a little shorter than r95) */
+    sched = []; let at = 0, gapT = 700;
     tiles.forEach((t, k) => {
-      const dur = Math.max(420, 760 - k * 22);
-      sched.push([at, dur]); at += gapT; gapT = Math.max(120, gapT * .8);
+      const dur = Math.max(380, 620 - k * 16);
+      sched.push([at, dur]); at += gapT; gapT = Math.max(100, gapT * .78);
     });
     const last = sched[sched.length - 1] || [0, 0];
     /* r75 timing: the line comes in 250ms after the wall is full, holds, fades,
@@ -147,6 +152,24 @@
     if (stage_ >= 3 || RM) finish();
     else for (let k = 0; k < launched; k++) land(k, true);
   };
+
+  /* the order: from the thumb upwards. The thumb is the bottom edge of
+     what is on screen (the wall's own bottom once it is all in), row by row,
+     with a fixed random jitter per cell so each row switches on in a loose,
+     uneven order. Each next logo is picked at the moment it launches, so if
+     the wall is still coming up the screen, the rows that just came into
+     view are next. Rows still below the screen wait until they show. */
+  let pitch = 1;
+  function jit(r, c) { const v = Math.sin(r * 127.1 + c * 311.7 + 7.3) * 43758.5453; return v - Math.floor(v); }
+  const key = (a, t) => (t._y <= a + pitch * .5 ? (a - t._y) / pitch + t._j * 1.35 : 1000 + t._y - a);
+  function order() { tiles.sort((p, q) => key(h0, p) - key(h0, q)); }
+  function pick(k) {
+    const r = stage.getBoundingClientRect();
+    const a = P2.clamp(Math.min(innerHeight, r.bottom) - r.top, 0, h0);
+    let best = k;
+    for (let i = k + 1; i < tiles.length; i++) if (key(a, tiles[i]) < key(a, tiles[best])) best = i;
+    if (best !== k) { const t = tiles[k]; tiles[k] = tiles[best]; tiles[best] = t; }
+  }
 
   /* ------------------------------------------------------------ the sequence */
   let launched = 0, stage_ = 0, clock = 0, raf = 0, prev = 0, visible = false, started = false;
@@ -167,7 +190,7 @@
     const dt = Math.min(100, now - prev); prev = now;
     if (!visible) return;
     clock += dt;
-    while (launched < tiles.length && sched[launched][0] <= clock) land(launched++, false);
+    while (launched < tiles.length && sched[launched][0] <= clock) { pick(launched); land(launched++, false); }
     if (stage_ < 1 && clock >= FULL) { stage_ = 1; sec.classList.add('is-full'); }
     if (stage_ < 2 && clock >= SAY) { stage_ = 2; sec.classList.add('is-say'); }             /* Room for one more. */
     if (stage_ === 2 && clock >= GONE) { stage_ = 2.5; sec.classList.remove('is-say'); }     /* ...fades slowly */
@@ -182,14 +205,14 @@
     if (RM) { finish(); return; }
     sec.classList.add('is-armed');
     new IntersectionObserver(([e]) => {
-      if (e.isIntersecting && e.intersectionRatio >= .5) started = true;
+      if (e.isIntersecting && e.intersectionRatio >= .6) started = true;
       visible = e.isIntersecting && started;
       if (visible) go(); else stop();
-    }, { threshold: [0, .5] }).observe(stage);
+    }, { threshold: [0, .3, .6, .9] }).observe(stage);
     /* someone who lands below the wall (a link, a restored scroll) sees it finished */
     if (wrap.getBoundingClientRect().bottom < 0) finish();
   };
   let rt = 0;
-  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (Math.abs(innerWidth - w0) > 40) build(); }, 200); }, { passive: true });
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (Math.abs(innerWidth - w0) > 40 || Math.abs(stage.clientHeight - h0) > 2) build(); }, 200); }, { passive: true });
   (document.fonts && document.fonts.ready ? Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1200))]) : Promise.resolve()).then(start);
 })();

@@ -17,6 +17,14 @@
 }
 .p2 ::selection{background:var(--p2-orange);color:var(--p2-ink)}
 
+/* r94: the page moves only up and down. clip (not hidden) on body: hidden
+   would turn the body into a scroll container. The html gets hidden first as
+   the fallback (it passes to the viewport, so that is safe there). The dark
+   screen and industries swipes read pointer events and keep working. */
+html.p2{overflow-x:hidden;overflow-x:clip;overscroll-behavior-x:none}
+.p2 body{overflow-x:clip;overscroll-behavior-x:none;touch-action:pan-y pinch-zoom}
+.p2 main,.p2 .foot{overflow-x:clip;max-width:100%}
+
 /* the shared section rules. A section built for phone2 adds .p2-sec (P2.sec(id)). */
 .p2 .p2-sec{
   min-height:var(--app-h,100svh);

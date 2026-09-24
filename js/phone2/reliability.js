@@ -39,7 +39,20 @@
   const oldH = sec.querySelector('.rely__h'), oldSub = sec.querySelector('.rely__sub');
   const wrap = el('div', 'p2r');
   const title = el('h2', 'p2r__title');
-  title.appendChild(document.createTextNode((oldH && oldH.textContent.trim()) || 'Everyone notices a dark screen.'));
+  /* r94: fit the title on exactly 2 lines on the phone ("Everyone notices" /
+     "a dark screen."), a phone-only line break; content.js and the PC copy
+     are untouched. If the copy is ever edited away from that sentence, this
+     falls back to the natural wrap. */
+  const titleText = (oldH && oldH.textContent.trim()) || 'Everyone notices a dark screen.';
+  const BREAK = /\s+(a dark screen\.?)\s*$/i;
+  const m = BREAK.exec(titleText);
+  if (m) {
+    title.appendChild(document.createTextNode(titleText.slice(0, m.index).trim()));
+    title.appendChild(el('br'));
+    title.appendChild(document.createTextNode(titleText.slice(m.index).trim()));
+  } else {
+    title.appendChild(document.createTextNode(titleText));
+  }
   const sub = el('p', 'p2r__sub'); sub.textContent = (oldSub && oldSub.textContent.trim()) || 'Yours stay on.';
 
   const frame = el('div', 'p2r__frame');
@@ -118,7 +131,10 @@
     dotBtns.forEach((b, k) => b.classList.toggle('is-on', SLOTS[k] === pairs[i].name));
   };
 
-  const SWEEP_MS = 1100, HOLD_MS = 1500;
+  /* r94: the screens stay OFF a few seconds before the sweep starts, and
+     that dark hold lasts exactly as long as the fully-lit hold at the end,
+     so the loop reads even (dark ... sweep ... lit ... dark ...). */
+  const SWEEP_MS = 1100, HOLD_MS = 3000, OFF_HOLD_MS = 3000;
   const sweep = (t0) => {
     if (!visible) return;
     const now = performance.now();
@@ -143,10 +159,19 @@
     raf = requestAnimationFrame(() => sweep(performance.now()));
   };
 
+  /* dark hold: the frame sits fully off (bar hidden), then the sweep begins */
+  const beginOffHold = () => {
+    cancelAnimationFrame(raf); clearTimeout(holdT);
+    setSweep(0); drawBar(0);
+    if (RM) { startSweep(); return; }
+    phase = 'off-hold';
+    holdT = setTimeout(startSweep, OFF_HOLD_MS);
+  };
+
   const next = () => {
     if (!visible) return;
     load((idx + 1) % pairs.length);
-    startSweep();
+    beginOffHold();
   };
 
   function manualGoto(i) {
@@ -177,7 +202,7 @@
 
   new IntersectionObserver(([e]) => {
     visible = e.isIntersecting && !document.hidden;
-    if (visible && phase === 'idle') { buildCanvas(); setTimeout(startSweep, 400); }
+    if (visible && phase === 'idle') { buildCanvas(); beginOffHold(); }
     else if (visible && phase !== 'sweep') { startSweep(); }
     else if (!visible) { cancelAnimationFrame(raf); clearTimeout(holdT); phase = 'idle'; }
   }, { threshold: .5 }).observe(sec);
