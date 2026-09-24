@@ -384,10 +384,9 @@
       const bf = sc0 && sc0.seg.find((x) => x.dataset.menu === 'breakfast');
       if (!RM.matches && sec && bf) {
         const ptr = document.createElement('div');
-        ptr.className = 'pub__ptr' + (PHONE ? ' pub__ptr--tap' : '');
+        ptr.className = 'pub__ptr';   /* r76: the arrow cursor on every screen */
         ptr.setAttribute('aria-hidden', 'true');
-        ptr.innerHTML = PHONE ? '<i class="pub__ptr-ring"></i>'
-          : '<svg viewBox="0 0 24 24" width="30" height="30"><path d="M5 2.5v17.2l4.6-4.3 2.9 6.6 3-1.3-2.9-6.5h6.3z" fill="#F3F1EC" stroke="#06121E" stroke-width="1.4" stroke-linejoin="round"/></svg><i class="pub__ptr-ring"></i>';
+        ptr.innerHTML = '<svg viewBox="0 0 24 24" width="30" height="30"><path d="M5 2.5v17.2l4.6-4.3 2.9 6.6 3-1.3-2.9-6.5h6.3z" fill="#F3F1EC" stroke="#06121E" stroke-width="1.4" stroke-linejoin="round"/></svg><i class="pub__ptr-ring"></i>';
         sec.appendChild(ptr);
         let timers = [], alive = false, pos = [0, 0];
         const T = (ms, fn) => timers.push(setTimeout(() => { if (alive) fn(); }, ms));
@@ -406,22 +405,22 @@
         const run = () => {
           if (state.some((x) => x.selected) || alive) return;   /* they already started */
           alive = true;
-          place(at(sc0.shot, PHONE ? .62 : .7, PHONE ? .55 : .5));
+          /* r76: it appears right away, just off the menu, and gets going */
+          const b0 = at(bf);
+          place([b0[0] + 70, b0[1] - 60]);
           ptr.classList.add('is-on');
+          T(120, () => move(b0, 650));
+          T(820, press);
+          T(930, () => bf.click());                               /* Breakfast (on a phone this publishes) */
           if (PHONE) {
-            T(350, () => move(at(bf), 900));
-            T(1400, press);
-            T(1550, () => bf.click());                            /* the tap publishes */
-            T(2500, () => { ptr.classList.remove('is-on'); alive = false; });
+            T(1700, () => { move([pos[0] + 40, pos[1] + 36], 600); ptr.classList.remove('is-on'); });
+            T(2400, () => { alive = false; });
           } else {
-            T(450, () => move(at(bf), 1000));
-            T(1550, press);
-            T(1700, () => bf.click());                            /* Breakfast ready, Publish glows */
-            T(2550, () => move(at(go, .5, .55), 1050));
-            T(3700, press);
-            T(3850, () => go.click());                            /* the menu goes live */
-            T(4500, () => { move([pos[0] + 46, pos[1] + 40], 700); ptr.classList.remove('is-on'); });
-            T(5300, () => { alive = false; });
+            T(1500, () => move(at(go, .5, .55), 800));
+            T(2380, press);
+            T(2490, () => go.click());                            /* the menu goes live */
+            T(3100, () => { move([pos[0] + 46, pos[1] + 40], 600); ptr.classList.remove('is-on'); });
+            T(3800, () => { alive = false; });
           }
         };
         /* anything the visitor does takes over at once */
@@ -430,9 +429,9 @@
         const io = new IntersectionObserver(([e]) => {
           if (!e.isIntersecting) return;
           io.disconnect();
-          setTimeout(run, 350);
-        }, { threshold: .6 });
-        io.observe(sc0.el);
+          setTimeout(run, 520);   /* r76: as the scenes finish wiping in */
+        }, { threshold: .4 });
+        io.observe(sec);
       }
     }
   }
