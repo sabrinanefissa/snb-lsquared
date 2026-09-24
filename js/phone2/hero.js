@@ -271,17 +271,19 @@
   const hold = (ms) => new Promise((r) => { const t = setTimeout(() => { skip = null; r(); }, ms); skip = () => { clearTimeout(t); r(); }; });
   const whenVisible = async () => { while (!visible || document.hidden) await wait(400); };
   /* the count climbs to its number (520ms, as the old hero) while the wall zooms to the next count */
+  /* r100: faster, and every frame holds the same time (Sabrina: speed it up, equal speed per frame) */
+  const BEAT = 1100, MOVE = 420;
   const count = (i) => new Promise((res) => {
     const to = NUMS[i], lv = i;
     let done = false, raf2 = 0;
     const fin = () => { if (done) return; done = true; skip = null; cancelAnimationFrame(raf2); setNum(to); if (mv) settle(); res(); };
     skip = fin;
-    const walk = i === 0 ? Promise.resolve() : moveTo(lv, 700);
+    const walk = i === 0 ? Promise.resolve() : moveTo(lv, MOVE);
     if (to === 'inf') { setNum('inf'); walk.then(fin); return; }
     const s = i === 0 ? 1 : NUMS[i - 1], t0 = performance.now();
     const step = (x) => {
       if (done) return;
-      const k = Math.min(1, (x - t0) / 520), e = 1 - Math.pow(1 - k, 3);
+      const k = Math.min(1, (x - t0) / MOVE), e = 1 - Math.pow(1 - k, 3);
       num.textContent = String(Math.round(s + (to - s) * e));
       if (k < 1) raf2 = requestAnimationFrame(step); else walk.then(fin);
     };
@@ -299,7 +301,7 @@
     [eL, eR].forEach((p) => { p.style.strokeDashoffset = edgeLen; });
     edge.style.transition = 'none'; stage.classList.add('is-edge'); void edge.getBoundingClientRect(); edge.style.transition = '';   /* the dash is hidden, so the edge can show at once */
     px.animate([{ opacity: 0, transform: 'scale(.3)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 200, easing: P2.EASE_OUT, fill: 'forwards' });
-    const traces = [eL, eR].map((p) => p.animate([{ strokeDashoffset: edgeLen }, { strokeDashoffset: 0 }], { duration: 600, delay: 260, easing: P2.EASE_IO, fill: 'forwards' }));
+    const traces = [eL, eR].map((p) => p.animate([{ strokeDashoffset: edgeLen }, { strokeDashoffset: 0 }], { duration: 450, delay: 180, easing: P2.EASE_IO, fill: 'forwards' }));
     skip = () => traces.forEach((a) => a.finish());
     const done = () => {
       skip = null;
@@ -316,22 +318,22 @@
     await whenVisible();
     phase('one');
     await bootOne();
-    await hold(1500);
+    await hold(BEAT - 150);
     /* then the wall: ten screens refresh on under the orange scanline while the count climbs */
     phase('count');
     word.textContent = 'Screens';
     setWall(0);
-    P2.scanline(screen, { dur: 620 });
+    P2.scanline(screen, { dur: 420 });
     for (let i = 0; i < NUMS.length; i++) {
       stage.dataset.count = String(NUMS[i]);
       await count(i);
-      await hold(NUMS[i] === 'inf' ? 4200 : NUMS[i] >= 500 ? 3600 : 1000);
+      await hold(BEAT);
     }
     /* the wall goes dark, then "One platform.", then the L Squared logo, as on PC */
     phase('end'); stage.classList.add('is-end');
     await wait(900);
     wallOn = false; cur = -1; drawWall(cvs[0], -1, 0); drawWall(cvs[1], -1, 0);
-    phase('plat'); stage.classList.add('is-plat'); await hold(3000);
+    phase('plat'); stage.classList.add('is-plat'); await hold(3000);   /* One platform. and the logo: exactly as r97 */
     stage.classList.remove('is-plat'); await wait(450);
     phase('logo'); stage.classList.add('is-logo'); await hold(650);
     stage.classList.add('is-full'); await hold(4200);

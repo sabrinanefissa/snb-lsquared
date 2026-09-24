@@ -3,6 +3,11 @@
    js/phone2/reliability.js builds the DOM inside #reliability; the r76
    phone markup is hidden here. */
 
+/* r98, the jump fix (js/phone2/reliability.js "page steadiness"): the
+   script holds the page still when a toolbar resizes it, so the browser's
+   own scroll anchoring must not correct the same shift a second time */
+html.p2{overflow-anchor:none}
+
 .p2 #reliability{height:auto;min-height:0;padding:0;display:block;
   background:linear-gradient(180deg,var(--black,#050A10) 0%,#02070C 60%,#000 100%)}
 .p2 #reliability > :not(.p2r){display:none}
@@ -15,12 +20,15 @@
 .p2 .p2r__sub{margin:.4em 0 0;font-family:'Archivo',sans-serif;font-stretch:70%;font-weight:700;
   font-size:clamp(15px,4.6vw,19px);line-height:1.2;color:rgba(243,241,236,.7)}
 
-.p2 .p2r__frame{position:relative;width:calc(100% - 2 * var(--p2-gut));max-width:520px;aspect-ratio:1080/1350;
+.p2 .p2r__frame{position:relative;width:min(calc(100% - 2 * var(--p2-gut)),calc((max(var(--app-h,100svh),100lvh) - 250px) * .6667));max-width:520px;aspect-ratio:1080/1620;   /* r99: her tall 2:3 phone photos, whole */
   overflow:hidden;border-radius:10px;--p:0%;touch-action:pan-y;-webkit-user-select:none;user-select:none}
 .p2 .p2r__ph{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;display:block}
 .p2 .p2r__ph--on{clip-path:inset(0 calc(100% - var(--p)) 0 0)}
-.p2 .p2r__bar{position:absolute;top:0;height:100%;width:34px;pointer-events:none;opacity:0;
-  filter:drop-shadow(0 0 10px rgba(255,153,0,.55))}
+/* r98: the next pair's off photo, faded in only while every screen is off */
+.p2 .p2r__ph--next{opacity:0}
+/* r98: the bar moves with transform only (js sets translateX) */
+.p2 .p2r__bar{position:absolute;top:0;left:0;height:100%;width:34px;pointer-events:none;opacity:0;
+  will-change:transform,opacity;filter:drop-shadow(0 0 10px rgba(255,153,0,.55))}
 
 .p2 .p2r__dots{display:flex;gap:14px;justify-content:center;padding:0 var(--p2-gut);min-height:9px}
 .p2 .p2r__dot{width:9px;height:9px;padding:0;border-radius:50%;border:1px solid rgba(243,241,236,.45);

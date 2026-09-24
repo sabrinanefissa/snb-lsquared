@@ -28,6 +28,26 @@
      part of the fall instead of dead space above it. */
   const P2 = document.documentElement.classList.contains('p2');
 
+  /* r98: phone only. Sabrina: the pinned screen must be evenly spread top to
+     bottom (top of screen -> falling pixels' zone -> the line -> the name),
+     not centred as one lump with a big band left over at the top. A zero
+     height marker sits first in .fall__stage (css/phone2-revert.css sets
+     the stage to justify-content:space-evenly and drops the old fixed
+     margins), so flexbox itself divides the screen into four equal gaps;
+     the landed pixel row then targets this marker's own position instead
+     of a fixed offset above the sentence, so the row always sits in the
+     middle of its gap. Words and the falling animation are untouched. */
+  let marker = null;
+  if (P2) {
+    const stage = sec.querySelector('.fall__stage');
+    if (stage && line) {
+      marker = document.createElement('i');
+      marker.className = 'p2-fallmark';
+      marker.setAttribute('aria-hidden', 'true');
+      stage.insertBefore(marker, line);
+    }
+  }
+
   /* ---- geometry ---------------------------------------------------- */
   const REL0 = .04, RELS = .50, FALL = .26;
   let W = 0, H = 0, D = 1, S = 12, N = 0, X0 = 0, LY = 0;
@@ -51,8 +71,15 @@
     X0 = Math.round((W - N * S) / 2);
     /* the line always sits a clear gap above the sentence, whatever the
        sentence wraps to, so the two never touch */
-    const top = lr ? (lr.top - r.top) : H * .38;
-    LY = Math.round(clamp(top - 48 - S, H * .1, H * .6));
+    const mr = marker ? marker.getBoundingClientRect() : null;
+    if (mr && mr.height >= 0 && (mr.top || mr.top === 0)) {
+      /* r98: the landed row centres on the flex-computed marker position,
+         so it sits in the middle of its own evenly-spaced gap */
+      LY = Math.round(clamp(mr.top - r.top - S / 2, 0, Math.max(0, H - S)));
+    } else {
+      const top = lr ? (lr.top - r.top) : H * .38;
+      LY = Math.round(clamp(top - 48 - S, H * .1, H * .6));
+    }
 
     sx = new Float32Array(N); sy = new Float32Array(N); rel = new Float32Array(N);
     for (let i = 0; i < N; i++) {

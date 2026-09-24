@@ -165,6 +165,7 @@
          to the next/previous industry, only the visual change is different.
          The old phone page ("phone design: old") keeps its original slide. */
       const FADE = !PHONE_W || document.documentElement.classList.contains('p2');
+      const P2 = document.documentElement.classList.contains('p2');
       let dots = [];
       /* r62: the phone gets the same dots; its current dot fills up while the
          photo waits, then the next one slides in */
@@ -182,6 +183,28 @@
         });
         stage.after(row);
       }
+      /* r98: the redesigned phone page only. Sabrina, top priority: the two
+         industry names showed on top of each other mid transition. The
+         photo crossfade below is completely untouched (still .ind__slide
+         fading exactly as built); the name is moved OUT of the fading
+         .ind__ph/.ind__slide chain and onto the stage itself (still the
+         same live nodes, same text, same a11y), so its own opacity is never
+         multiplied by the photo's fade and it can run on its own clock:
+         the outgoing name reaches 0 fully first (200ms), only THEN does the
+         incoming name start fading in (250ms), with a real gap between, so
+         at most one name is ever readable. css/phone2-revert.css repositions
+         the moved node to sit exactly in the same reserved strip above the
+         photo (var(--caprow)) that it always sat in. */
+      let capOfSlide = null, capNameOfSlide = null;
+      if (P2) {
+        const capA = $('.ind__cap', A), capB = $('.ind__cap', B);
+        if (capA && capB) {
+          capA.classList.add('p2i-cap'); capB.classList.add('p2i-cap');
+          stage.append(capA, capB);
+          capOfSlide = new Map([[A, capA], [B, capB]]);
+          capNameOfSlide = new Map([[A, capA.querySelector('.ind__capname')], [B, capB.querySelector('.ind__capname')]]);
+        }
+      }
       const fill = (slide, d) => {
         const ph = $('.ind__ph', slide);
         if (d[6]) ph.dataset.phone = d[6]; else delete ph.dataset.phone;
@@ -193,7 +216,13 @@
         ph.style.setProperty('--ar', r);
         /* the phone sets its own shape from its own photo (js/mobile.js) */
         if (!PHONE_W) ratioOf(d[1], (x) => { if (ph.dataset.src === d[1]) { ph.style.setProperty('--kw', x); ph.style.setProperty('--ar', x); } });
-        $('.ind__capname', slide).textContent = d[0];
+        const capName = (capNameOfSlide && capNameOfSlide.get(slide)) || $('.ind__capname', slide);
+        if (capName) capName.textContent = d[0];
+        /* r98: the redesigned phone page locks the stage to the known 2:3
+           shape of the phone photos (css/phone2-revert.css, !important),
+           so this --kw churn (static guess, then the real desktop ratio,
+           then js/mobile.js's own phone-photo ratio once it loads) never
+           resizes the stage under .p2; only the CSS var wins there. */
       };
       function go(n, dir) {
         n = (n + IND.length) % IND.length;
@@ -206,6 +235,16 @@
         if (FADE) {
           /* the new photo fades in over the old one, which stays whole behind it */
           const old = front;
+          if (capOfSlide) {
+            const oldCap = capOfSlide.get(old), newCap = capOfSlide.get(back);
+            if (!first && !RM.matches) {
+              if (oldCap) oldCap.classList.remove('is-shown');
+              setTimeout(() => { if (newCap) newCap.classList.add('is-shown'); }, 200);
+            } else {
+              if (oldCap) oldCap.classList.remove('is-shown');
+              if (newCap) newCap.classList.add('is-shown');
+            }
+          }
           if (!first && !RM.matches) {
             busy = true;
             old.classList.add('is-under');
@@ -537,6 +576,30 @@
          the next one drops in from above, instead of a plain crossfade.
          Unused (and harmless) everywhere else. */
       const P2 = document.documentElement.classList.contains('p2');
+      /* r98: Sabrina - "Every feature included." does not fit beside "No
+         hidden fees." on one row of this band; the fact stacks instead
+         (fig on its own line, word on its own line under it) rather than
+         each half force-wrapping mid word. Measured, not guessed, and kept
+         live across a resize/orientation change; every other fact keeps
+         its unchanged side-by-side row (this only adds .p2-stack when a
+         fact's own content needs it). */
+      if (P2) {
+        const fitLine = (el) => {
+          const fig = el.querySelector('.beats__fig'), word = el.querySelector('.beats__word');
+          if (!fig || !word) return;
+          const avail = stage.clientWidth;
+          if (!avail) return;
+          const gap = parseFloat(getComputedStyle(el).columnGap) || 0;
+          const wasStacked = el.classList.contains('p2-stack');
+          if (wasStacked) el.classList.remove('p2-stack');   /* measure the row width fresh, not the stacked one */
+          const need = fig.scrollWidth + word.scrollWidth + gap;
+          el.classList.toggle('p2-stack', need > avail - 2);
+        };
+        const fitAll = () => lines.forEach(fitLine);
+        fitAll();
+        let rt = 0;
+        addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(fitAll, 150); }, { passive: true });
+      }
       let i = 0, timer = 0, visible = false;
       /* the outgoing beat is fully gone before the next one arrives, so two
          figures are never on screen together */

@@ -46,6 +46,73 @@
    visual change is a fade instead of a sideways slide. The dots and the
    gold fill bar under the photo are untouched. */
 
+/* r98: the phone's industry photos are all the same shape now (the m/ind-*
+   -full.webp set, 1080x1620, 2:3). js/mobile.js and js/page.js still churn
+   --kw at runtime (a static guess, then a measured desktop ratio, then the
+   real phone-photo ratio once it decodes), and each of those writes was
+   resizing .ind__stage/.ind__ph live, which read as the title (and the name
+   under the photo) jumping during a transition. Locking the number here
+   (an author !important beats their inline style writes) makes the stage a
+   fixed box that never resizes again, on this phone build only. */
+.p2 #industries .ind__stage,
+.p2 #industries .ind__ph{
+  --kw:.6667 !important;
+  --ar:.6667 !important;
+}
+
+/* r98: the industry NAME must never double up with the outgoing one mid
+   transition (Sabrina, top priority: "the titles of each industries still
+   overlap when transitioning"). The photo crossfade is completely
+   untouched (still .ind__slide fading exactly as built). js/page.js moves
+   the two live .ind__cap nodes (same nodes, same text, same a11y) out from
+   inside .ind__ph/.ind__slide onto #ind-stage itself, once, at setup, so
+   the name's own opacity is never multiplied by the photo's fade and it can
+   run on an independent clock: js/page.js adds/removes .is-shown on the
+   moved .p2i-cap: the outgoing name drops to 0 fully first (200ms), only
+   THEN does the incoming name start fading in (250ms) after that gap, so
+   at most one name is ever readable. This rule repositions the moved node
+   to sit exactly where it always sat: centred in the reserved strip above
+   the photo (the same var(--caprow) mobile.css already reserves via
+   .ind__stage's own height and .ind__ph's top offset), instead of the old
+   "bottom:calc(100% + Npx) relative to .ind__ph" math, which no longer
+   applies once the node is no longer a child of .ind__ph. */
+.p2 #industries .ind__cap.p2i-cap{
+  position:absolute;left:0;right:0;top:0;bottom:auto;height:var(--caprow,50px);
+  margin:0;padding:0 clamp(16px,4vw,56px);z-index:3;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;
+  opacity:0;transition:opacity 200ms ease;
+}
+.p2 #industries .ind__cap.p2i-cap.is-shown{
+  opacity:1;transition:opacity 250ms ease;
+}
+@media (prefers-reduced-motion:reduce){
+  .p2 #industries .ind__cap.p2i-cap{transition:none}
+}
+
+/* ---------------------------------------------------------------- CEO quote
+   r98: Sabrina, the pinned screen must be evenly spread top to bottom (top
+   of screen -> the falling pixels' zone -> the line -> the name), not
+   centred as one lump that leaves a big band at the top and a small one at
+   the bottom. js/fall.js's word reveal, the falling pixels and the sentence
+   itself are all untouched; only the vertical layout of the pinned stage
+   changes. space-evenly plus a zero height marker (js/fall.js) as the first
+   child gives four equal gaps: top of screen, marker (where the pixels
+   land), the line, the name, bottom of screen. The old fixed margin-top on
+   the line (a hand-set offset above the sentence) and on the name are
+   dropped so flexbox alone controls the spacing. */
+.p2 #independent .fall__stage{
+  justify-content:space-evenly;
+}
+.p2 #independent .fall__line{
+  margin-top:0;
+}
+.p2 #independent .fall__by{
+  margin-top:0;
+}
+.p2 #independent .p2-fallmark{
+  display:block;width:1px;height:0;flex:0 0 auto;
+}
+
 /* ---------------------------------------------------------------- who we are
    The r76 accordion already centres itself (flex column, justify-content
    center), but leaves an even but noticeable empty band above and below the
@@ -114,11 +181,12 @@
   opacity:0;transform:translateY(calc(-50% - 14px));
   transition:opacity .38s var(--p2-ease-io,ease),transform .38s var(--p2-ease-io,ease);
 }
-/* r96: each fact drops in from above along a thin orange line, the
-   previous one falling away below as it leaves, so the band reads as a
-   ticker running down the page rather than a plain crossfade. page.js
-   (p2-gated) adds .is-out on the outgoing line for the ~360ms handoff
-   before the next .is-on line lands. */
+/* r98: the previous fact falls away below as it leaves, the next one drops
+   in from above (page.js, p2-gated, adds/removes .is-out for the ~360ms
+   handoff before the next .is-on line lands) - unchanged. Sabrina: remove
+   the thin orange line that used to mark the drop entirely (it was the
+   .beats__line::before rule; there is no replacement, the fall/rise motion
+   alone carries it now). */
 .p2 .beats__line.is-on{
   opacity:1;transform:translateY(-50%);
   transition:opacity .42s var(--p2-ease-io,ease),transform .42s var(--p2-ease-io,ease);
@@ -127,14 +195,6 @@
   opacity:0;transform:translateY(calc(-50% + 14px));
   transition:opacity .3s ease-in,transform .3s ease-in;
 }
-.p2 .beats__line::before{
-  content:"";position:absolute;left:50%;top:-10px;width:2px;height:0;
-  transform:translateX(-50%);border-radius:1px;background:var(--p2-orange,#FF9900);
-  box-shadow:0 0 6px rgba(255,153,0,.65),0 0 14px rgba(255,153,0,.3);
-  opacity:0;transition:height .32s var(--p2-ease-io,ease),opacity .32s var(--p2-ease-io,ease);
-}
-.p2 .beats__line.is-on::before{height:12px;opacity:1;transition-delay:.08s}
-.p2 .beats__line.is-out::before{height:0;opacity:0;transition:height .22s ease-in,opacity .22s ease-in}
 .p2 .beats__fig,.p2 .beats__word{
   font-family:'Archivo',sans-serif;font-stretch:64%;font-weight:800;text-transform:uppercase;
   line-height:.9;letter-spacing:-.01em;font-size:clamp(21px,6.6vw,34px);
@@ -143,6 +203,29 @@
 .p2 .beats__word{margin-left:0}
 .p2 .beats__line:nth-of-type(odd) .beats__word{color:var(--p2-orange,#FF9900)}
 .p2 .beats__line:nth-of-type(even) .beats__word{color:var(--p2-blue,#56B0E4)}
+
+/* r98: mobile.css's older "figure on top, word under it" rule for these
+   same spans (`.beats__fig,.beats__word{max-width:...;text-wrap:balance}`)
+   was still reaching a fact that is too long to sit beside its word on one
+   row here (Every feature included. / No hidden fees.), force-wrapping
+   each span onto two lines and cramming both halves together. Cancelled
+   for this band; a fact that does not fit beside its word on one row gets
+   page.js's own .p2-stack instead (below), a clean two-line stack, not a
+   forced mid-word wrap. */
+.p2 #numbers .beats__fig,
+.p2 #numbers .beats__word{
+  white-space:nowrap;text-wrap:nowrap;max-width:none;
+}
+/* the incoming/outgoing name is never both on screen, so a fact that is too
+   wide to sit beside its word on one line stacks instead: the fig on its
+   own line, the word on its own line under it, both still centred and
+   still vertically centred as one block in the band (same .beats__line
+   top:50%/translateY(-50%) as every other fact - only the row becomes a
+   column). js/page.js measures this per fact and adds .p2-stack. */
+.p2 .beats__line.p2-stack{
+  flex-direction:column;align-items:center;gap:.14em;
+}
+.p2 .beats__line.p2-stack .beats__word{margin-left:0}
 
 /* ---------------------------------------------------------------- contact
    Nothing else changes: the r76 wall, headline, fields and button render
