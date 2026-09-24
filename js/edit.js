@@ -178,6 +178,7 @@
       ['publishing', 'publish', '.pub__title', '#publish .wrap'],
       ['dead screen', 'reliability', null, '#reliability .wrap'],   /* its line under the title is its own .rely__sub */
       ['trusted by', 'clients', '.clients__title', '#clients'],
+      ['reviews', 'reviews', null, '#reviews'],   /* r103: In their words */
       ['figures', 'numbers', null, '#numbers'],
       ['contact', 'demo', '.demo__h', '#demo']
     ];
@@ -210,7 +211,7 @@
     var TXT = {
       statement: ['.statement__h'], why: ['.strips__title'], industries: ['.ind__title', '.ind__cta'],
       'ceo quote': ['.fall__line', '.fall__line i.is-on', '.fall__by'], publishing: ['.pub__title'],
-      'dead screen': ['.rely__h'], 'trusted by': ['.clients__title', '.quote__text', '.lw-room__say'], figures: ['.beats__fig'], contact: []
+      'dead screen': ['.rely__h'], 'trusted by': ['.clients__title', '.quote__text', '.lw-room__say'], reviews: ['.rv__q', '.rv__name'], figures: ['.beats__fig'], contact: []
     };
     SECS.forEach(function (s) {
       var v = C[s[0] + ' text colour'] || C[s[0] + ' text color'];
@@ -230,6 +231,7 @@
       SECS.forEach(function (s) { ids[s[0]] = s[1]; });
       ids['why lsquared'] = 'strips'; ids.why = 'strips'; ids.ceo = 'independent'; ids.quote = 'independent';
       ids.trusted = 'clients'; ids.logos = 'clients'; ids.clients = 'clients'; ids.publish = 'publish'; ids['blue statement'] = 'statement';
+      ids.review = 'reviews'; ids['in their words'] = 'reviews'; ids.testimonials = 'reviews';
       C['section order'].split(',').forEach(function (nm) {
         var id = ids[nm.trim().toLowerCase()];
         if (id && !seen[id]) { seen[id] = 1; seq.push(id); }
@@ -248,6 +250,10 @@
     var logos = [];
     for (var q = 1; has('logo ' + q + ' file'); q++) logos.push({ name: C['logo ' + q + ' name'] || '', src: file(C['logo ' + q + ' file']) });
     if (logos.length) window.LSQ_LOGOS = logos;
+    /* r103: the reviews (In their words), as many as are listed */
+    var revs = [];
+    for (var rv = 1; has('review ' + rv + ' words'); rv++) revs.push({ words: C['review ' + rv + ' words'], name: C['review ' + rv + ' name'] || '', role: C['review ' + rv + ' role'] || '' });
+    if (revs.length) window.LSQ_REVIEWS = revs;
 
     /* layout: 100% is the size it is now. Laptop and phone are separate. */
     var K = [['title size', 'title'], ['space under titles', 'gap'], ['space above and below sections', 'pad'],
@@ -266,7 +272,7 @@
     };
     var css = '@media (min-width:761px){:root{' + block('laptop') + '}}@media (max-width:760px){:root{' + block('phone') + '}}';
     [['statement', 'statement'], ['why lsquared', 'strips'], ['industries', 'industries'], ['ceo quote', 'independent'],
-     ['publishing', 'publish'], ['dead screen', 'reliability'], ['trusted by', 'clients'], ['figures', 'numbers'], ['contact', 'demo']
+     ['publishing', 'publish'], ['dead screen', 'reliability'], ['trusted by', 'clients'], ['reviews', 'reviews'], ['figures', 'numbers'], ['contact', 'demo']
     ].forEach(function (s) { if (has('show ' + s[0]) && /^no/i.test(C['show ' + s[0]])) css += '#' + s[1] + '{display:none!important}'; });
     var st = document.createElement('style'); st.id = 'lsq-layout'; st.textContent = css + bgCss; document.head.appendChild(st);
   } catch (e) {

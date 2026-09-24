@@ -192,6 +192,44 @@ logo 8 file: logos/lenovo-hq.png
 logo 9 name: SFM
 logo 9 file: logos/sfm-hq.png
 
+== IN THEIR WORDS (customer reviews, like the critics' quotes in a film trailer) ==
+reviews line at end:
+reviews background:
+reviews text colour:
+# Each review is a few words in big type on a black screen, then the name and role in small type.
+# They come one after another, faster and faster; the last one holds the longest, so put the strongest last.
+# Put * around one word or phrase to make it orange, for example:   Above and *beyond*.
+# A | makes a new line. Add review 10, 11 and so on for more; delete all three lines of one to remove it.
+# how long each one stays on screen, in seconds
+reviews seconds each: 2
+review 1 words: Above and *beyond*.
+review 1 name: Luis Javier D.
+review 1 role: Owner
+review 2 words: A single source|of *truth*.
+review 2 name: Ritesh S.
+review 2 role: Senior Project Manager
+review 3 words: *Incredibly* stable.
+review 3 name: Kushal J.
+review 3 role: Senior QA Engineer
+review 4 words: Live. On-brand.|*Exactly* when they should be.
+review 4 name: Retail marketing team
+review 4 role: L Squared customer
+review 5 words: *Effortlessly*|customizable.
+review 5 name: Sanskruti D.
+review 5 role: Marketing Executive
+review 6 words: Simple. Human.|*Amazing* support.
+review 6 name: Roshni G.
+review 6 role: Associate Admin Executive
+review 7 words: No more|*printed* notices.
+review 7 name: Office operations team
+review 7 role: L Squared customer
+review 8 words: *Genuinely*|amazing.
+review 8 name: Kushal J.
+review 8 role: Senior QA Engineer
+review 9 words: An extension|of *our own* team.
+review 9 name: Samyak J.
+review 9 role: Backend Developer
+
 == FIGURES (big words | small words) ==
 figures line at end:
 figures background:
@@ -233,8 +271,8 @@ contact fact 3: 20 min|response time
 
 == SECTION ORDER ==
 # Write the sections in the order you want them. The hero always comes first.
-# Names: statement, why, industries, ceo quote, publishing, dead screen, trusted by, figures, contact
-section order: statement, why, industries, ceo quote, publishing, dead screen, trusted by, figures, contact
+# Names: statement, why, industries, ceo quote, publishing, dead screen, trusted by, reviews, figures, contact
+section order: statement, why, industries, ceo quote, publishing, dead screen, trusted by, reviews, figures, contact
 
 == FOOTER ==
 footer background:
@@ -271,6 +309,7 @@ show ceo quote: yes
 show publishing: yes
 show dead screen: yes
 show trusted by: yes
+show reviews: yes
 show figures: yes
 show contact: yes
 
