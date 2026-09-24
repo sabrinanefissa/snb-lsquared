@@ -199,10 +199,10 @@ reviews text colour:
 # Each review is a few words in big type on a black screen, then the name and role fading in slowly beneath.
 # The first one plays alone in the middle; then they gather, two, three, four at a time, overlapping,
 # until the screen is a crowd of words; then it freezes, dims, and the invitation below appears in the middle.
-# Put * around one word or phrase to make it blue, for example:   Above and *beyond*.
+# Put * around one word or phrase to highlight it (blue, then orange, then blue, one after another), for example:   Above and *beyond*.
 # A | makes a new line. Add review 10, 11 and so on for more; delete all three lines of one to remove it.
 # how long the first review stays alone on screen, in seconds
-reviews seconds each: 2.4
+reviews seconds each: 1.2
 # the ending: the invitation, its small line, and the button, which opens your G2 reviews page
 reviews invite: If we've earned it,|we'd love to hear it.
 reviews invite line: Two minutes to leave a review.

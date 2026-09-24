@@ -28,7 +28,8 @@
 .rv__card.is-on{opacity:1}
 /* the words land whole, at once, with the smallest settle */
 .rv__card.is-on{transition:opacity 220ms linear,transform 420ms var(--ease)}
-.rv__card.is-off{opacity:0;transition:opacity 900ms var(--ease)}
+.rv__card.is-off{opacity:0;transition:opacity 700ms var(--ease)}
+.rv__card.is-solo.is-off{transition:opacity 550ms var(--ease)}
 .rv__card.is-solo{max-width:min(92vw,1400px)}
 .rv__card.is-solo .rv__q{font-size:clamp(40px,6.8vw,132px)}
 
@@ -38,16 +39,18 @@
   color:var(--paper);font-size:clamp(26px,3.4vw,66px);text-wrap:balance;white-space:normal;
 }
 .rv__q em{font-style:normal;color:var(--blue)}
+.rv__card.is-orange .rv__q em{color:#FF9900}   /* blue, orange, blue, orange */
 
 /* the name and the role: they fade in slowly, after the words */
-.rv__by{display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;transition:opacity 1400ms var(--ease)}
+.rv__by{display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;transition:opacity 1100ms var(--ease)}
+.rv__card.is-solo .rv__by{transition-duration:900ms}
 .rv__card.is-by .rv__by{opacity:1}
 .rv__name{font-stretch:76%;font-weight:700;font-size:clamp(11px,.9vw,15px);letter-spacing:.18em;text-transform:uppercase;color:var(--paper)}
 .rv__role{font-stretch:76%;font-weight:600;font-size:clamp(10px,.78vw,13px);letter-spacing:.16em;text-transform:uppercase;color:var(--paper-soft)}
 
 /* the freeze: the crowd holds where it is and steps back into the black */
 #reviews.is-frozen .rv__card{transition:opacity 1100ms var(--ease)}
-#reviews.is-frozen .rv__card.is-on{opacity:.22}
+#reviews.is-frozen .rv__card.is-on{opacity:.18}
 #reviews.is-frozen .rv__card.is-off{opacity:0}
 
 /* the invitation: alone in the middle, bright, with the button */
@@ -56,6 +59,9 @@
   display:flex;flex-direction:column;align-items:center;gap:clamp(18px,3dvh,34px);
   opacity:0;pointer-events:none;
 }
+/* a soft pool of black behind the invitation, so it reads over the crowd */
+.rv__ask::before{content:"";position:absolute;left:50%;top:50%;width:160%;height:210%;transform:translate(-50%,-50%);z-index:-1;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(0,0,0,.92) 0%,rgba(0,0,0,.8) 45%,rgba(0,0,0,.4) 75%,rgba(0,0,0,0) 100%)}
 #reviews.is-ask .rv__ask{opacity:1;pointer-events:auto;transition:opacity 260ms linear}
 .rv__ask .rv__q{font-size:clamp(40px,6.4vw,124px)}
 .rv__ask-line{font-stretch:76%;font-weight:700;font-size:clamp(13px,1.05vw,17px);letter-spacing:.16em;text-transform:uppercase;color:var(--paper-soft);

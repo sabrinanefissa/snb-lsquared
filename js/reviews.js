@@ -3,9 +3,12 @@
    1. One review alone, whole, dead centre. Its name and role fade in slowly
       beneath. It holds, it fades.
    2. They gather. The next arrives; before it leaves another lands
-      elsewhere, so two are on screen, then three, then four; at different
-      places, sizes and slight angles; while some leave, more arrive, faster
-      and faster, until the screen is a crowd of overlapping words.
+      elsewhere, so two are on screen, then three, then four, straight and
+      apart, at different places and sizes; while some leave, more arrive,
+      faster and faster. Once it is busy they start to tilt, and they keep
+      coming, dozens of them, larger, overlapping, until the whole screen
+      is words and barely any black shows through. The highlighted word
+      alternates blue, orange, blue, orange.
    3. It freezes. The crowd holds where it is and dims a step back into the
       black. Alone in the middle, bright, the invitation and the Leave a
       review button (the G2 page).
@@ -37,7 +40,7 @@
   const LIST = (window.LSQ_REVIEWS && window.LSQ_REVIEWS.length) ? window.LSQ_REVIEWS : DEF;
   const N = LIST.length;
   const secs = parseFloat(T['reviews seconds each']);
-  const SOLO_HOLD = (isFinite(secs) && secs > 0 ? secs : 2.4) * 1000;
+  const SOLO_HOLD = (isFinite(secs) && secs > 0 ? secs : 1.2) * 1000;
   const ASK = T['reviews invite'] || "If we've earned it,|we'd love to hear it.";
   const ASK_LINE = T['reviews invite line'] || 'Two minutes to leave a review.';
   const BTN = T['reviews button'] || 'Leave a review';
@@ -65,8 +68,8 @@
     });
   };
   const plain = (s) => s.replace(/[*|]/g, ' ').replace(/\s+/g, ' ').trim();
-  const card = (r, solo) => {
-    const c = el('div', 'rv__card' + (solo ? ' is-solo' : '')), q = el('p', 'rv__q');
+  const card = (r, solo, k) => {
+    const c = el('div', 'rv__card' + (solo ? ' is-solo' : '') + (k % 2 ? ' is-orange' : '')), q = el('p', 'rv__q');
     fillQ(q, r.words); c.appendChild(q);
     if (r.name || r.role) {
       const by = el('div', 'rv__by');
@@ -125,20 +128,33 @@
   const COLS = phone ? 2 : 4, ROWS = phone ? 4 : 3;
   const SLOTS = [];
   for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) SLOTS.push({ x: (c + .5) / COLS, y: (r + .5) / ROWS });
+  /* the fill: a finer grid over the whole screen, edges included, dealt in
+     a shuffled order and jittered, so every part of the screen gets covered */
+  const FC = phone ? 3 : 6, FR = phone ? 7 : 4, FILL = [];
+  for (let r = 0; r < FR; r++) for (let c = 0; c < FC; c++) FILL.push({ x: (c + .5) / FC, y: (r + .5) / FR });
+  for (let i = FILL.length - 1; i > 0; i--) { const j = Math.floor(hash(i, 77) * (i + 1)); const t = FILL[i]; FILL[i] = FILL[j]; FILL[j] = t; }
+  /* straight while there are few; once this many are on screen they start to tilt, more and more */
+  const TILT_AT = phone ? 12 : 16, TILT_RAMP = phone ? 10 : 14;
   function place(c, k, spread) {
     const W = stage.clientWidth, H = stage.clientHeight;
     let best = null, bestD = -1;
-    const cand = spread ? SLOTS : [SLOTS[Math.floor(hash(k, 9) * SLOTS.length)]];
-    cand.forEach((s, i) => {
-      const jx = (hash(k, i + 1) - .5) * (1 / COLS) * .7, jy = (hash(k, i + 2) - .5) * (1 / ROWS) * .7;
-      const x = Math.min(.9, Math.max(.1, s.x + jx)), y = Math.min(.9, Math.max(.1, s.y + jy));
-      let d = 1e9;
-      live.forEach((p) => { d = Math.min(d, Math.hypot((x - p.x) * W, (y - p.y) * H)); });
-      if (!live.length) d = 1 - Math.hypot(x - .5, y - .5);   /* alone: nearest the middle */
-      if (d > bestD) { bestD = d; best = { x, y }; }
-    });
-    const s = phone ? .55 + hash(k, 4) * .45 : .5 + hash(k, 4) * .5;
-    const rot = (hash(k, 5) - .5) * (phone ? 8 : 10);
+    const n = live.length;
+    if (spread) {
+      SLOTS.forEach((s, i) => {
+        const jx = (hash(k, i + 1) - .5) * (1 / COLS) * .7, jy = (hash(k, i + 2) - .5) * (1 / ROWS) * .7;
+        const x = Math.min(.9, Math.max(.1, s.x + jx)), y = Math.min(.9, Math.max(.1, s.y + jy));
+        let d = 1e9;
+        live.forEach((p) => { d = Math.min(d, Math.hypot((x - p.x) * W, (y - p.y) * H)); });
+        if (!n) d = 1 - Math.hypot(x - .5, y - .5);   /* alone: nearest the middle */
+        if (d > bestD) { bestD = d; best = { x, y }; }
+      });
+    } else {
+      const f = FILL[k % FILL.length];
+      best = { x: Math.min(.97, Math.max(.03, f.x + (hash(k, 1) - .5) / FC)), y: Math.min(.97, Math.max(.03, f.y + (hash(k, 2) - .5) / FR)) };
+    }
+    const busy = Math.min(1, Math.max(0, (n - TILT_AT) / TILT_RAMP));
+    const s = (phone ? .55 + hash(k, 4) * .45 : .5 + hash(k, 4) * .5) * (1 + .35 * busy);   /* larger as it fills */
+    const rot = (hash(k, 5) - .5) * (phone ? 16 : 22) * busy;   /* straight, then tilting once it is busy */
     c.style.left = (best.x * 100).toFixed(2) + '%'; c.style.top = (best.y * 100).toFixed(2) + '%';
     c.style.setProperty('--s', s.toFixed(3)); c.style.setProperty('--r', rot.toFixed(2) + 'deg');
     stage.appendChild(c); cards.push(c);
@@ -154,7 +170,7 @@
 
   if (RM) {
     /* the end, still: a quiet crowd of every review and the invitation over it */
-    LIST.forEach((r, i) => place(card(r, false), i, true));
+    LIST.forEach((r, i) => place(card(r, false, i), i, true));
     finish(true);
     return;
   }
@@ -168,28 +184,29 @@
      ms. 1.4s down to a tenth of a second: two on screen, three, four, then
      the rush. Each card stays a little longer than the one before it, so
      the crowd only ever grows; the last wave never leaves. */
-  const GAPS = [1400, 1100, 1000, 900, 800, 700, 600, 520, 460, 400, 350, 300, 260, 230, 200, 180, 160, 150, 140, 130, 120, 110, 100, 100, 100, 100];
-  const TOTAL = GAPS.length + 1, LAST_WAVE = phone ? 12 : 14;
-  const gapAt = (k) => GAPS[k - 1] || 100;
-  const stayAt = (k) => 2600 + k * 180;
-  const on = (c) => { void c.offsetWidth; c.classList.add('is-on'); later(() => c.classList.add('is-by'), c.classList.contains('is-solo') ? 500 : 380); };
+  const GAPS = [1300, 1000, 900, 800, 700, 600, 520, 460, 400, 350, 300, 260, 230, 200, 180, 160, 150, 140, 130, 120, 110, 100];
+  const FILL_N = phone ? 44 : 64;   /* arrivals in the fill, 90ms apart, none of them ever leaves */
+  const TOTAL = GAPS.length + 1 + FILL_N, STAY_FROM = 12;   /* from this arrival on, nothing leaves */
+  const gapAt = (k) => (k <= GAPS.length ? GAPS[k - 1] : 90);
+  const stayAt = (k) => 2400 + k * 180;
+  const on = (c) => { void c.offsetWidth; c.classList.add('is-on'); later(() => c.classList.add('is-by'), c.classList.contains('is-solo') ? 350 : 300); };
   const off = (c) => { c.classList.remove('is-on'); c.classList.add('is-off'); live = live.filter((p) => p !== c._pos); later(() => c.remove(), 1000); };
   const arrive = () => {
     if (!visible) { playing = false; return; }
     if (k >= TOTAL) { finish(false); return; }
     const r = LIST[k % N], solo = k === 0;
-    const c = solo ? card(r, true) : place(card(r, false), k, live.length < (phone ? 4 : 6));   /* apart while there are few, then the overlaps */
+    const c = solo ? card(r, true, k) : place(card(r, false, k), k, live.length < (phone ? 4 : 6));   /* apart while there are few, then the overlaps */
     if (solo) {
       c.style.left = '50%'; c.style.top = '50%'; c._pos = { x: .5, y: .5 }; live.push(c._pos);
       stage.appendChild(c); cards.push(c);
       fitQ(c.querySelector('.rv__q'), stage.clientWidth * (phone ? .9 : .92));
       on(c);
-      later(() => off(c), 500 + 1400 + SOLO_HOLD);
-      k++; later(arrive, 500 + 1400 + SOLO_HOLD + 1300);
+      later(() => off(c), 350 + 900 + SOLO_HOLD);
+      k++; later(arrive, 350 + 900 + SOLO_HOLD + 900);
       return;
     }
     on(c);
-    if (k < TOTAL - LAST_WAVE) later(() => off(c), stayAt(k));
+    if (k < STAY_FROM) later(() => off(c), stayAt(k));
     k++; later(arrive, gapAt(k));
   };
   const start = () => { if (playing || sec.classList.contains('is-ask')) return; playing = true; clear(); later(arrive, k === 0 ? 400 : 200); };
