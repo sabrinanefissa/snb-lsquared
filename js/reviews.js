@@ -149,21 +149,29 @@
         if (d > bestD) { bestD = d; best = { x, y }; }
       });
     } else {
+      /* the fill runs past every edge: centres from 6% outside the screen to
+         6% outside on the other side, so the ones at the edges are cut off */
       const f = FILL[k % FILL.length];
-      best = { x: Math.min(.97, Math.max(.03, f.x + (hash(k, 1) - .5) / FC)), y: Math.min(.97, Math.max(.03, f.y + (hash(k, 2) - .5) / FR)) };
+      best = { x: -.06 + 1.12 * (f.x + (hash(k, 1) - .5) / FC), y: -.06 + 1.12 * (f.y + (hash(k, 2) - .5) / FR) };
     }
     const busy = Math.min(1, Math.max(0, (n - TILT_AT) / TILT_RAMP));
-    const s = (phone ? .55 + hash(k, 4) * .45 : .5 + hash(k, 4) * .5) * (1 + .35 * busy);   /* larger as it fills */
+    /* sizes: while few, medium; in the fill, everything from tiny to huge
+       (a fifth huge, a third medium, the rest small), so the wall has depth */
+    let s;
+    if (spread) s = phone ? .6 + hash(k, 4) * .4 : .55 + hash(k, 4) * .45;
+    else { const u = hash(k, 4), v = hash(k, 6); s = u < .25 ? 1.6 + v * (phone ? .8 : 1.3) : u < .6 ? .85 + v * .7 : .3 + v * .5; }
     const rot = (hash(k, 5) - .5) * (phone ? 16 : 22) * busy;   /* straight, then tilting once it is busy */
     c.style.left = (best.x * 100).toFixed(2) + '%'; c.style.top = (best.y * 100).toFixed(2) + '%';
     c.style.setProperty('--s', s.toFixed(3)); c.style.setProperty('--r', rot.toFixed(2) + 'deg');
     stage.appendChild(c); cards.push(c);
-    /* never past the edges of the stage: measured as drawn (size and angle included) */
-    const sr = stage.getBoundingClientRect(), cr = c.getBoundingClientRect(), m = 6;
-    let dx = 0, dy = 0;
-    if (cr.left < sr.left + m) dx = sr.left + m - cr.left; else if (cr.right > sr.right - m) dx = sr.right - m - cr.right;
-    if (cr.top < sr.top + m) dy = sr.top + m - cr.top; else if (cr.bottom > sr.bottom - m) dy = sr.bottom - m - cr.bottom;
-    if (dx || dy) { best = { x: best.x + dx / W, y: best.y + dy / H }; c.style.left = (best.x * 100).toFixed(2) + '%'; c.style.top = (best.y * 100).toFixed(2) + '%'; }
+    /* while few: never past the edges of the stage, measured as drawn (size and angle included) */
+    if (spread) {
+      const sr = stage.getBoundingClientRect(), cr = c.getBoundingClientRect(), m = 6;
+      let dx = 0, dy = 0;
+      if (cr.left < sr.left + m) dx = sr.left + m - cr.left; else if (cr.right > sr.right - m) dx = sr.right - m - cr.right;
+      if (cr.top < sr.top + m) dy = sr.top + m - cr.top; else if (cr.bottom > sr.bottom - m) dy = sr.bottom - m - cr.bottom;
+      if (dx || dy) { best = { x: best.x + dx / W, y: best.y + dy / H }; c.style.left = (best.x * 100).toFixed(2) + '%'; c.style.top = (best.y * 100).toFixed(2) + '%'; }
+    }
     c._pos = best; live.push(best);
     return c;
   }
@@ -185,9 +193,9 @@
      the rush. Each card stays a little longer than the one before it, so
      the crowd only ever grows; the last wave never leaves. */
   const GAPS = [1300, 1000, 900, 800, 700, 600, 520, 460, 400, 350, 300, 260, 230, 200, 180, 160, 150, 140, 130, 120, 110, 100];
-  const FILL_N = phone ? 44 : 64;   /* arrivals in the fill, 90ms apart, none of them ever leaves */
+  const FILL_N = phone ? 130 : 180;   /* arrivals in the fill, 50ms apart, none of them ever leaves: it keeps filling until the words mesh into one wall */
   const TOTAL = GAPS.length + 1 + FILL_N, STAY_FROM = 12;   /* from this arrival on, nothing leaves */
-  const gapAt = (k) => (k <= GAPS.length ? GAPS[k - 1] : 90);
+  const gapAt = (k) => (k <= GAPS.length ? GAPS[k - 1] : 50);
   const stayAt = (k) => 2400 + k * 180;
   const on = (c) => { void c.offsetWidth; c.classList.add('is-on'); later(() => c.classList.add('is-by'), c.classList.contains('is-solo') ? 350 : 300); };
   const off = (c) => { c.classList.remove('is-on'); c.classList.add('is-off'); live = live.filter((p) => p !== c._pos); later(() => c.remove(), 1000); };

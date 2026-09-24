@@ -13,10 +13,10 @@
 #reviews{
   position:relative;width:100%;min-height:100dvh;background:#000;
   display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-  padding:var(--pad-sec) 0;overflow:hidden;
+  padding:0;overflow:hidden;
   -webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;
 }
-.rv{position:relative;width:100%;height:min(84dvh,1000px)}
+.rv{position:relative;width:100%;height:100dvh}   /* the whole screen: the fill runs past its edges and #reviews clips it */
 
 /* a card: the words and, beneath, the name and role. Placed by its centre. */
 .rv__card{
@@ -70,13 +70,14 @@
 #reviews.is-ask.is-ask2 .rv__ask-line,#reviews.is-ask.is-ask2 .rv__ask .btn{opacity:1;transform:none}
 
 /* an optional line at the end (content.js "reviews line at end") */
-#reviews .sec-end{position:relative;margin-top:0;padding:0 clamp(20px,5vw,64px)}
+#reviews .sec-end{position:absolute;left:0;right:0;bottom:clamp(12px,2dvh,24px);z-index:3;margin:0;padding:0 clamp(20px,5vw,64px)}
 
 /* ---------------------------------------------------------------- phone */
 @media (max-width:760px){
   #reviews{min-height:var(--app-h,100svh);padding:0}
   .p2 #reviews{min-height:max(var(--app-h,100svh),100lvh)}
-  .rv{height:min(calc(var(--app-h,100svh) * .9),900px)}
+  .rv{height:var(--app-h,100svh)}
+  .p2 .rv{height:max(var(--app-h,100svh),100lvh)}
   .rv__card{max-width:min(86vw,520px);gap:clamp(12px,2dvh,20px)}
   .rv__card.is-solo{max-width:calc(100vw - 2 * var(--gut,20px))}
   .rv__card.is-solo .rv__q{font-size:15.5vw}
