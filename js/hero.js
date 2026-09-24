@@ -8,6 +8,7 @@ const BEATS=[[1,'Screen'],[10,'Screens'],[100,'Screens'],[500,'Screens']];
 const hero=document.getElementById('hero'),num=document.getElementById('h_num'),word=document.getElementById('h_word'),
 bigA=document.getElementById('h_bigA'),bigB=document.getElementById('h_bigB'),logo=document.getElementById('h_logo');
 if(!hero)return;
+if(document.documentElement.classList.contains('p2'))return; /* r77: the redesigned phone page has its own hero (js/phone2/hero.js) */
 const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
 if(reduce){logo.classList.add('on','full');hero.classList.add('end');return;}
 const wall=window.LSQWall||{show:async()=>{},stop(){}};

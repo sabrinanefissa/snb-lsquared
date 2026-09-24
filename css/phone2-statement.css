@@ -1,0 +1,33 @@
+/* phone2 2.2 Statement: "Place your logo". js/phone2/statement.js builds the
+   DOM inside #statement. The r76 pixel field and heading stay in the page
+   and are hidden here. Every selector starts with .p2 (see js/phone2/README.md). */
+
+.p2 #statement{
+  position:relative;overflow:clip;touch-action:pan-y;
+  background:linear-gradient(180deg,#1C5E93 0%,#164C79 45%,#0F324F 78%,#0C2740 100%);
+}
+.p2 #statement .pixfield,.p2 #statement > .wrap{display:none}
+.p2 .shed--into{display:none}   /* the r76 transition canvas between statement and who: phone2 draws its own handoff */
+.p2 .p2s__cv{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.p2 .p2s__l1,.p2 .p2s__l2{
+  position:absolute;left:0;right:0;z-index:3;margin:0;padding:0 var(--p2-gut);width:100%;
+  color:var(--p2-paper);font-family:'Archivo',sans-serif;font-stretch:64%;font-weight:800;
+  text-transform:uppercase;letter-spacing:-.01em;line-height:.98;text-wrap:balance;
+}
+/* lockup uses the full height: line one sits just under the top, line two
+   just above the bottom, so the pixel field between them fills the section
+   instead of the old flex space-evenly gaps (which centred the two lines
+   into the middle third and left ~220px of dead band top and bottom). */
+.p2 .p2s__l1{font-size:14vw;opacity:.96;top:max(28px,calc(var(--app-h,100svh) * .05))}
+.p2 .p2s__l2{font-size:13vw;color:rgba(255,250,240,.6);transition:color 500ms var(--p2-ease);bottom:max(28px,calc(var(--app-h,100svh) * .05))}
+.p2 .p2s__l2.is-bright{color:#fff}
+.p2 .p2s__mask{position:absolute;left:0;top:0;z-index:2;pointer-events:none;opacity:0;will-change:transform,opacity}
+.p2 .p2s__ripple{
+  position:absolute;left:0;top:0;z-index:2;width:120px;height:120px;margin:-60px 0 0 -60px;
+  border-radius:50%;pointer-events:none;opacity:0;
+  background:radial-gradient(circle,rgba(255,153,0,.55) 0%,rgba(255,153,0,.18) 55%,rgba(255,153,0,0) 75%);
+}
+@media (prefers-reduced-motion:reduce){
+  .p2 .p2s__ripple{display:none}
+  .p2 .p2s__mask{transition:none}
+}

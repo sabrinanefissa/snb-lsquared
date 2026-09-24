@@ -1,0 +1,47 @@
+/* phone2 2.5 CEO quote: "Pixels along the line". js/phone2/ceo.js builds
+   the DOM inside #independent. The r76 fall stays in the page and is
+   hidden here. Every selector starts with .p2 (see js/phone2/README.md). */
+
+.p2 #independent{
+  height:calc(var(--app-h,100svh) * 1.8);min-height:0;overflow:clip;position:relative;
+  background:linear-gradient(180deg,#0A1826 0%,var(--p2-ink) 42%,var(--p2-black) 100%);
+  /* override .p2-sec's flex+space-evenly centering: with only .p2q__stage
+     left in flow (siblings hidden below), that rule vertically centred the
+     app-h-tall sticky stage inside this ~2x-app-h wrapper instead of
+     letting it sit at the top, so position:sticky never had a true top:0 to
+     pin against — the pin only "caught" 675px into the runway, showing an
+     empty screen and a cropped quote at p=0. Block layout puts the stage at
+     the true top so sticky pins from progress 0. */
+  display:block;
+}
+.p2 #independent > *:not(.p2q__stage){display:none}
+.p2 .p2q__stage{
+  position:sticky;top:0;height:var(--app-h,100svh);display:flex;flex-direction:column;
+  align-items:center;justify-content:space-evenly;padding:0 var(--p2-gut);text-align:center;
+}
+.p2 .p2q__line{
+  position:absolute;left:50%;top:44px;bottom:44px;width:2px;margin-left:-1px;
+  background:rgba(255,153,0,.5);box-shadow:0 0 10px 1px rgba(255,153,0,.38);
+}
+.p2 .p2q__cv{position:absolute;left:50%;top:44px;width:80px;height:calc(100% - 88px);margin-left:-40px;pointer-events:none}
+.p2 .p2q__quote{
+  position:relative;z-index:2;font-family:'Archivo',sans-serif;font-weight:600;
+  font-size:9.6vw;line-height:1.16;color:rgba(255,255,255,.35);max-width:100%;
+}
+.p2 .p2q__quote i{color:inherit;transition:color 260ms var(--p2-ease)}
+.p2 .p2q__quote i.is-on{color:#fff}
+.p2 .p2q__by{
+  position:relative;z-index:2;margin-top:20px;font-family:'Archivo',sans-serif;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:rgba(255,255,255,.35);
+  transition:color 300ms var(--p2-ease);
+}
+.p2 .p2q__by.is-on{color:var(--p2-orange)}
+.p2 .p2q__dot{
+  position:absolute;left:50%;bottom:36px;width:8px;height:8px;margin-left:-4px;border-radius:50%;
+  background:var(--p2-orange);opacity:0;box-shadow:0 0 14px 3px rgba(255,153,0,.7);
+  transition:opacity 400ms var(--p2-ease),transform 400ms var(--p2-ease);transform:scale(.4);
+}
+.p2 .p2q__dot.is-on{opacity:1;transform:scale(1)}
+@media (prefers-reduced-motion:reduce){
+  .p2 .p2q__cv{display:none}
+}

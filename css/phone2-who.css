@@ -1,0 +1,47 @@
+/* phone2 2.3 Who we are: "Five words, one refresh". js/phone2/who.js builds
+   the DOM inside #strips. The r76 accordion stays in the page and is hidden
+   here. Every selector starts with .p2 (see js/phone2/README.md). */
+
+.p2 #strips{
+  height:calc(var(--app-h,100svh) * 5);min-height:0;display:block;overflow:visible;
+  background:linear-gradient(180deg,#0C2740 0%,#0A2138 28%,#0A1B2E 62%,#07131F 100%);
+}
+.p2 #strips > .wrap{display:none}
+.p2 .p2w{display:block}
+.p2 .p2w__panel{
+  min-height:var(--app-h,100svh);display:flex;flex-direction:column;align-items:center;
+  justify-content:space-evenly;text-align:center;
+}
+.p2 .p2w__title{color:var(--p2-paper);text-transform:uppercase;padding:0 var(--p2-gut)}
+.p2 .p2w__word{
+  position:relative;display:grid;color:var(--p2-paper);font-family:'Archivo',sans-serif;
+  font-stretch:64%;font-weight:800;text-transform:uppercase;line-height:.88;font-size:22vw;letter-spacing:-.01em;
+  padding:0 var(--p2-gut);
+}
+.p2 .p2w__word > span{grid-area:1/1;transition:opacity 400ms var(--p2-ease)}
+.p2 .p2w__blocky{opacity:1;letter-spacing:.16em;font-stretch:130%}
+.p2 .p2w__crisp{opacity:0;letter-spacing:-.01em;font-stretch:64%}
+.p2 .p2w__word.is-done .p2w__blocky{opacity:0}
+.p2 .p2w__word.is-done .p2w__crisp{opacity:1}
+/* full width, no gutter: photos bleed edge to edge, never inset */
+.p2 .p2w__photo{position:relative;width:100%;background-size:cover;background-position:center;background-color:#08182A;overflow:hidden}
+.p2 .p2w__line{margin:12px 0 0;color:rgba(255,255,255,.74);font-family:'Archivo',sans-serif;font-weight:500;font-size:5.6vw;line-height:1.28;max-width:34ch;padding:0 var(--p2-gut)}
+/* the rule and its line copy are one group ("foot") so the panel's own
+   space-evenly (word / photo / foot) never pulls the rule away from the
+   copy it belongs to; the rule sits directly under the photo area of the
+   foot, and the line copy 12px under the rule, same as before. */
+.p2 .p2w__foot{display:flex;flex-direction:column;align-items:center;width:100%}
+/* the rule under each photo: the line copy is locked 12px under it, same
+   offset the photo used to be locked under. Left dim until the scanline
+   finishes, then holds at rest so the orange thread never goes dark across
+   the five panels. The last one (is-live) is the one that hands off. */
+.p2 .p2w__rule{display:block;width:100%;height:2px;margin:0;background:var(--p2-orange);
+  box-shadow:0 0 10px 2px rgba(255,153,0,.5);opacity:0;transition:opacity 400ms var(--p2-ease)}
+.p2 .p2w__rule.is-on{opacity:.6}
+.p2 .p2w__rule.is-live{opacity:.85;box-shadow:0 0 14px 3px rgba(255,153,0,.7)}
+.p2 .p2w__dust{position:fixed;width:5px;height:5px;border-radius:50%;background:#FFDFA6;box-shadow:0 0 8px 2px rgba(255,153,0,.5);z-index:35;pointer-events:none}
+@media (prefers-reduced-motion:reduce){
+  .p2 .p2w__word > span{transition:none}
+  .p2 .p2w__rule{transition:none}
+  .p2 .p2w__dust{display:none}
+}

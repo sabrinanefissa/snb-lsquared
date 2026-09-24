@@ -10,6 +10,7 @@
   const sec = document.getElementById('independent');
   const cv = document.getElementById('fall-canvas');
   if (!sec || !cv) return;
+  if (document.documentElement.classList.contains('p2')) return;   /* r77: phone2 ceo.js rebuilds this section */
 
   const RM = matchMedia('(prefers-reduced-motion: reduce)');
   const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);

@@ -515,7 +515,7 @@
      content is carried once by a visually hidden paragraph next to it. */
   {
     const stage = $('#beats');
-    if (stage) {
+    if (stage && !document.documentElement.classList.contains('p2')) {   /* r78: js/phone2/figures.js drives the phone ticker wall instead */
       const lines = $$('.beats__line', stage);
       let i = 0, timer = 0, visible = false;
       /* the outgoing beat is fully gone before the next one arrives, so two
@@ -571,7 +571,9 @@
     const T = window.LSQ || {};
     window.LSQ_LOGOLIST = LOGOS;
     const orbit = $('#clients .orbit'), sec = $('#clients');
-    if (orbit && sec && LOGOS.length) {
+    const P2 = document.documentElement.classList.contains('p2');   /* r77: the redesigned phone page builds its own wall (js/phone2/trusted.js) */
+    if (P2 && orbit) orbit.remove();
+    if (!P2 && orbit && sec && LOGOS.length) {
       const PHONE = matchMedia('(max-width:760px)').matches;
       const wall = document.createElement('div');
       wall.className = 'lwall'; wall.setAttribute('aria-hidden', 'true');

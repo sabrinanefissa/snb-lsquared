@@ -1,0 +1,62 @@
+/* phone2: the redesigned phone page (r77). Linked with media="(max-width: 760px)".
+   Every rule starts with .p2, which js/phone2/core.js (and edit.js) add only
+   on a phone while content.js says "phone design: new". Without .p2 this
+   file changes nothing, so "phone design: old" is exactly r76. */
+
+.p2{
+  --p2-orange:#FF9900;
+  --p2-blue:#56B0E4;
+  --p2-ink:#06121E;
+  --p2-black:#050A10;
+  --p2-paper:#F3F1EC;
+  /* one title size on the whole phone page; content.js "phone title size" still scales it */
+  --p2-title:calc(clamp(30px,9vw,44px) * var(--k-title,1));
+  --p2-gut:20px;
+  --p2-ease:cubic-bezier(.23,1,.32,1);
+  --p2-ease-io:cubic-bezier(.77,0,.175,1);
+}
+.p2 ::selection{background:var(--p2-orange);color:var(--p2-ink)}
+
+/* the shared section rules. A section built for phone2 adds .p2-sec (P2.sec(id)). */
+.p2 .p2-sec{
+  min-height:var(--app-h,100svh);
+  display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;
+  text-align:center;font-family:'Archivo',sans-serif;
+}
+.p2 .p2-title{
+  font-family:'Archivo',sans-serif;font-stretch:64%;font-weight:800;text-transform:uppercase;
+  letter-spacing:-.012em;line-height:.92;font-size:var(--p2-title);text-wrap:balance;margin:0;
+}
+
+/* the scanline: the one way content arrives on a phone2 screen */
+.p2 .p2-scan{
+  position:absolute;z-index:6;height:2px;margin-top:-1px;pointer-events:none;opacity:0;
+  background:var(--p2-orange);
+  box-shadow:0 0 10px 1px rgba(255,153,0,.75),0 0 26px 4px rgba(255,153,0,.28);
+  will-change:transform;
+}
+
+/* the ghost finger: translucent, taps once and holds */
+.p2 .p2-ghost{
+  position:absolute;left:0;top:0;z-index:30;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;
+  pointer-events:none;opacity:0;
+  background:radial-gradient(circle,rgba(243,241,236,.55) 0%,rgba(243,241,236,.28) 55%,rgba(243,241,236,0) 72%);
+  box-shadow:0 0 0 1px rgba(243,241,236,.28);
+  transition:opacity 300ms var(--p2-ease),scale 160ms var(--p2-ease);
+  scale:1.15;
+}
+.p2 .p2-ghost.is-on{opacity:1;scale:1}
+.p2 .p2-ghost.is-down{scale:.84}
+
+/* the one travelling orange element (P2.signal.fly) */
+.p2 .p2-sig{
+  position:fixed;left:0;top:0;z-index:40;pointer-events:none;opacity:0;transform-origin:0 0;
+  background:var(--p2-orange);
+  box-shadow:0 0 12px 2px rgba(255,153,0,.6);
+}
+.p2 .p2-sig--dot{border-radius:50%}
+.p2 .p2-sig--edge{background:transparent;border:1px solid var(--p2-orange);border-radius:30px}
+
+@media (prefers-reduced-motion:reduce){
+  .p2 .p2-scan,.p2 .p2-ghost,.p2 .p2-sig{display:none}
+}

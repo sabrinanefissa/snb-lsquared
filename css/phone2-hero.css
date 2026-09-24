@@ -1,0 +1,63 @@
+/* phone2 hero: "Power on". js/phone2/hero.js builds the DOM inside #hero.
+   The r76 hero parts stay in the page and are hidden here. */
+
+.p2 #hero{height:calc(var(--app-h,100svh) * 3);min-height:0;overflow:clip;background:var(--p2-black);display:block}
+.p2 #hero > :not(.p2h){display:none}
+.p2 .p2h{position:absolute;inset:0}
+.p2 .p2h__stage{
+  position:sticky;top:0;height:var(--app-h,100svh);overflow:hidden;background:var(--p2-black);
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;
+}
+.p2 .p2h__screen{position:absolute;inset:0}
+.p2 .p2h__cv{position:absolute;inset:0;width:100%;height:100%;display:block;transform-origin:50% 50%;will-change:transform,opacity}
+/* the soft flicker: a copy of the settled count, each screen a touch brighter
+   or dimmer, breathes in and out over it. Slow and soft, never a strobe. */
+.p2 .p2h__flw{position:absolute;inset:0;opacity:0}
+.p2 .p2h__cv--fl{animation:p2h-breathe 4.8s ease-in-out infinite alternate}
+@keyframes p2h-breathe{from{opacity:0}to{opacity:.9}}
+
+/* the one screen: the phone itself, lit and waiting */
+.p2 .p2h__one{
+  position:absolute;inset:12px;border-radius:30px;opacity:0;
+  background:radial-gradient(120% 70% at 50% 42%,#123A5C 0%,#0A2238 55%,#07172A 100%);
+  box-shadow:inset 0 0 40px rgba(86,176,228,.22);
+}
+.p2 .p2h__wash{position:absolute;inset:0;opacity:0;pointer-events:none;
+  background:linear-gradient(180deg,#174D78 0%,#1C5E93 100%)}   /* ends on the statement's top colour; hero.js reads the real one from the page */
+
+/* soft #FF9900 light behind the number: no edge, opacity only */
+.p2 .p2h__glow{
+  position:absolute;left:50%;top:44%;width:120vw;height:78vw;margin:-39vw 0 0 -60vw;border-radius:50%;
+  pointer-events:none;opacity:.34;mix-blend-mode:screen;
+  background:radial-gradient(closest-side,rgba(255,153,0,.62) 0%,rgba(255,153,0,.3) 42%,rgba(255,153,0,.1) 70%,rgba(255,153,0,0) 100%);
+}
+
+/* the lockup: number, SCREENS, and the hero title locked under it */
+.p2 .p2h__lock{
+  position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 var(--p2-gut);
+  color:var(--p2-paper);font-stretch:64%;font-weight:800;text-transform:uppercase;pointer-events:none;
+  text-shadow:0 2px 24px rgba(0,0,0,.85),0 1px 3px rgba(0,0,0,.7);
+}
+.p2 .p2h__num{display:flex;align-items:center;justify-content:center;height:.86em;
+  font-size:30vw;line-height:.86;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.p2 .p2h__inf{height:.52em;width:auto;overflow:visible}
+.p2 .p2h__inf path{fill:none;stroke:currentColor;stroke-width:11;stroke-linejoin:round}
+.p2 .p2h__lock .p2h__inf{filter:drop-shadow(0 2px 18px rgba(0,0,0,.8))}
+.p2 .p2h__word{font-size:var(--p2-title);line-height:.92;letter-spacing:.02em;margin-top:.12em}
+.p2 .p2h__plat{font-size:var(--p2-title);line-height:.92;letter-spacing:-.012em;margin-top:.5em;text-wrap:balance}
+
+/* the orange edge: 1px #FF9900 with its soft glow */
+.p2 .p2h__edge{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;opacity:0;
+  filter:drop-shadow(0 0 3px rgba(255,153,0,.9)) drop-shadow(0 0 10px rgba(255,153,0,.45))}
+.p2 .p2h__edge path{fill:none;stroke:var(--p2-orange);stroke-width:1.25;stroke-linecap:round}
+
+/* the boot pixel */
+.p2 .p2h__px{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;opacity:0;
+  background:var(--p2-orange);box-shadow:0 0 8px 2px rgba(255,153,0,.85),0 0 22px 6px rgba(255,153,0,.35)}
+.p2 .p2h__stage.is-boot .p2h__screen,.p2 .p2h__stage.is-boot .p2h__lock{visibility:hidden}
+
+@media (prefers-reduced-motion:reduce){
+  .p2 .p2h__flw{display:none}
+  .p2 .p2h__px{display:none}
+}

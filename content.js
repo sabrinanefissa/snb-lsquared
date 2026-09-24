@@ -118,15 +118,25 @@ publishing option 1: Breakfast
 publishing option 2: Lunch
 publishing button: Publish
 publishing status before: Nothing published
+# phone only: shown once both screens are live (js/phone2/publish.js)
+publishing status live: Live on 2 screens
+# phone only: shown before either screen is live, replaced by the line above once the tap wipes both photos in
+publishing status waiting: 2 screens waiting.
 # the status reads the option name plus these words, for example "Breakfast ready", "Breakfast live"
 publishing ready word: ready
 publishing live word: live
 publishing screen 1 empty photo: menu-blank.webp
+publishing screen 1 empty phone photo:
 publishing screen 1 option 1 photo: menu-breakfast.webp
+publishing screen 1 option 1 phone photo:
 publishing screen 1 option 2 photo: menu-lunch.webp
+publishing screen 1 option 2 phone photo:
 publishing screen 2 empty photo: drivethru-blank.webp
+publishing screen 2 empty phone photo:
 publishing screen 2 option 1 photo: drivethru.webp
+publishing screen 2 option 1 phone photo:
 publishing screen 2 option 2 photo: drivethru-menu.webp
+publishing screen 2 option 2 phone photo:
 
 == DEAD SCREEN ==
 dead screen line at end:
@@ -139,6 +149,14 @@ dead screen off photo: retail-off.webp
 dead screen on photo: retail-on.webp
 dead screen off phone photo: m/retail-off.webp
 dead screen on phone photo: m/retail-on.webp
+# optional: more phone pairs for the drag demo, one per industry. Retail is the pair above.
+# Leave empty and that dot stays dimmed. Needs a whole 4:5 phone photo (1080x1350), screens off and on.
+dead screen restaurants off phone photo:
+dead screen restaurants on phone photo:
+dead screen enterprise off phone photo:
+dead screen enterprise on phone photo:
+dead screen manufacturing off phone photo:
+dead screen manufacturing on phone photo:
 
 == TRUSTED BY ==
 trusted by line under title:
@@ -233,6 +251,8 @@ laptop publishing photos size: 100%
 laptop dead screen photo size: 100%
 
 == LAYOUT: PHONE (100% = as it is now) ==
+# new = the redesigned phone page; old = the phone page as it was on 24 Sept
+phone design: new
 phone title size: 100%
 phone space under titles: 100%
 phone space above and below sections: 100%

@@ -1,0 +1,46 @@
+/* phone2 2.9 Figures: "The ticker wall". js/phone2/figures.js re-times the
+   existing .beats__line elements (content.js "figure 1".. keeps writing into
+   them); this file only restyles them to sit stacked edge to edge instead of
+   crossfading one at a time.
+   Fix 13: the section is locked to exactly one app-h (no dead band top or
+   bottom), every line is a single non-wrapping row sized by js/phone2/
+   figures.js's --p2f-size (falls back to the old 11vw before that JS runs),
+   the pixel field canvas is hidden for this section only (it read as a
+   rendering glitch behind the type), and one ticker (js-picked) carries the
+   orange signal colour so the thread does not go dark for a whole section. */
+
+.p2 #numbers.p2-sec{
+  justify-content:stretch;overflow:hidden;background:#050A10;
+  height:var(--app-h,100svh);min-height:var(--app-h,100svh);max-height:var(--app-h,100svh);
+}
+.p2 #numbers .beats{position:relative;z-index:2;width:100%;height:100%;display:flex}
+.p2 #numbers .beats__stage{
+  position:static;width:100%;height:100%;
+  display:flex;flex-direction:column;justify-content:space-between;align-items:stretch;
+  padding:clamp(14px,4vh,28px) var(--p2-gut);
+}
+/* fix 13(d): the ambient pixel field behind the type read as blurred grey
+   blocks and a rendering glitch on this dark, type-dense section; it stays
+   fully functional (tap-to-place still runs elsewhere) but is hidden here */
+.p2 #numbers canvas[data-fx="pixfield"]{display:none}
+.p2 #numbers .beats__line{
+  position:relative;left:auto;right:auto;top:auto;transform:none;opacity:1;transition:none;
+  display:flex;flex-direction:row;flex-wrap:nowrap;align-items:baseline;justify-content:center;gap:.28em;
+  white-space:nowrap;text-align:center;will-change:transform;
+}
+.p2 #numbers .beats__fig,.p2 #numbers .beats__word{
+  font-family:'Archivo',sans-serif;font-stretch:70%;font-weight:800;text-transform:uppercase;
+  line-height:.98;letter-spacing:-.01em;font-size:var(--p2f-size,8.5vw);white-space:nowrap;
+  max-width:none;text-wrap:nowrap;display:inline;
+}
+.p2 #numbers .beats__fig{color:var(--p2-paper)}
+.p2 #numbers .beats__word{color:var(--p2-blue);margin-left:0}
+
+/* fix 13(e): the one ticker carrying the orange signal */
+.p2 #numbers .beats__fig.p2f-orange{color:var(--p2-orange);transition:text-shadow 260ms var(--p2-ease)}
+.p2 #numbers .beats__fig.p2f-orange.is-pulse{text-shadow:0 0 18px rgba(255,153,0,.65)}
+
+@media (prefers-reduced-motion:reduce){
+  .p2 #numbers .beats__line{transform:none!important}
+  .p2 #numbers .beats__fig.p2f-orange{transition:none}
+}

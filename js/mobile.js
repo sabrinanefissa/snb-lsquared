@@ -74,7 +74,7 @@
      positions (measured on the photo) stay true whatever the phone's shape */
   {
     const stage = $('.demo__stage'), screen = $('.demo__screen'), h = $('.demo__h');
-    if (stage && screen) {
+    if (stage && screen && !document.documentElement.classList.contains('p2')) {   /* r78: js/phone2/contact.js builds its own wall */
       const fit = () => {
         const pw = (wall && wall.naturalWidth) || 852, pht = (wall && wall.naturalHeight) || 1846;
         const W = stage.clientWidth, H = stage.clientHeight;

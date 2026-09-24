@@ -6,7 +6,8 @@
    from its edge into the next section. Mounted on every [data-shed]. */
 (() => {
   'use strict';
-  const nodes = [...document.querySelectorAll('[data-shed]')];
+  const nodes = [...document.querySelectorAll('[data-shed]')]
+    .filter((n) => !(document.documentElement.classList.contains('p2') && n.classList.contains('shed--into')));   /* r77: phone2 statement.js/who.js own this transition */
   if (!nodes.length) return;
 
   const RM = matchMedia('(prefers-reduced-motion: reduce)');

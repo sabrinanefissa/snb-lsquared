@@ -16,6 +16,8 @@
       C[t.slice(0, i).trim().toLowerCase().replace(/\s+/g, ' ')] = t.slice(i + 1).trim();
     });
     window.LSQ = C;
+    /* r77: the redesigned phone page (js/phone2) unless content.js says phone design: old */
+    if (matchMedia('(max-width:760px)').matches && !/^old/i.test(C['phone design'] || '')) root.classList.add('p2');
 
     var $$ = function (s) { return [].slice.call(document.querySelectorAll(s)); };
     var has = function (k) { return Object.prototype.hasOwnProperty.call(C, k) && C[k] !== ''; };
@@ -82,10 +84,15 @@
     text('publishing option 2', '.seg button[data-menu=lunch]');
     text('publishing button', '#pub-go');
     text('publishing status before', '.pub__state');
+    /* r79 fix 12: "publishing status waiting" and "publishing status live" have no old-markup target;
+       js/phone2/publish.js reads them straight off window.LSQ (set above), so no text() wiring runs here. */
     [['screen 1', '#pub-1'], ['screen 2', '#pub-2']].forEach(function (s) {
       bg('publishing ' + s[0] + ' empty photo', s[1] + ' .pub__ph[data-menu=none]');
+      phone('publishing ' + s[0] + ' empty phone photo', s[1] + ' .pub__ph[data-menu=none]');
       bg('publishing ' + s[0] + ' option 1 photo', s[1] + ' .pub__ph[data-menu=breakfast]');
+      phone('publishing ' + s[0] + ' option 1 phone photo', s[1] + ' .pub__ph[data-menu=breakfast]');
       bg('publishing ' + s[0] + ' option 2 photo', s[1] + ' .pub__ph[data-menu=lunch]');
+      phone('publishing ' + s[0] + ' option 2 phone photo', s[1] + ' .pub__ph[data-menu=lunch]');
     });
 
     /* dead screen */
@@ -93,6 +100,15 @@
     text('dead screen line', '.rely__sub');
     bg('dead screen off photo', '#rely-off'); phone('dead screen off phone photo', '#rely-off');
     bg('dead screen on photo', '#rely-on'); phone('dead screen on phone photo', '#rely-on');
+    /* r78: optional Restaurants, Enterprise and Manufacturing phone pairs for the phone2 drag demo (js/phone2/reliability.js) */
+    (function () {
+      var pairs = [];
+      [['restaurants', 'Restaurants'], ['enterprise', 'Enterprise'], ['manufacturing', 'Manufacturing']].forEach(function (p) {
+        var offK = 'dead screen ' + p[0] + ' off phone photo', onK = 'dead screen ' + p[0] + ' on phone photo';
+        if (has(offK) && has(onK)) pairs.push({ name: p[1], off: file(C[offK]), on: file(C[onK]) });
+      });
+      window.LSQ_RELY_PAIRS = pairs;
+    })();
 
     /* trusted by */
     text('trusted title', '.clients__title');
