@@ -40,7 +40,7 @@
   const LIST = (window.LSQ_REVIEWS && window.LSQ_REVIEWS.length) ? window.LSQ_REVIEWS : DEF;
   const N = LIST.length;
   const secs = parseFloat(T['reviews seconds each']);
-  const SOLO_HOLD = (isFinite(secs) && secs > 0 ? secs : 1.2) * 1000;
+  const SOLO_HOLD = (isFinite(secs) && secs > 0 ? secs : .6) * 1000;
   const ASK = T['reviews invite'] || "If we've earned it,|we'd love to hear it.";
   const ASK_LINE = T['reviews invite line'] || 'Two minutes to leave a review.';
   const BTN = T['reviews button'] || 'Leave a review';
@@ -120,6 +120,15 @@
     later(() => { sec.classList.add('is-ask'); later(() => sec.classList.add('is-ask2'), 700); }, 1100);
   };
 
+  /* the beat, written out: the gap before each arrival after the solo, in
+     ms. 1.4s down to a tenth of a second: two on screen, three, four, then
+     the rush. Each card stays a little longer than the one before it, so
+     the crowd only ever grows; the last wave never leaves. */
+  const GAPS = [1300, 1000, 900, 800, 700, 600, 520, 460, 400, 350, 300, 260, 230, 200, 180, 160, 150, 140, 130, 120, 110, 100];
+  const FILL_N = phone ? 130 : 180;   /* arrivals in the fill, 50ms apart, none of them ever leaves: it keeps filling until the words mesh into one wall */
+  const TOTAL = GAPS.length + 1 + FILL_N;
+  const gapAt = (k) => (k <= GAPS.length ? GAPS[k - 1] : 50);
+
   /* ------------------------------------------------------------ placing
      Slots on a loose grid across the stage, jittered, each with its own
      size and small angle. The first arrivals take the slot farthest from
@@ -155,11 +164,12 @@
       best = { x: -.06 + 1.12 * (f.x + (hash(k, 1) - .5) / FC), y: -.06 + 1.12 * (f.y + (hash(k, 2) - .5) / FR) };
     }
     const busy = Math.min(1, Math.max(0, (n - TILT_AT) / TILT_RAMP));
-    /* sizes: while few, medium; in the fill, everything from tiny to huge
-       (a fifth huge, a third medium, the rest small), so the wall has depth */
-    let s;
-    if (spread) s = phone ? .6 + hash(k, 4) * .4 : .55 + hash(k, 4) * .45;
-    else { const u = hash(k, 4), v = hash(k, 6); s = u < .25 ? 1.6 + v * (phone ? .8 : 1.3) : u < .6 ? .85 + v * .7 : .3 + v * .5; }
+    /* sizes: mixed from the very start (small, medium, large side by side),
+       and the range widens smoothly as it goes, the biggest growing from
+       about the base size to huge by the end, so there is never a jump */
+    const t = Math.min(1, k / (TOTAL - 1));
+    const lo = .55 - .25 * t, hi = (phone ? 1.15 : 1.25) + (phone ? 1.4 : 1.7) * t;
+    const s = lo + (hi - lo) * Math.pow(hash(k, 4), 1.7);   /* more small than large */
     const rot = (hash(k, 5) - .5) * (phone ? 16 : 22) * busy;   /* straight, then tilting once it is busy */
     c.style.left = (best.x * 100).toFixed(2) + '%'; c.style.top = (best.y * 100).toFixed(2) + '%';
     c.style.setProperty('--s', s.toFixed(3)); c.style.setProperty('--r', rot.toFixed(2) + 'deg');
@@ -188,15 +198,6 @@
      places and sizes). Gaps between arrivals shrink from 1.7s to .32s;
      each card's stay grows, so the count on screen climbs: 1, 2, 3, 4...
      The last wave never leaves; it is the crowd that freezes. */
-  /* the beat, written out: the gap before each arrival after the solo, in
-     ms. 1.4s down to a tenth of a second: two on screen, three, four, then
-     the rush. Each card stays a little longer than the one before it, so
-     the crowd only ever grows; the last wave never leaves. */
-  const GAPS = [1300, 1000, 900, 800, 700, 600, 520, 460, 400, 350, 300, 260, 230, 200, 180, 160, 150, 140, 130, 120, 110, 100];
-  const FILL_N = phone ? 130 : 180;   /* arrivals in the fill, 50ms apart, none of them ever leaves: it keeps filling until the words mesh into one wall */
-  const TOTAL = GAPS.length + 1 + FILL_N, STAY_FROM = 12;   /* from this arrival on, nothing leaves */
-  const gapAt = (k) => (k <= GAPS.length ? GAPS[k - 1] : 50);
-  const stayAt = (k) => 2400 + k * 180;
   const on = (c) => { void c.offsetWidth; c.classList.add('is-on'); later(() => c.classList.add('is-by'), c.classList.contains('is-solo') ? 350 : 300); };
   const off = (c) => { c.classList.remove('is-on'); c.classList.add('is-off'); live = live.filter((p) => p !== c._pos); later(() => c.remove(), 1000); };
   const arrive = () => {
@@ -209,12 +210,10 @@
       stage.appendChild(c); cards.push(c);
       fitQ(c.querySelector('.rv__q'), stage.clientWidth * (phone ? .9 : .92));
       on(c);
-      later(() => off(c), 350 + 900 + SOLO_HOLD);
-      k++; later(arrive, 350 + 900 + SOLO_HOLD + 900);
+      k++; later(arrive, 350 + 600 + SOLO_HOLD);   /* the first one stays; the next arrives beside it */
       return;
     }
-    on(c);
-    if (k < STAY_FROM) later(() => off(c), stayAt(k));
+    on(c);   /* r108: once a review is in, it stays; nothing ever fades out */
     k++; later(arrive, gapAt(k));
   };
   const start = () => { if (playing || sec.classList.contains('is-ask')) return; playing = true; clear(); later(arrive, k === 0 ? 400 : 200); };
