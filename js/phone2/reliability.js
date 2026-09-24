@@ -226,8 +226,13 @@
 
   /* r98: both sweeps are the same length and the same symmetric curve
      (ease in and out), so turning off is the exact mirror of turning on */
-  const SWEEP_MS = 1200, ON_HOLD_MS = 3000, OFF_HOLD_MS = 3000, FADE_MS = 520;
-  const easeIO = (k) => (k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+  /* r102: the screens stay off 3s and on 3s, exactly the same both ways.
+     The first sweep starts well under a second after the section arrives
+     (it used to wait a full off-hold first), and the curve is a gentler
+     ease in and out, so the photo visibly changes from the first frames
+     instead of sitting still at each end of the sweep. */
+  const SWEEP_MS = 1200, ON_HOLD_MS = 3000, OFF_HOLD_MS = 3000, FIRST_MS = 600, FADE_MS = 520;
+  const easeIO = (k) => (k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2);
 
   const sweep = (to, done) => {
     const from = p, dur = SWEEP_MS * Math.abs(to - from) / 100;
@@ -284,7 +289,7 @@
     stop();
     if (RM) { setP(100); handoffOnce(); return; }
     if (busy) return;
-    if (p <= 0) offHold(started ? 900 : OFF_HOLD_MS);
+    if (p <= 0) offHold(started ? 900 : FIRST_MS);
     else if (p >= 100) onHold();
     else turnOn();   /* half way: finish lighting, then the loop carries on */
   };

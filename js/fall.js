@@ -48,6 +48,26 @@
     }
   }
 
+  /* r102: phone only. The quote is set as giant type that fills the pinned
+     screen top to bottom, like the statement: the font size is found by
+     measurement (largest size whose block of words is no taller than about
+     three quarters of the screen and no word wider than the screen), so
+     it fits every phone. The content.js size dial (--k-quote) still applies
+     on top. Nothing here runs on a computer or the old phone design. */
+  const QUOTE_FILL = .76;
+  function fitQuote(H) {
+    if (!P2 || !line) return;
+    const target = H * QUOTE_FILL;
+    let lo = 16, hi = 160;
+    for (let n = 0; n < 12; n++) {
+      const mid = (lo + hi) / 2;
+      line.style.fontSize = 'calc(' + mid.toFixed(2) + 'px * var(--k-quote,1))';
+      const fits = line.offsetHeight <= target && line.scrollWidth <= line.clientWidth + 1;
+      if (fits) lo = mid; else hi = mid;
+    }
+    line.style.fontSize = 'calc(' + Math.floor(lo) + 'px * var(--k-quote,1))';
+  }
+
   /* ---- geometry ---------------------------------------------------- */
   const REL0 = .04, RELS = .50, FALL = .26;
   let W = 0, H = 0, D = 1, S = 12, N = 0, X0 = 0, LY = 0;
@@ -65,6 +85,7 @@
     /* r6: the field uses the page, not the sentence. Cells let go across about
        90% of the width and land as one centred line about 75% wide. */
     S = Math.round(clamp(W * .012, 10, 22));
+    fitQuote(H);
     const lr = line ? line.getBoundingClientRect() : null;
     const LW = clamp(W * .75, 240, W - 40);
     N = Math.max(8, Math.round(LW / S));
@@ -157,6 +178,7 @@
 
   let wt = 0;
   addEventListener('resize', () => { clearTimeout(wt); wt = setTimeout(resize, 160); }, { passive: true });
+  if (P2 && document.fonts && document.fonts.ready) document.fonts.ready.then(resize);   /* r102: the fit is measured in Archivo */
   document.addEventListener('visibilitychange', () => {
     if (document.hidden && raf) { cancelAnimationFrame(raf); raf = 0; }
     else if (live && !raf) raf = requestAnimationFrame(frame);

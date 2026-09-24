@@ -19,11 +19,16 @@
 .p2 .p2t__panel{position:relative;display:block;height:100%;border-radius:5px;background:#fff;overflow:hidden}
 .p2 .p2t__panel img{position:absolute;left:13%;top:17%;width:74%;height:66%;object-fit:contain}
 
-/* r96: each logo switches on in its own cell, rising a few pixels as it
-   lights (the wall fills from the bottom row up, trusted.js sets the order) */
+/* r102: each logo comes towards you, from small and far to its place, as
+   on the laptop (trusted.js lands them in a random order) */
 .p2 .p2t__tile{transition-property:opacity,transform;transition-timing-function:cubic-bezier(.16,1,.3,1);transition-duration:620ms}
-.p2 #clients.is-armed .p2t__tile{opacity:0;transform:translateY(14px) scale(.92)}
+.p2 #clients.is-armed .p2t__tile{opacity:0;transform:scale(.35)}
 .p2 #clients.is-armed .p2t__tile.is-in{opacity:1;transform:none}
+/* the two tiles beside the open cell power down under the wide screen */
+.p2 .p2t__panel{transition:background-color 500ms var(--p2-ease)}
+.p2 .p2t__panel img{transition:opacity 500ms var(--p2-ease)}
+.p2 .p2t__tile.is-off .p2t__panel{background-color:#06121E}
+.p2 .p2t__tile.is-off .p2t__panel img{opacity:0}
 
 /* the title's screen: one wide dark screen in the wall, running past both
    edges like the rows of logos, the title centred in it */
@@ -35,10 +40,26 @@
 .p2 #clients .p2t__band .sec-sub{margin-top:6px}
 .p2 #clients .p2t__band .sec-end{position:relative;margin:0;padding:0 var(--p2-gut);text-align:center}
 
-/* the r76 ending sits on top of the wall; sections.css styles it */
-.p2 #clients .lw-say{z-index:4}
-.p2 #clients .lw-room{z-index:3}
+/* r102, the ending: the r69 box, phone only (sections.css r75 turned it
+   into the shade for the laptop, which keeps it). One wide dark screen
+   across the whole row, the same bezel as the tiles, holds "Room for one
+   more."; then it shrinks to the open cell and the card is the only frame. */
+.p2 #clients .lw-room{
+  z-index:3;width:calc(var(--tw,116px) * 3 + var(--g,10px) * 2);height:var(--th,60px);
+  padding:4px;border-radius:8px;background:#0B1826;
+  box-shadow:0 0 0 1px rgba(124,194,236,.14),0 6px 22px rgba(86,176,228,.16);
+  opacity:0;transition:opacity 400ms var(--p2-ease),width 800ms cubic-bezier(.7,0,.3,1);
+}
+.p2 #clients .lw-room::before{content:"";position:absolute;inset:4px;border-radius:5px;
+  background:radial-gradient(ellipse at 50% 45%,#12344F 0%,#06121E 78%);transition:opacity 500ms var(--p2-ease)}
+.p2 #clients.is-room .lw-room{opacity:1}
+.p2 #clients.is-card .lw-room{width:var(--tw,116px);padding:0;background:transparent;box-shadow:none}
+.p2 #clients.is-card .lw-room::before{opacity:0}
+.p2 #clients .lw-room__say{font-size:clamp(20px,6.4vw,28px);opacity:0;transition:opacity 900ms var(--p2-ease)}
+.p2 #clients.is-say .lw-room__say{opacity:1}
+.p2 #clients .lw-card{opacity:0;transition:opacity 900ms var(--p2-ease) 300ms,transform 140ms var(--p2-ease)}
+.p2 #clients.is-card .lw-card{opacity:1}
 
 @media (prefers-reduced-motion:reduce){
-  .p2 .p2t__tile{transition:none}
+  .p2 .p2t__tile,.p2 .p2t__panel,.p2 .p2t__panel img,.p2 #clients .lw-room,.p2 #clients .lw-room::before,.p2 #clients .lw-room__say,.p2 #clients .lw-card{transition:none}
 }

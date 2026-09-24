@@ -115,17 +115,10 @@
     const seed = i * 73 + j * 131 + 1, f1 = .7 + .6 * hsh(seed, 3), f2 = .7 + .6 * hsh(seed, 4);
     return .8 + .2 * (.6 * Math.sin(t * .0012 * f1 + seed) + .4 * Math.sin(t * .0019 * f2 + seed * 2.3));
   };
-  /* r94: only the screens right behind the letters step back (a 14px ramp
-     from the glyph boxes), so the dark hugs the number and SCREENS */
-  const dimAt = (x, y, sw, sh, lv) => {
-    const bs = boxes[lv]; if (!bs) return 1;
-    let d = 1e9;
-    for (const b of bs) {
-      const dx = Math.max(b.l - (x + sw / 2), (x - sw / 2) - b.r, 0), dy = Math.max(b.t - (y + sh / 2), (y - sh / 2) - b.b, 0);
-      d = Math.min(d, Math.hypot(dx, dy));
-    }
-    return d <= 0 ? .3 : d < 14 ? .3 + .7 * d / 14 : 1;
-  };
+  /* r102: no screen ever steps back behind the words (Sabrina: the dark
+     area behind the count read as a shadow). Every screen keeps its full
+     brightness; the count sits straight on the wall. */
+  const dimAt = () => 1;
   const layout = () => {
     geo = LV.map((L, lv) => {
       const AW = W - IN * 2, AH = H - IN * 2, cw = AW / L.c;
