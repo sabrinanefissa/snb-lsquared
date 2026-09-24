@@ -13,10 +13,10 @@
 #reviews{
   position:relative;width:100%;min-height:100dvh;background:#000;
   display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-  padding:var(--pad-sec) 0;overflow:hidden;
+  padding:0;overflow:hidden;
   -webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;
 }
-.rv{position:relative;width:100%;height:min(84dvh,1000px)}
+.rv{position:relative;width:100%;height:100dvh}   /* the whole screen: the fill runs past its edges and #reviews clips it */
 
 /* a card: the words and, beneath, the name and role. Placed by its centre. */
 .rv__card{
@@ -28,7 +28,8 @@
 .rv__card.is-on{opacity:1}
 /* the words land whole, at once, with the smallest settle */
 .rv__card.is-on{transition:opacity 220ms linear,transform 420ms var(--ease)}
-.rv__card.is-off{opacity:0;transition:opacity 900ms var(--ease)}
+.rv__card.is-off{opacity:0;transition:opacity 700ms var(--ease)}
+.rv__card.is-solo.is-off{transition:opacity 550ms var(--ease)}
 .rv__card.is-solo{max-width:min(92vw,1400px)}
 .rv__card.is-solo .rv__q{font-size:clamp(40px,6.8vw,132px)}
 
@@ -38,16 +39,18 @@
   color:var(--paper);font-size:clamp(26px,3.4vw,66px);text-wrap:balance;white-space:normal;
 }
 .rv__q em{font-style:normal;color:var(--blue)}
+.rv__card.is-orange .rv__q em{color:#FF9900}   /* blue, orange, blue, orange */
 
 /* the name and the role: they fade in slowly, after the words */
-.rv__by{display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;transition:opacity 1400ms var(--ease)}
+.rv__by{display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;transition:opacity 1100ms var(--ease)}
+.rv__card.is-solo .rv__by{transition-duration:900ms}
 .rv__card.is-by .rv__by{opacity:1}
 .rv__name{font-stretch:76%;font-weight:700;font-size:clamp(11px,.9vw,15px);letter-spacing:.18em;text-transform:uppercase;color:var(--paper)}
 .rv__role{font-stretch:76%;font-weight:600;font-size:clamp(10px,.78vw,13px);letter-spacing:.16em;text-transform:uppercase;color:var(--paper-soft)}
 
 /* the freeze: the crowd holds where it is and steps back into the black */
 #reviews.is-frozen .rv__card{transition:opacity 1100ms var(--ease)}
-#reviews.is-frozen .rv__card.is-on{opacity:.22}
+#reviews.is-frozen .rv__card.is-on{opacity:.14}   /* no shadow behind the invitation: the wall itself steps back far enough */
 #reviews.is-frozen .rv__card.is-off{opacity:0}
 
 /* the invitation: alone in the middle, bright, with the button */
@@ -64,13 +67,14 @@
 #reviews.is-ask.is-ask2 .rv__ask-line,#reviews.is-ask.is-ask2 .rv__ask .btn{opacity:1;transform:none}
 
 /* an optional line at the end (content.js "reviews line at end") */
-#reviews .sec-end{position:relative;margin-top:0;padding:0 clamp(20px,5vw,64px)}
+#reviews .sec-end{position:absolute;left:0;right:0;bottom:clamp(12px,2dvh,24px);z-index:3;margin:0;padding:0 clamp(20px,5vw,64px)}
 
 /* ---------------------------------------------------------------- phone */
 @media (max-width:760px){
   #reviews{min-height:var(--app-h,100svh);padding:0}
   .p2 #reviews{min-height:max(var(--app-h,100svh),100lvh)}
-  .rv{height:min(calc(var(--app-h,100svh) * .9),900px)}
+  .rv{height:var(--app-h,100svh)}
+  .p2 .rv{height:max(var(--app-h,100svh),100lvh)}
   .rv__card{max-width:min(86vw,520px);gap:clamp(12px,2dvh,20px)}
   .rv__card.is-solo{max-width:calc(100vw - 2 * var(--gut,20px))}
   .rv__card.is-solo .rv__q{font-size:15.5vw}
