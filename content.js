@@ -73,7 +73,7 @@ why 3 line: SOC 2 Type II. ISO 27001.|Enterprise-grade security built in.
 why 3 photo: cybersecurity.png
 why 4 word: Support
 why 4 line: Less escalation. More resolution.
-why 4 photo: cybersecurity.png
+why 4 photo: customerservice.png
 why 5 word: Scale
 why 5 line: We grow alongside you. | Keeping up from start to finish. 
 why 5 photo: scalewhoweare.png
