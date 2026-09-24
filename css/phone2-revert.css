@@ -112,6 +112,19 @@
 .p2 #independent .p2-fallmark{
   display:block;width:1px;height:0;flex:0 0 auto;
 }
+/* r102: Sabrina, the quote must fill the screen top to bottom like "We own
+   the platform. You own the network." (the statement): the same condensed
+   uppercase type, and js/fall.js sizes it so the block of words is as tall
+   as the screen allows (about three quarters of it, the pixels' landing
+   zone above and the name below share the rest). The word by word grey to
+   dark reveal and the falling pixels are untouched. */
+.p2 #independent .fall__stage{padding:0 var(--p2-gut,20px)}
+.p2 #independent .fall__line{
+  width:100%;max-width:none;margin:0;
+  font-family:'Archivo',sans-serif;font-stretch:64%;font-weight:800;text-transform:uppercase;
+  letter-spacing:-.012em;line-height:.9;text-wrap:balance;
+}
+.p2 #independent .fall__by{font-size:13px}
 
 /* ---------------------------------------------------------------- who we are
    The r76 accordion already centres itself (flex column, justify-content
@@ -178,22 +191,19 @@
   position:absolute;left:0;right:0;top:50%;
   display:flex!important;flex-direction:row;align-items:baseline;justify-content:center;
   gap:.3em;flex-wrap:nowrap;white-space:nowrap;
-  opacity:0;transform:translateY(calc(-50% - 14px));
-  transition:opacity .38s var(--p2-ease-io,ease),transform .38s var(--p2-ease-io,ease);
+  opacity:0;transform:translateY(-50%);
+  transition:opacity .36s var(--p2-ease,ease);
 }
-/* r98: the previous fact falls away below as it leaves, the next one drops
-   in from above (page.js, p2-gated, adds/removes .is-out for the ~360ms
-   handoff before the next .is-on line lands) - unchanged. Sabrina: remove
-   the thin orange line that used to mark the drop entirely (it was the
-   .beats__line::before rule; there is no replacement, the fall/rise motion
-   alone carries it now). */
+/* r102: back to the fade (Sabrina: no sliding). Each fact fades in where it
+   sits, like the hero count, and the old one fades out fully first
+   (page.js still adds .is-out for the ~360ms handoff). Nothing moves. */
 .p2 .beats__line.is-on{
   opacity:1;transform:translateY(-50%);
-  transition:opacity .42s var(--p2-ease-io,ease),transform .42s var(--p2-ease-io,ease);
+  transition:opacity .5s var(--p2-ease,ease);
 }
 .p2 .beats__line.is-out{
-  opacity:0;transform:translateY(calc(-50% + 14px));
-  transition:opacity .3s ease-in,transform .3s ease-in;
+  opacity:0;transform:translateY(-50%);
+  transition:opacity .3s ease-in;
 }
 .p2 .beats__fig,.p2 .beats__word{
   font-family:'Archivo',sans-serif;font-stretch:64%;font-weight:800;text-transform:uppercase;

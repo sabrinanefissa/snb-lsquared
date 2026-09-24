@@ -3,16 +3,19 @@
    One phone screen, filled edge to edge and top to bottom with the logo
    wall (tiles bleed past every edge, like the PC wall). The title sits in
    the wall, in one wide dark screen, centred.
-   The fill (r96): the wall switches on from the bottom row up, from where
-   the thumb is, in a loose random order inside that upward flow (slow, then
-   faster: 700ms down to 100ms between them). The first logo lands as soon
-   as the wall is 60% on screen, so the section never reads as a black
-   loading screen. The ending is the old one (page.js 6b, r75): the middle cell stays
-   open while the wall fills, a soft shade brings "Room for one more." in
-   over the logos, it holds and fades, then the "Take your place." card
-   fades into the open cell with its pulsing soft #FF9900 glow, which stops
-   on tap; the tap goes to #demo. The ending uses the r76 classes and styles
-   (lw-say, lw-room, lw-card, lw-glow in sections.css), so it looks as before.
+   The fill (r102): the logos switch on in a random order, out of sequence,
+   exactly as on the laptop (slow, then faster: 700ms down to 100ms between
+   them), each one coming towards you from small and far. The first logo
+   lands as soon as the wall is 60% on screen, so the section never reads
+   as a black loading screen. The ending is the box (the r69 laptop idea,
+   Sabrina's choice for the phone; the laptop keeps its r75 shade): the
+   middle cell stays open while the wall fills; when it is full the two
+   tiles beside it go dark and one wide dark screen across the whole row
+   holds "Room for one more."; it holds and fades, then the screen shrinks
+   onto the middle cell and the "Take your place." card appears there with
+   its pulsing soft #FF9900 glow, which stops on tap; the tap goes to #demo.
+   The ending uses the r69 classes (lw-room, lw-room__say, lw-card, lw-glow
+   in sections.css), restored for the phone in css/phone2-trusted.css.
    Time drives it once the wall is half in view, and only while on screen.
    Words: content.js "trusted title", "trusted by invite line",
    "trusted by card text", the logo list (window.LSQ_LOGOS), and the optional
@@ -40,21 +43,20 @@
   const names = el('ul', 'sr-only'); names.setAttribute('aria-label', 'Clients');
   LOGOS.forEach((l) => { if (l.name) names.appendChild(el('li', '', l.name)); });
 
-  /* the old ending (r75): the shade with the line, the card in the open cell, the glow */
-  const shade = el('div', 'lw-say');
+  /* the ending (r102, the r69 box): the wide dark screen with the line in
+     it, which shrinks to the open cell and becomes the card, and the glow */
   const say = el('p', 'lw-room__say', T['trusted by invite line'] || 'Room for one more.');
-  shade.appendChild(say);
   const room = el('div', 'lw-room');
   const card = el('a', 'lw-card'); card.href = '#demo'; card.tabIndex = -1;
   const cardT = el('span', 'lw-card__t', T['trusted by card text'] || 'Take your place.');
   card.appendChild(cardT); card.setAttribute('aria-label', cardT.textContent + ' Book a demo');
   card.addEventListener('click', () => sec.classList.add('is-seen'));   /* the glow pulses until the card is tapped */
-  room.appendChild(card);
+  room.append(say, card);
   const glow = el('i', 'lw-glow'); glow.setAttribute('aria-hidden', 'true');
 
   stage.append(grid, band);
   if (band2) stage.appendChild(band2);
-  stage.append(room, shade);
+  stage.append(room);
   wrap.append(stage, names);
   sec.prepend(wrap);
   /* the testimonial, when content.js turns it on, sits after the wall */
@@ -62,7 +64,7 @@
   if (quote && document.documentElement.classList.contains('lsq-quote')) wrap.after(quote);
 
   /* ------------------------------------------------------------ the wall */
-  let tiles = [], sched = [], FULL = 0, SAY = 0, GONE = 0, CARD = 0, w0 = 0, h0 = 0;
+  let tiles = [], sides = [], sched = [], FULL = 0, SAY = 0, GONE = 0, CARD = 0, w0 = 0, h0 = 0;
   /* one key per real logo: two list entries with the same file are
      the same logo, so they may not sit side by side either */
   const keyOf = (l) => String(l.src || '').split(/[?#]/)[0].replace(/^.*\//, '').replace(/-hq(?=\.)/, '').toLowerCase() || (l.name || '').trim().toLowerCase();
@@ -119,23 +121,20 @@
     const skip = (r, c) => r === M && c === K;
     const g = deal(rows, cols, skip);
     const cx = X(K) + tw / 2, cy = Y(M) + th / 2;   /* the open cell */
-    const list = [];
+    const list = []; sides = [];
     for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
       const x = X(c), y = Y(r);
       if (g[r * cols + c] < 0 || x + tw <= 0 || x >= W || y + th <= 0 || y >= H) continue;
       const l = LOGOS[g[r * cols + c]];
       const t = el('div', 'p2t__tile'); t.style.left = x + 'px'; t.style.top = y + 'px';
-      t._y = y + th / 2; t._j = jit(r, c);
       const p = el('span', 'p2t__panel'), im = el('img'); im.src = l.src; im.alt = ''; im.decoding = 'async';
       p.appendChild(im); t.appendChild(p); grid.appendChild(t);
       list.push(t);
+      if (r === M) sides.push(t);   /* the two tiles beside the open cell: they go dark under the wide screen */
     }
-    pitch = th + gy;
-    tiles = list; order();
-    /* the open cell's card, the shade and the glow, as r75 placed them */
+    tiles = shuffle(list);
+    /* the open cell: the wide screen is centred on it (three tiles wide, then one), and the glow */
     room.style.left = cx + 'px'; room.style.top = (cy - th / 2) + 'px';
-    shade.style.left = cx + 'px'; shade.style.top = cy + 'px';
-    shade.style.width = (tw * 5) + 'px'; shade.style.height = (th * 3.4) + 'px';
     glow.style.cssText = 'left:' + cx + 'px;top:' + cy + 'px;width:' + (tw * 1.85) + 'px;height:' + (th * 2.5) + 'px';
     grid.appendChild(glow);
     /* the schedule (r96): the first logo lands at once, then 700ms, each gap
@@ -146,29 +145,18 @@
       sched.push([at, dur]); at += gapT; gapT = Math.max(100, gapT * .78);
     });
     const last = sched[sched.length - 1] || [0, 0];
-    /* r75 timing: the line comes in 250ms after the wall is full, holds, fades,
-       and the card fades into the open cell */
-    FULL = last[0] + last[1]; SAY = FULL + 250; GONE = SAY + 900 + 700; CARD = GONE + 350;
+    /* r69 timing: the wide screen and its line come in 250ms after the wall
+       is full, the line holds and fades, then the screen shrinks onto the
+       open cell and the card appears in it */
+    FULL = last[0] + last[1]; SAY = FULL + 250; GONE = SAY + 900 + 1100; CARD = GONE + 500;
     if (stage_ >= 3 || RM) finish();
     else for (let k = 0; k < launched; k++) land(k, true);
   };
 
-  /* the order: from the thumb upwards. The thumb is the bottom edge of
-     what is on screen (the wall's own bottom once it is all in), row by row,
-     with a fixed random jitter per cell so each row switches on in a loose,
-     uneven order. Each next logo is picked at the moment it launches, so if
-     the wall is still coming up the screen, the rows that just came into
-     view are next. Rows still below the screen wait until they show. */
-  let pitch = 1;
-  function jit(r, c) { const v = Math.sin(r * 127.1 + c * 311.7 + 7.3) * 43758.5453; return v - Math.floor(v); }
-  const key = (a, t) => (t._y <= a + pitch * .5 ? (a - t._y) / pitch + t._j * 1.35 : 1000 + t._y - a);
-  function order() { tiles.sort((p, q) => key(h0, p) - key(h0, q)); }
-  function pick(k) {
-    const r = stage.getBoundingClientRect();
-    const a = P2.clamp(Math.min(innerHeight, r.bottom) - r.top, 0, h0);
-    let best = k;
-    for (let i = k + 1; i < tiles.length; i++) if (key(a, tiles[i]) < key(a, tiles[best])) best = i;
-    if (best !== k) { const t = tiles[k]; tiles[k] = tiles[best]; tiles[best] = t; }
+  /* the order (r102): random, out of sequence, as on the laptop */
+  function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
   }
 
   /* ------------------------------------------------------------ the sequence */
@@ -181,8 +169,9 @@
   };
   const finish = () => {
     tiles.forEach((t, k) => land(k, true)); launched = tiles.length;
-    shade.style.transition = 'none'; card.style.transition = 'none';
-    sec.classList.remove('is-say'); sec.classList.add('is-full', 'is-card'); card.tabIndex = 0;
+    room.style.transition = 'none'; card.style.transition = 'none';
+    sides.forEach((t) => t.classList.remove('is-off'));
+    sec.classList.remove('is-say'); sec.classList.add('is-full', 'is-room', 'is-card'); card.tabIndex = 0;
     stage_ = 3; stop();
   };
   const step = (now) => {
@@ -190,11 +179,17 @@
     const dt = Math.min(100, now - prev); prev = now;
     if (!visible) return;
     clock += dt;
-    while (launched < tiles.length && sched[launched][0] <= clock) { pick(launched); land(launched++, false); }
+    while (launched < tiles.length && sched[launched][0] <= clock) land(launched++, false);
     if (stage_ < 1 && clock >= FULL) { stage_ = 1; sec.classList.add('is-full'); }
-    if (stage_ < 2 && clock >= SAY) { stage_ = 2; sec.classList.add('is-say'); }             /* Room for one more. */
-    if (stage_ === 2 && clock >= GONE) { stage_ = 2.5; sec.classList.remove('is-say'); }     /* ...fades slowly */
-    if (clock >= CARD) { stage_ = 3; sec.classList.add('is-card'); card.tabIndex = 0; return; }   /* the card fades into the open cell */
+    if (stage_ < 2 && clock >= SAY) {   /* the two tiles beside the open cell go dark, the wide screen and Room for one more. come in */
+      stage_ = 2; sides.forEach((t) => t.classList.add('is-off')); sec.classList.add('is-room', 'is-say');
+    }
+    if (stage_ === 2 && clock >= GONE) { stage_ = 2.5; sec.classList.remove('is-say'); }     /* ...the line fades */
+    if (clock >= CARD) {   /* the screen shrinks onto the open cell and becomes the card; the side tiles light again behind it */
+      stage_ = 3; sec.classList.add('is-card'); card.tabIndex = 0;
+      setTimeout(() => sides.forEach((t) => t.classList.remove('is-off')), 500);
+      return;
+    }
     raf = requestAnimationFrame(step);
   };
   const go = () => { if (raf || stage_ >= 3 || !visible) return; prev = performance.now(); raf = requestAnimationFrame(step); };
