@@ -515,7 +515,7 @@
      content is carried once by a visually hidden paragraph next to it. */
   {
     const stage = $('#beats');
-    if (stage && !document.documentElement.classList.contains('p2')) {   /* r78: js/phone2/figures.js drives the phone ticker wall instead */
+    if (stage) {
       const lines = $$('.beats__line', stage);
       let i = 0, timer = 0, visible = false;
       /* the outgoing beat is fully gone before the next one arrives, so two

@@ -1,51 +1,58 @@
-/* phone2 hero: "Power on". js/phone2/hero.js builds the DOM inside #hero.
-   The r76 hero parts stay in the page and are hidden here. */
+/* phone2 hero (r92): the r77 screen, looping on a timer like the old hero.
+   js/phone2/hero.js builds the DOM inside #hero. One phone screen tall, no
+   pinning. The r76 hero parts stay in the page and are hidden here. */
 
-.p2 #hero{height:calc(var(--app-h,100svh) * 3);min-height:0;overflow:clip;background:var(--p2-black);display:block}
+.p2 #hero{height:var(--app-h,100svh);min-height:0;overflow:hidden;background:var(--p2-black);display:block;position:relative;
+  -webkit-tap-highlight-color:transparent}
 .p2 #hero > :not(.p2h){display:none}
 .p2 .p2h{position:absolute;inset:0}
 .p2 .p2h__stage{
-  position:sticky;top:0;height:var(--app-h,100svh);overflow:hidden;background:var(--p2-black);
-  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;
+  position:absolute;inset:0;overflow:hidden;background:var(--p2-black);
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
 }
-.p2 .p2h__screen{position:absolute;inset:0}
+.p2 .p2h__screen{position:absolute;inset:0;transition:opacity 900ms var(--p2-ease)}
 .p2 .p2h__cv{position:absolute;inset:0;width:100%;height:100%;display:block;transform-origin:50% 50%;will-change:transform,opacity}
-/* the soft flicker: a copy of the settled count, each screen a touch brighter
-   or dimmer, breathes in and out over it. Slow and soft, never a strobe. */
-.p2 .p2h__flw{position:absolute;inset:0;opacity:0}
-.p2 .p2h__cv--fl{animation:p2h-breathe 4.8s ease-in-out infinite alternate}
-@keyframes p2h-breathe{from{opacity:0}to{opacity:.9}}
 
-/* the one screen: the phone itself, lit and waiting */
-.p2 .p2h__one{
-  position:absolute;inset:12px;border-radius:30px;opacity:0;
-  background:radial-gradient(120% 70% at 50% 42%,#123A5C 0%,#0A2238 55%,#07172A 100%);
-  box-shadow:inset 0 0 40px rgba(86,176,228,.22);
-}
-.p2 .p2h__wash{position:absolute;inset:0;opacity:0;pointer-events:none;
-  background:linear-gradient(180deg,#174D78 0%,#1C5E93 100%)}   /* ends on the statement's top colour; hero.js reads the real one from the page */
-
-/* soft #FF9900 light behind the number: no edge, opacity only */
+/* soft #FF9900 light behind the words: no edge, opacity only */
 .p2 .p2h__glow{
-  position:absolute;left:50%;top:44%;width:120vw;height:78vw;margin:-39vw 0 0 -60vw;border-radius:50%;
-  pointer-events:none;opacity:.34;mix-blend-mode:screen;
+  position:absolute;left:50%;top:50%;width:120vw;height:78vw;margin:-39vw 0 0 -60vw;border-radius:50%;
+  pointer-events:none;opacity:0;display:none;mix-blend-mode:screen;   /* r93: removed, the shadow stays behind the words only */transition:opacity 900ms var(--p2-ease);
   background:radial-gradient(closest-side,rgba(255,153,0,.62) 0%,rgba(255,153,0,.3) 42%,rgba(255,153,0,.1) 70%,rgba(255,153,0,0) 100%);
 }
 
-/* the lockup: number, SCREENS, and the hero title locked under it */
+/* the count: number and SCREENS, one lockup in the exact centre */
 .p2 .p2h__lock{
   position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
   display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 var(--p2-gut);
   color:var(--p2-paper);font-stretch:64%;font-weight:800;text-transform:uppercase;pointer-events:none;
-  text-shadow:0 2px 24px rgba(0,0,0,.85),0 1px 3px rgba(0,0,0,.7);
+  text-shadow:0 2px 26px rgba(0,0,0,.92),0 1px 3px rgba(0,0,0,.8);   /* r93: the PC hero shadow */
+  transition:opacity 900ms var(--p2-ease);
 }
 .p2 .p2h__num{display:flex;align-items:center;justify-content:center;height:.86em;
-  font-size:30vw;line-height:.86;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  font-size:17vw;line-height:.9;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .p2 .p2h__inf{height:.52em;width:auto;overflow:visible}
 .p2 .p2h__inf path{fill:none;stroke:currentColor;stroke-width:11;stroke-linejoin:round}
-.p2 .p2h__lock .p2h__inf{filter:drop-shadow(0 2px 18px rgba(0,0,0,.8))}
-.p2 .p2h__word{font-size:var(--p2-title);line-height:.92;letter-spacing:.02em;margin-top:.12em}
-.p2 .p2h__plat{font-size:var(--p2-title);line-height:.92;letter-spacing:-.012em;margin-top:.5em;text-wrap:balance}
+.p2 .p2h__lock .p2h__inf{filter:drop-shadow(0 2px 13px rgba(0,0,0,.92))}
+.p2 .p2h__word{font-size:17vw;line-height:.92;letter-spacing:.02em;margin-top:0}   /* r93: same size as the number, like PC */
+
+/* the end of each loop, as on PC: the wall and the count go dark... */
+.p2 .p2h__stage.is-end .p2h__screen,.p2 .p2h__stage.is-end .p2h__lock{opacity:0}
+.p2 .p2h__stage.is-end .p2h__glow{opacity:.3}
+
+/* ...then "One platform." (content.js hero title), centred */
+.p2 .p2h__plat{position:absolute;inset:0;display:grid;place-items:center;padding:0 var(--p2-gut);text-align:center;pointer-events:none;
+  opacity:0;transition:opacity 1.5s var(--p2-ease)}
+.p2 .p2h__platt{color:var(--p2-paper);font-stretch:64%;font-weight:800;text-transform:uppercase;letter-spacing:-.015em;line-height:.9;
+  font-size:16vw;white-space:nowrap;display:block;width:max-content;text-shadow:none}
+.p2 .p2h__stage.is-plat .p2h__plat{opacity:1}
+
+/* ...then the L Squared logo: the mark first, then the full wordmark (PC hero.css) */
+.p2 .p2h__logo{position:absolute;left:50%;top:50%;width:min(80vw,440px);transform:translate(-50%,-50%);pointer-events:none;
+  opacity:0;transition:opacity 1.2s var(--p2-ease)}
+.p2 .p2h__logo img{display:block;width:100%;height:auto;clip-path:inset(0 84.6% 0 0);transform:translateX(42.4%);
+  transition:clip-path 1.7s var(--p2-ease),transform 1.7s var(--p2-ease)}
+.p2 .p2h__stage.is-logo .p2h__logo{opacity:1}
+.p2 .p2h__stage.is-full .p2h__logo img{clip-path:inset(0 0 0 0);transform:translateX(0)}
 
 /* the orange edge: 1px #FF9900 with its soft glow */
 .p2 .p2h__edge{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;opacity:0;
@@ -58,6 +65,6 @@
 .p2 .p2h__stage.is-boot .p2h__screen,.p2 .p2h__stage.is-boot .p2h__lock{visibility:hidden}
 
 @media (prefers-reduced-motion:reduce){
-  .p2 .p2h__flw{display:none}
   .p2 .p2h__px{display:none}
+  .p2 .p2h__screen,.p2 .p2h__lock,.p2 .p2h__glow,.p2 .p2h__plat,.p2 .p2h__logo,.p2 .p2h__logo img{transition:none}
 }

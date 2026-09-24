@@ -141,8 +141,11 @@
      gets receive(state, from). A station that has not been built yet just
      keeps the state waiting in pending(). The signal is decoration only:
      every section must also work if it never receives it. */
-  const SEC = { hero: 'hero', statement: 'statement', who: 'strips', industries: 'industries', ceo: 'independent',
-    publish: 'publish', reliability: 'reliability', trusted: 'clients', figures: 'numbers', contact: 'demo' };
+  /* r92: only the sections that are still phone2 have a station. Statement,
+     who we are, industries, ceo, publishing, figures and contact went back
+     to r76, so the thread no longer runs through them. The hero and Trusted
+     by no longer hand anything on either; the helpers stay for reliability. */
+  const SEC = { hero: 'hero', reliability: 'reliability', trusted: 'clients' };
   const signal = (() => {
     const st = {}, pend = {}, log = [], flights = [];
     let owner = 'hero', el = null;

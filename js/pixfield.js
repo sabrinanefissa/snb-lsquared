@@ -69,7 +69,6 @@
     if(inside&&now-ptr.t<1800)return{x:ptr.x-r.left,y:ptr.y-r.top,v:1,r,real:true};
     return null;};
   document.querySelectorAll('[data-fx="pixfield"]').forEach(cv=>{
-    if(document.documentElement.classList.contains('p2')&&cv.closest('#statement'))return;   /* r77: phone2 statement.js owns this field */
     const blue=cv.closest('#statement');
     const dark=cv.closest('#numbers');
     const g=new Grid(cv,{cell:w=>w<760?22:34,gap:w=>w<760?3:4,decay:dark?.955:.94,dpr:1.5,

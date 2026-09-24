@@ -1,0 +1,75 @@
+/* phone2-revert.css (r92): overrides for the sections Sabrina sent back to
+   the r76 OLD phone design, scoped under .p2 (only active while content.js
+   says "phone design: new", so it never touches "phone design: old" or PC).
+   Everything else about these sections is the untouched r76 CSS in
+   css/mobile.css and css/sections.css; this file only fixes what Sabrina
+   flagged: Who we are centred and filling the screen with no dead band, and
+   the Nine facts turned into a thin band over the top of the contact photo. */
+
+/* ---------------------------------------------------------------- who we are
+   The r76 accordion already centres itself (flex column, justify-content
+   center), but leaves an even but noticeable empty band above and below the
+   five strips. Tightening the section padding and reclaiming that slack for
+   the grid itself makes the title and the five strips use the full height,
+   still perfectly centred, with no dead band top or bottom. */
+.p2 #strips{
+  padding-top:clamp(14px,3.2dvh,26px);
+  padding-bottom:clamp(14px,3.2dvh,26px);
+  overflow:hidden;
+}
+.p2 .strips{
+  height:calc(var(--app-h,100svh) - 2 * clamp(14px,3.2dvh,26px) - var(--gap-title) - 1.25 * var(--title));
+}
+
+/* ---------------------------------------------------------------- nine facts
+   Old one-at-a-time crossfade (page.js "6. the figures", unchanged JS), but
+   restyled as a thin band (about 20-25% of app-h, no dead space inside it)
+   laid over the TOP of the contact photo. #demo's own top screen (the
+   headline) starts at 12.9% of its height (see mobile.css "contact: the new
+   tall three-screen wall"), so the band's overlap into #demo is kept well
+   under that so the headline screen is never covered. The band keeps a solid
+   ground for its own (non-overlapping) height, then fades to transparent
+   over the small strip it overlaps, so the seam into the photo reads as one
+   soft transition rather than a hard cut. */
+.p2 #numbers{
+  min-height:0;height:clamp(150px,calc(var(--app-h,100svh) * .22),210px);
+  margin-bottom:-52px;   /* overlap: well inside #demo's safe top 12.9% (~109px on a 844px screen) */
+  position:relative;z-index:2;
+  padding:0 var(--p2-gut,20px);
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  background:linear-gradient(180deg,#050A10 0%,#050A10 68%,rgba(5,10,16,0) 100%);
+}
+.p2 #numbers .pixfield{display:none}
+.p2 .beats{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.p2 .beats__stage{position:relative;width:100%;height:auto;padding:0;display:block}
+.p2 .beats__line{
+  position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
+  display:flex!important;flex-direction:row;align-items:baseline;justify-content:center;
+  gap:.3em;flex-wrap:nowrap;white-space:nowrap;
+  opacity:0;transition:opacity .35s var(--p2-ease,ease);
+}
+.p2 .beats__line.is-on{opacity:1;transition:opacity .5s var(--p2-ease,ease)}
+.p2 .beats__fig,.p2 .beats__word{
+  font-family:'Archivo',sans-serif;font-stretch:64%;font-weight:800;text-transform:uppercase;
+  line-height:.9;letter-spacing:-.01em;font-size:clamp(18px,5.4vw,28px);
+}
+.p2 .beats__fig{color:var(--p2-paper,#F3F1EC)}
+.p2 .beats__word{color:var(--p2-orange,#FF9900);margin-left:0}
+
+/* ---------------------------------------------------------------- contact
+   Nothing else changes: the r76 wall, headline, fields and button render
+   exactly as before. #demo only needs an explicit stacking context so the
+   facts band above (z-index:2) always paints over its top edge, never under
+   it, whatever else on the page picks up a z-index. */
+.p2 #demo{position:relative;z-index:1}
+
+@media (prefers-reduced-motion:reduce){
+  /* page.js shows every beat at once under reduced motion (no rotation); on
+     the thin band that would stack eight lines on the same spot, illegible.
+     Here they stack normally instead, so the section grows to fit them; the
+     tradeoff is this one section is not thin under reduced motion, but it is
+     readable, and it no longer overlaps the contact photo. */
+  .p2 #numbers{height:auto;margin-bottom:0;padding:20px var(--p2-gut,20px)}
+  .p2 .beats__stage{height:auto}
+  .p2 .beats__line{position:static;transform:none;opacity:1;transition:none;margin-bottom:8px}
+}
