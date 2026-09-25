@@ -9,9 +9,17 @@
       coming, dozens of them, larger, overlapping, until the whole screen
       is words and barely any black shows through. The highlighted word
       alternates blue, orange, blue, orange.
-   3. It freezes. The crowd holds where it is and dims a step back into the
-      black. Alone in the middle, bright, the invitation and the Leave a
-      review button (the G2 page).
+   3. The ending, one continuous motion: the wall softens and pulls back,
+      as if a camera stepped away from a screen; black gutters open through
+      it and cut it into the three by three grid of the L Squared mark, the
+      L squares wash blue, the others grey, the centre one goes dark (the
+      open screen), and it settles as the mark. Then the hero's own ending:
+      a line beneath the mark ("Every voice. Every screen."), it leaves, and
+      the mark becomes the full L Squared logo, the wordmark sliding out of
+      it exactly as in the hero. Beneath the logo, one by one on the black:
+      the invitation, its small line, the Leave a review button (the G2
+      page). The wall is white, blue and grey (the logo's colours) so the
+      squares really are the reviews, not a repaint. No orange.
    A tap or click during the play skips to the end. It plays once, only
    while on screen (IntersectionObserver), on timers; every move is
    transform or opacity. Leaving and coming back resumes. Reduced motion
@@ -45,6 +53,8 @@
   const ASK_LINE = T['reviews invite line'] || 'Two minutes to leave a review.';
   const BTN = T['reviews button'] || 'Leave a review';
   const LINK = T['reviews link'] || 'https://www.g2.com/products/l-squared/reviews';
+  const PRE = T['reviews line before logo'] || 'Every voice.|Every screen.';
+  const logoSrc = ((document.querySelector('#hero .hlogo img, #h_logo img') || {}).getAttribute || (() => null)).call(document.querySelector('#hero .hlogo img, #h_logo img'), 'src') || 'assets/lsquared-logo.png';
   const phone = matchMedia('(max-width:760px)').matches;
   const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
   const hash = (a, b) => { const v = Math.sin(a * 127.1 + b * 311.7) * 43758.5453; return v - Math.floor(v); };
@@ -69,7 +79,7 @@
   };
   const plain = (s) => s.replace(/[*|]/g, ' ').replace(/\s+/g, ' ').trim();
   const card = (r, solo, k) => {
-    const c = el('div', 'rv__card' + (solo ? ' is-solo' : '') + (k % 2 ? ' is-orange' : '')), q = el('p', 'rv__q');
+    const c = el('div', 'rv__card' + (solo ? ' is-solo' : '')), q = el('p', 'rv__q');
     fillQ(q, r.words); c.appendChild(q);
     if (r.name || r.role) {
       const by = el('div', 'rv__by');
@@ -83,9 +93,26 @@
 
   /* ------------------------------------------------------------ DOM */
   const sr = el('p', 'sr-only');
-  sr.textContent = 'What our customers say. ' + LIST.map((r) => plain(r.words) + ' ' + [r.name, r.role].filter(Boolean).join(', ') + '.').join(' ') + ' ' + plain(ASK) + ' ' + ASK_LINE;
+  sr.textContent = 'What our customers say. ' + LIST.map((r) => plain(r.words) + ' ' + [r.name, r.role].filter(Boolean).join(', ') + '.').join(' ') + ' ' + plain(PRE) + ' L Squared. ' + plain(ASK) + ' ' + ASK_LINE;
   sec.insertBefore(sr, stage);
   stage.setAttribute('aria-hidden', 'true');
+  const wall = el('div', 'rv__wall'); stage.appendChild(wall);
+  /* the mark: the square the wall becomes. Nine cells, the L in blue, the
+     rest grey, the centre dark; a frame blacks out everything outside it */
+  const mark = el('div', 'rv__mark'), frame = el('div', 'rv__frame');
+  const L = [[0, 0], [1, 0], [2, 0], [2, 1]];   /* row, col of the blue squares */
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) {
+    const cell = el('i', 'rv__cell' + (L.some((p) => p[0] === r && p[1] === c) ? ' is-blue' : (r === 1 && c === 1) ? ' is-open' : ' is-grey'));
+    cell.style.left = (c * 34.5) + '%'; cell.style.top = (r * 34.5) + '%';
+    mark.appendChild(cell);
+  }
+  wall.append(frame, mark);
+  /* the line before the logo, and the logo itself (the hero's reveal: the
+     mark first, then the wordmark slides out of it) */
+  const pre = el('div', 'rv__pre'), preQ = el('p', 'rv__q'); fillQ(preQ, PRE); pre.appendChild(preQ);
+  const logo = el('div', 'rv__logo'), logoImg = el('img'); logoImg.src = logoSrc; logoImg.alt = 'L Squared'; logoImg.decoding = 'async';
+  logo.appendChild(logoImg);
+  stage.append(pre, logo);
   const ask = el('div', 'rv__ask'), askQ = el('p', 'rv__q');
   fillQ(askQ, ASK);
   const askLine = el('p', 'rv__ask-line', ASK_LINE);
@@ -100,7 +127,7 @@
     let fs = parseFloat(getComputedStyle(q).fontSize);
     for (let n = 0; n < 10 && q.scrollWidth > maxW + 1; n++) { fs *= .92; q.style.fontSize = fs.toFixed(1) + 'px'; }
   };
-  const fitAsk = () => { const w = stage.clientWidth * (phone ? .9 : .92); fitQ(askQ, w); };
+  const fitAsk = () => { const w = stage.clientWidth * (phone ? .9 : .92); fitQ(askQ, w); fitQ(preQ, w); };
 
   /* ------------------------------------------------------------ state */
   const cards = [];
@@ -109,15 +136,55 @@
   const later = (fn, ms) => { const t = setTimeout(fn, ms); timers.push(t); return t; };
   const clear = () => { timers.forEach(clearTimeout); timers = []; };
 
-  /* ------------------------------------------------------------ the end */
+  /* ------------------------------------------------------------ the end
+     The mark: a square of side MK (the stage's smaller side) centred on
+     the wall. The wall zooms from 1 to the size of the finished mark and
+     rises so the mark's centre lands at MARK_Y of the screen; the ask sits
+     beneath. Everything is transform and opacity; the blur (laptop only)
+     is one filter on the wall as a single layer, never on the words. */
+  const MARK_PX = () => (phone ? Math.min(stage.clientWidth * .34, 132) : Math.min(stage.clientHeight * .17, 156));
+  const MARK_Y = phone ? .3 : .32;
+  /* the logo image: 1920 x 290, the mark is its left 15.4%, centred at 7.7% */
+  const MARK_FRAC = .154, MARK_CX = .077;
+  let ended = false;
+  const layoutEnd = () => {
+    const W = stage.clientWidth, H = stage.clientHeight, MK = Math.min(W, H) * .86;
+    wall.style.setProperty('--mk', MK.toFixed(1) + 'px');
+    const s = MARK_PX() / MK, dy = (MARK_Y - .5) * H;
+    /* the logo, centred where the mark is: its mark starts the same size as
+       the wall's mark, and scales to the finished logo as the wordmark slides out */
+    const LW = Math.min(W * (phone ? .84 : .56), phone ? 440 : 900);
+    logo.style.width = LW.toFixed(1) + 'px'; logo.style.top = (MARK_Y * 100) + '%';
+    logo.style.setProperty('--k', (MARK_PX() / (LW * MARK_FRAC)).toFixed(4));
+    return { s, dy };
+  };
   const finish = (instant) => {
-    if (sec.classList.contains('is-ask')) return;
-    clear();
-    cards.forEach((c) => { if (!c.classList.contains('is-off')) c.classList.add('is-on', 'is-by'); });
-    sec.classList.add('is-frozen');
-    fitAsk();
-    if (instant || RM) { sec.classList.add('is-ask', 'is-ask2'); return; }
-    later(() => { sec.classList.add('is-ask'); later(() => sec.classList.add('is-ask2'), 700); }, 1100);
+    if (ended) return;
+    ended = true; clear();
+    cards.forEach((c) => c.classList.add('is-on', 'is-by'));
+    sec.classList.add('is-ending'); fitAsk();
+    const { s, dy } = layoutEnd();
+    const endT = 'translateY(' + dy.toFixed(1) + 'px) scale(' + s.toFixed(4) + ')';
+    if (instant || RM) {
+      wall.style.transform = endT; sec.classList.add('is-mark', 'is-logo', 'is-full', 'is-ask', 'is-ask2', 'is-ask3'); return;
+    }
+    const DUR = 2600, E = 'cubic-bezier(.77,0,.175,1)';
+    later(() => {
+      const kf = [{ transform: 'translateY(0) scale(1)' }, { transform: endT }];
+      wall.animate(kf, { duration: DUR, easing: E, fill: 'forwards' }).finished.then(() => { wall.style.transform = endT; }).catch(() => {});
+      if (!phone) wall.animate([{ filter: 'blur(0)' }, { filter: 'blur(5px)', offset: .35 }, { filter: 'blur(0)', offset: .85 }, { filter: 'blur(0)' }], { duration: DUR, easing: 'linear' });
+      sec.classList.add('is-mark');   /* the frame, the gutters and the colours wash in over the zoom (css) */
+      /* the hero's ending: the line beneath the mark, it leaves, then the mark
+         becomes the logo as the wordmark slides out of it */
+      let t = DUR + 500;
+      later(() => sec.classList.add('is-pre'), t); t += 2400;
+      later(() => sec.classList.remove('is-pre'), t); t += 700;
+      later(() => sec.classList.add('is-logo'), t); t += 500;      /* the real mark over the wall's */
+      later(() => sec.classList.add('is-full'), t); t += 1900;     /* the wordmark slides out (1.7s, as the hero) */
+      later(() => sec.classList.add('is-ask'), t); t += 700;
+      later(() => sec.classList.add('is-ask2'), t); t += 600;
+      later(() => sec.classList.add('is-ask3'), t);
+    }, 500);
   };
 
   /* the beat, written out: the gap before each arrival after the solo, in
@@ -173,7 +240,7 @@
     const rot = (hash(k, 5) - .5) * (phone ? 16 : 22) * busy;   /* straight, then tilting once it is busy */
     c.style.left = (best.x * 100).toFixed(2) + '%'; c.style.top = (best.y * 100).toFixed(2) + '%';
     c.style.setProperty('--s', s.toFixed(3)); c.style.setProperty('--r', rot.toFixed(2) + 'deg');
-    stage.appendChild(c); cards.push(c);
+    wall.appendChild(c); cards.push(c);
     /* while few: never past the edges of the stage, measured as drawn (size and angle included) */
     if (spread) {
       const sr = stage.getBoundingClientRect(), cr = c.getBoundingClientRect(), m = 6;
@@ -207,7 +274,7 @@
     const c = solo ? card(r, true, k) : place(card(r, false, k), k, live.length < (phone ? 4 : 6));   /* apart while there are few, then the overlaps */
     if (solo) {
       c.style.left = '50%'; c.style.top = '50%'; c._pos = { x: .5, y: .5 }; live.push(c._pos);
-      stage.appendChild(c); cards.push(c);
+      wall.appendChild(c); cards.push(c);
       fitQ(c.querySelector('.rv__q'), stage.clientWidth * (phone ? .9 : .92));
       on(c);
       k++; later(arrive, 350 + 600 + SOLO_HOLD);   /* the first one stays; the next arrives beside it */
@@ -216,9 +283,9 @@
     on(c);   /* r108: once a review is in, it stays; nothing ever fades out */
     k++; later(arrive, gapAt(k));
   };
-  const start = () => { if (playing || sec.classList.contains('is-ask')) return; playing = true; clear(); later(arrive, k === 0 ? 400 : 200); };
+  const start = () => { if (playing || ended) return; playing = true; clear(); later(arrive, k === 0 ? 400 : 200); };
   const stop = () => { clear(); playing = false; };
-  sec.addEventListener('click', (e) => { if (e.target.closest('a')) return; if (visible && !sec.classList.contains('is-ask')) finish(false); });   /* a tap skips to the end */
+  sec.addEventListener('click', (e) => { if (e.target.closest('a')) return; if (visible && !ended) finish(false); });   /* a tap skips to the end */
 
   const io = new IntersectionObserver(([e]) => {
     const was = visible;
@@ -231,5 +298,8 @@
   const ready = document.fonts && document.fonts.ready ? Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1200))]) : Promise.resolve();
   ready.then(() => { fitAsk(); io.observe(sec); });
   let rt = 0;
-  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { fitAsk(); const s = stage.querySelector('.rv__card.is-solo .rv__q'); if (s) fitQ(s, stage.clientWidth * .92); }, 160); }, { passive: true });
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => {
+    fitAsk(); const q = stage.querySelector('.rv__card.is-solo .rv__q'); if (q) fitQ(q, stage.clientWidth * .92);
+    if (ended) { const { s, dy } = layoutEnd(); wall.getAnimations().forEach((a) => a.cancel()); wall.style.transform = 'translateY(' + dy.toFixed(1) + 'px) scale(' + s.toFixed(4) + ')'; }
+  }, 160); }, { passive: true });
 })();
