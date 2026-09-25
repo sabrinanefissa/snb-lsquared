@@ -41,8 +41,18 @@
   ];
   const LIST = (window.LSQ_REVIEWS && window.LSQ_REVIEWS.length) ? window.LSQ_REVIEWS : DEF;
   const N = LIST.length;
+  /* speed dials (content.js): "reviews speed" for the whole section and
+     "reviews speed <moment>" for one moment, in percent; 100% is as built.
+     D(ms, moment) is the time a moment takes once the dials are applied;
+     the CSS transitions read the same numbers as --rv-* factors. */
+  const pct = (v) => { const x = parseFloat(String(v == null ? '' : v).replace('%', '')); if (!isFinite(x) || x <= 0) return 1; return x > 3 ? x / 100 : x; };
+  const SPEED = pct(T['reviews speed']);
+  const spd = (m) => SPEED * pct(T['reviews speed ' + m]);
+  const D = (ms, m) => Math.round(ms / spd(m));
+  [['first review', 'first'], ['gathering', 'gather'], ['filling', 'fill'], ['zoom', 'zoom'], ['mark hold', 'mark'], ['line slide', 'slide'], ['line hold', 'lhold'], ['line fade', 'lfade'], ['logo hold', 'ghold'], ['logo fade', 'gfade'], ['invitation', 'ask']]
+    .forEach(([m, v]) => sec.style.setProperty('--rv-' + v, (1 / spd(m)).toFixed(4)));
   const secs = parseFloat(T['reviews seconds each']);
-  const SOLO_HOLD = (isFinite(secs) && secs >= 0 ? secs : .3) * 1000;
+  const SOLO_HOLD = D((isFinite(secs) && secs >= 0 ? secs : .3) * 1000, 'first review');
   const PRE = (T['reviews line before logo'] || 'Every voice.|Every screen.').split('|').map((x) => x.trim()).filter(Boolean);   /* the lines beside the mark, one at a time */
   const ASK = T['reviews invite'] || "If we've earned it,|we'd love to hear it.";
   const ASK_LINE = T['reviews invite line'] || 'Two minutes to leave a review.';
@@ -153,7 +163,7 @@
   const GAPS = [1000, 900, 800, 700, 600, 520, 460, 400, 350, 300, 260, 230, 200, 180, 160, 150, 140, 130, 120, 110, 100];
   const FILL_N = phone ? 130 : 180;
   const TOTAL = GAPS.length + 1 + FILL_N;
-  const gapAt = (j) => (j <= GAPS.length ? GAPS[j - 1] : 50);
+  const gapAt = (j) => (j <= GAPS.length ? D(GAPS[j - 1], 'gathering') : D(50, 'filling'));
   const EARLY = [1.15, .6, .9, 1.35, .7, 1.05, .55, 1.25, .8];
   const GX = phone ? 14 : 28, GY = phone ? 26 : 18;
   let rects = [], overlapAt = -1, overflow = false, heavy = 0;
@@ -243,26 +253,26 @@
     if (instant || RM) {
       wall.style.transform = endT; sec.classList.add('is-mark', 'is-solid', 'is-gone', 'is-ask', 'is-ask2', 'is-ask3'); return;
     }
-    const ZOOM = 3000, SLIDE = 1700;
+    const ZOOM = D(3000, 'zoom'), SLIDE = D(1700, 'line slide');
     later(() => {
       wall.animate([{ transform: 'scale(1)' }, { transform: endT }], { duration: ZOOM, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' })
         .finished.then(() => { wall.style.transform = endT; }).catch(() => {});
       sec.classList.add('is-mark');                                           /* the frame, the gutters and the colours wash in over the zoom */
-      let t = ZOOM - 600;
-      later(() => sec.classList.add('is-solid'), t); t += 900;                /* the reviews fade into solid squares: the mark */
-      later(() => sec.classList.add('is-lock'), t); t += 450;                 /* the real mark fades in over the wall's, same pixels */
-      later(() => sec.classList.add('is-lock2'), t); t += 900;                /* the wall goes, unseen beneath it; the mark holds, as in the hero */
-      later(() => lock.classList.add('is-open', 'is-settled'), t); t += SLIDE + 2000;   /* the first line slides out of the mark; holds */
+      let t = ZOOM - D(600, 'zoom');
+      later(() => sec.classList.add('is-solid'), t); t += D(900, 'zoom');     /* the reviews fade into solid squares: the mark */
+      later(() => sec.classList.add('is-lock'), t); t += D(450, 'mark hold'); /* the real mark fades in over the wall's, same pixels */
+      later(() => sec.classList.add('is-lock2'), t); t += D(900, 'mark hold');/* the wall goes, unseen beneath it; the mark holds, as in the hero */
+      later(() => lock.classList.add('is-open', 'is-settled'), t); t += SLIDE + D(2000, 'line hold');   /* the first line slides out of the mark; holds */
       for (let i = 1; i < PRE.length; i++) {                                 /* each next line fades in where the last one was */
-        later(() => lock.classList.add('is-hide'), t); t += 450;
-        later(() => { lText.textContent = PRE[i]; lock.classList.remove('is-hide'); }, t); t += 600 + 2000;
+        later(() => lock.classList.add('is-hide'), t); t += D(450, 'line fade');
+        later(() => { lText.textContent = PRE[i]; lock.classList.remove('is-hide'); }, t); t += D(600, 'line fade') + D(2000, 'line hold');
       }
-      later(() => lock.classList.add('is-word'), t); t += 700 + 2600;         /* L SQUARED fades in where the words were; holds */
-      later(() => sec.classList.add('is-gone'), t); t += 1100 + 500;          /* the logo fades to black */
-      later(() => sec.classList.add('is-ask'), t); t += 1000;                 /* the invitation, alone, slowly */
-      later(() => sec.classList.add('is-ask2'), t); t += 900;
+      later(() => lock.classList.add('is-word'), t); t += D(700, 'line fade') + D(2600, 'logo hold');   /* L SQUARED fades in where the words were; holds */
+      later(() => sec.classList.add('is-gone'), t); t += D(1100, 'logo fade') + D(500, 'logo fade');    /* the logo fades to black */
+      later(() => sec.classList.add('is-ask'), t); t += D(1000, 'invitation');                          /* the invitation, alone, slowly */
+      later(() => sec.classList.add('is-ask2'), t); t += D(900, 'invitation');
       later(() => sec.classList.add('is-ask3'), t);
-    }, 200);
+    }, D(200, 'zoom'));
   };
 
   /* ------------------------------------------------------------ reduced motion: the end, still */
@@ -273,7 +283,7 @@
   }
 
   /* ------------------------------------------------------------ the play */
-  const on = (c) => { void c.offsetWidth; c.classList.add('is-on'); later(() => c.classList.add('is-by'), 250); };
+  const on = (c) => { void c.offsetWidth; c.classList.add('is-on'); later(() => c.classList.add('is-by'), D(250, 'gathering')); };
   const arrive = () => {
     if (!visible && !ended) { playing = false; return; }
     if (k >= TOTAL) { finish(false); return; }
@@ -285,13 +295,13 @@
       fitQ(c.querySelector('.rv__q'), stage.clientWidth * (phone ? .9 : .92));
       remember(c);
       on(c);
-      k++; later(arrive, 250 + SOLO_HOLD);   /* the next one lands beside it within half a second */
+      k++; later(arrive, D(250, 'first review') + SOLO_HOLD);   /* the next one lands beside it within half a second */
       return;
     }
     on(place(card(r, false), k));
     k++; later(arrive, gapAt(k));
   };
-  const start = () => { if (playing || ended) return; playing = true; clear(); later(arrive, k === 0 ? 150 : 150); };
+  const start = () => { if (playing || ended) return; playing = true; clear(); later(arrive, D(150, 'first review')); };
   /* scrolling away resets it; coming back plays it again from the start */
   const reset = () => {
     clear(); playing = false; ended = false; k = 0; rects = []; overlapAt = -1; overflow = false; heavy = 0;

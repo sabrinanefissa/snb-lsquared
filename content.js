@@ -211,6 +211,20 @@ reviews invite: If we've earned it,|we'd love to hear it.
 reviews invite line: Two minutes to leave a review.
 reviews button: Leave a review
 reviews link: https://www.g2.com/products/l-squared/reviews
+# SPEED. 100% is as it is now, 200% is twice as fast, 50% is half as fast.
+# The first line sets the whole section; the others set one moment each, on top of it.
+reviews speed: 100%
+reviews speed first review: 100%
+reviews speed gathering: 100%
+reviews speed filling: 100%
+reviews speed zoom: 100%
+reviews speed mark hold: 100%
+reviews speed line slide: 100%
+reviews speed line hold: 100%
+reviews speed line fade: 100%
+reviews speed logo hold: 100%
+reviews speed logo fade: 100%
+reviews speed invitation: 100%
 review 1 words: Above and *beyond*.
 review 1 name: Luis Javier D.
 review 1 role: Owner
