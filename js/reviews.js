@@ -102,7 +102,7 @@
   const L = [[0, 0], [1, 0], [2, 0], [2, 1]];
   for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) {
     const cell = el('i', 'rv__cell' + (L.some((p) => p[0] === r && p[1] === c) ? ' is-blue' : (r === 1 && c === 1) ? ' is-open' : ' is-grey'));
-    cell.style.left = (c * 35) + '%'; cell.style.top = (r * 35) + '%';
+    cell.style.left = (c * 34.48) + '%'; cell.style.top = (r * 34.48) + '%';   /* 90 px squares, 10 px gaps, as the logo */
     mark.appendChild(cell);
   }
   wall.append(frame, mark);
@@ -203,7 +203,7 @@
      The wall's mark: a square of side MK centred on the wall. The wall zooms
      to the size of the lockup's mark, centred on the section; the lockup's
      mark then takes over at the same pixels. */
-  const MARK_FRAC = .154;
+  const MARK_FRAC = .1506;   /* measured from the logo image: the mark is 290 of 1926 px */
   const lockW = () => Math.min(stage.clientWidth * (phone ? .84 : .56), phone ? 440 : 900);
   const markPx = () => (phone ? Math.min(stage.clientWidth * .34, 132) : Math.min(stage.clientHeight * .17, 156));
   const layoutEnd = () => {

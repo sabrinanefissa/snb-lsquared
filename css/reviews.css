@@ -52,14 +52,14 @@
 .rv__frame,.rv__mark{position:absolute;left:50%;top:50%;width:var(--mk,600px);height:var(--mk,600px);transform:translate(-50%,-50%);pointer-events:none}
 .rv__frame{z-index:2;box-shadow:0 0 0 6000px #000;opacity:0;transition:opacity 1500ms var(--ease) 300ms}
 .rv__mark{z-index:3}
-.rv__cell{position:absolute;width:30%;height:30%;opacity:0;box-shadow:0 0 0 calc(var(--mk,600px) * .025) #000;
+.rv__cell{position:absolute;width:31.03%;height:31.03%;opacity:0;box-shadow:0 0 0 calc(var(--mk,600px) * .025) #000;
   transition:opacity 1400ms var(--ease) 900ms,background-color 900ms var(--ease)}
 .rv__cell.is-blue{background:rgba(86,176,228,.86)}
-.rv__cell.is-grey{background:rgba(200,200,200,.86)}
+.rv__cell.is-grey{background:rgba(202,202,204,.86)}
 .rv__cell.is-open{background:rgba(0,0,0,.96)}
 #reviews.is-mark .rv__frame,#reviews.is-mark .rv__cell{opacity:1}
 #reviews.is-solid .rv__cell.is-blue{background:#56B0E4}
-#reviews.is-solid .rv__cell.is-grey{background:#C8C8C8}
+#reviews.is-solid .rv__cell.is-grey{background:#CACACC}
 #reviews.is-solid .rv__cell.is-open{background:#000}
 
 /* the lockup, the hero's move: the mark (the logo's left 15.4%) centred,
@@ -68,21 +68,21 @@
 .rv__lock{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;pointer-events:none;opacity:0;transition:opacity 400ms var(--ease)}
 #reviews.is-lock .rv__lock{opacity:1}
 #reviews.is-lock .rv__wall{opacity:0}   /* the wall's solid mark hands over to the real one, same pixels */
-.rv__lock-in{display:flex;align-items:center;width:100%;transform-origin:7.7% 50%;
-  clip-path:inset(0 84.6% 0 0);transform:translateX(42.4%) scale(var(--k,1));
+.rv__lock-in{display:flex;align-items:center;width:100%;transform-origin:7.53% 50%;
+  clip-path:inset(0 84.94% 0 0);transform:translateX(42.47%) scale(var(--k,1));
   transition:clip-path 1.7s var(--ease),transform 1.7s var(--ease)}
-.rv__lock.is-settled .rv__lock-in{transform:translateX(42.4%) scale(1)}
+.rv__lock.is-settled .rv__lock-in{transform:translateX(42.47%) scale(1)}
 .rv__lock.is-open .rv__lock-in{clip-path:inset(0 0 0 0);transform:translateX(0) scale(1)}
-.rv__lock-mark{display:block;flex:none;width:15.4%;overflow:hidden}
-.rv__lock-mark img{display:block;width:calc(100% / .154);max-width:none;height:auto}
-.rv__lock-right{position:relative;display:block;flex:none;width:84.6%}
+.rv__lock-mark{display:block;flex:none;width:15.06%;overflow:hidden}   /* measured: the mark is 290 of the image's 1926 px */
+.rv__lock-mark img{display:block;width:calc(100% / .1506);max-width:none;height:auto}
+.rv__lock-right{position:relative;display:block;flex:none;width:84.94%}
 /* the line, set like the wordmark: wide, geometric, the logo's blue, one line */
-.rv__lock-text{position:absolute;left:0;top:50%;transform:translateY(-50%);padding-left:4.6%;white-space:nowrap;
+.rv__lock-text{position:absolute;left:0;top:50%;transform:translateY(-50%);padding-left:5%;white-space:nowrap;
   font-stretch:118%;font-weight:600;text-transform:uppercase;letter-spacing:.01em;line-height:1;color:var(--blue);
   font-size:clamp(20px,3vw,58px);opacity:1}
 /* the wordmark: the same logo image, shifted so only its right part shows */
 .rv__lock-word{display:block;width:100%;overflow:hidden;opacity:0}
-.rv__lock-word img{display:block;width:calc(100% / .846);max-width:none;height:auto;margin-left:calc(-100% * .154 / .846)}
+.rv__lock-word img{display:block;width:calc(100% / .8494);max-width:none;height:auto;margin-left:calc(-100% * .1506 / .8494)}
 .rv__lock.is-word .rv__lock-text{opacity:0}
 .rv__lock.is-word .rv__lock-word{opacity:1}
 #reviews.is-gone .rv__lock{opacity:0;transition:opacity 1100ms var(--ease)}
