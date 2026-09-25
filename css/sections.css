@@ -401,9 +401,8 @@
      copy, and the width follows the real ratio, so nothing is cut. */
   --relyh:min(700px,calc(100dvh - 2 * var(--pad-sec) - var(--gap-title) - 100px));
   aspect-ratio:1672 / 941;   /* r117: the store pair (store-off.webp, store-on.webp) is 1672x941 */
-  /* r117: the photo is shown whole under the two lines of copy: as wide as the
-     window allows, but never taller than the room left on one screen */
-  width:min(calc(100vw - 40px),calc((100dvh - 2 * var(--pad-sec) - var(--gap-title) - 110px) * 1672 / 941),2400px);
+  /* r118: full width, edge to edge, the whole photo; the section takes the height that needs */
+  width:100vw;margin-left:calc(50% - 50vw);border-radius:0;
   height:auto;
   touch-action:pan-y;
   box-shadow:0 16px 34px rgba(0,0,0,.55);
@@ -757,7 +756,7 @@
   .strips{--rowh:calc(min(calc(100dvh - 2 * var(--pad-sec) - var(--gap-title) - 1.1 * var(--title)),720px) * var(--k-strips,1))}
   .ind__stage{height:calc(min(80dvh,calc(100vw / 3)) * var(--k-ind,1))}
   .pub__rig{--pubh:calc((100dvh - 2 * var(--pad-sec) - 2 * (var(--title) + var(--gap-title))) * var(--k-pub,1))}
-  .rely__frame{width:calc(min(calc(100vw - 40px),calc((100dvh - 2 * var(--pad-sec) - var(--gap-title) - 110px) * 1672 / 941),2400px) * var(--k-rely,1))}
+  .rely__frame{width:calc(100vw * var(--k-rely,1));margin-left:calc(50% - 50vw * var(--k-rely,1))}
 }
 
 /* r65: the optional lines from content.js, in the same voice as the dead
