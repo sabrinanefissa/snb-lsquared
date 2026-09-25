@@ -201,11 +201,11 @@ reviews text colour:
 # until the screen is a crowd of words; then it freezes, dims, and the invitation below appears in the middle.
 # Put * around one word or phrase to make it blue, for example:   Above and *beyond*.
 # A | makes a new line. Add review 10, 11 and so on for more; delete all three lines of one to remove it.
-# how long the first review stays alone on screen, in seconds
-reviews seconds each: 1.2
+# how long the first review is alone before the next lands beside it, in seconds
+reviews seconds each: 0.3
 # the ending: the invitation, its small line, and the button, which opens your G2 reviews page
-# once the screen is a wall of words it becomes the L Squared mark; this line shows under it, then the logo appears as in the hero
-reviews line before logo: Every voice.|Every screen.
+# once the screen is a wall of words it becomes the L Squared mark; this line slides out of the mark on one line, as L SQUARED does in the hero, then L SQUARED itself
+reviews line before logo: Every voice. Every screen.
 reviews invite: If we've earned it,|we'd love to hear it.
 reviews invite line: Two minutes to leave a review.
 reviews button: Leave a review
