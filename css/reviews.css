@@ -38,33 +38,61 @@
   margin:0;font-stretch:64%;font-weight:800;text-transform:uppercase;letter-spacing:-.012em;line-height:.92;
   color:var(--paper);font-size:clamp(26px,3.4vw,66px);text-wrap:balance;white-space:normal;
 }
-.rv__q em{font-style:normal;color:var(--blue)}
-.rv__card.is-orange .rv__q em{color:#FF9900}   /* blue, orange, blue, orange */
+.rv__q em{font-style:normal;color:var(--blue)}   /* the logo's blue, always */
 
 /* the name and the role: they fade in slowly, after the words */
 .rv__by{display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;transition:opacity 1100ms var(--ease)}
 .rv__card.is-solo .rv__by{transition-duration:900ms}
 .rv__card.is-by .rv__by{opacity:1}
-.rv__name{font-stretch:76%;font-weight:700;font-size:clamp(11px,.9vw,15px);letter-spacing:.18em;text-transform:uppercase;color:var(--paper)}
-.rv__role{font-stretch:76%;font-weight:600;font-size:clamp(10px,.78vw,13px);letter-spacing:.16em;text-transform:uppercase;color:var(--paper-soft)}
+.rv__name{font-stretch:76%;font-weight:700;font-size:clamp(11px,.9vw,15px);letter-spacing:.18em;text-transform:uppercase;color:#C8C8C8}   /* the logo's grey */
+.rv__role{font-stretch:76%;font-weight:600;font-size:clamp(10px,.78vw,13px);letter-spacing:.16em;text-transform:uppercase;color:rgba(200,200,200,.7)}
 
-/* the freeze: the crowd holds where it is and steps back into the black */
-#reviews.is-frozen .rv__card{transition:opacity 1100ms var(--ease)}
-#reviews.is-frozen .rv__card.is-on{opacity:.14}   /* no shadow behind the invitation: the wall itself steps back far enough */
-#reviews.is-frozen .rv__card.is-off{opacity:0}
+/* the wall: every card lives in it, so the ending can zoom it as one */
+.rv__wall{position:absolute;inset:0;transform-origin:50% 50%;will-change:transform}
 
-/* the invitation: alone in the middle, bright, with the button */
+/* the ending: the wall becomes the mark. The frame blacks out everything
+   outside the square; the nine cells wash in with the logo's colours and
+   black gutters between them; the centre stays dark, the open screen. */
+.rv__frame,.rv__mark{position:absolute;left:50%;top:50%;width:var(--mk,600px);height:var(--mk,600px);transform:translate(-50%,-50%);pointer-events:none}
+.rv__frame{z-index:2;box-shadow:0 0 0 6000px #000;opacity:0;transition:opacity 1500ms var(--ease) 300ms}
+.rv__mark{z-index:3}
+.rv__cell{position:absolute;width:31%;height:31%;opacity:0;box-shadow:0 0 0 calc(var(--mk,600px) * .0175) #000;
+  transition:opacity 1400ms var(--ease) 900ms}
+.rv__cell.is-blue{background:rgba(86,176,228,.86)}
+.rv__cell.is-grey{background:rgba(200,200,200,.86)}
+.rv__cell.is-open{background:rgba(0,0,0,.96)}
+#reviews.is-mark .rv__frame,#reviews.is-mark .rv__cell{opacity:1}
+
+/* the line before the logo: beneath the mark, in and out */
+.rv__pre{position:absolute;left:50%;top:62%;transform:translate(-50%,-50%);z-index:3;width:max-content;max-width:min(92vw,1400px);pointer-events:none}
+.rv__pre .rv__q{font-size:clamp(34px,5.2vw,104px);opacity:0;transition:opacity 700ms var(--ease)}
+#reviews.is-pre .rv__pre .rv__q{opacity:1}
+
+/* the logo, the hero's reveal: the mark first (its left 15.4%, shifted so
+   the mark sits in the middle), then the wordmark slides out. It starts the
+   size of the wall's mark (--k) and settles at the logo's own size. */
+.rv__logo{position:absolute;left:50%;top:32%;transform:translate(-50%,-50%);z-index:2;pointer-events:none;opacity:0;transition:opacity 500ms var(--ease)}
+.rv__logo img{display:block;width:100%;height:auto;transform-origin:7.7% 50%;
+  clip-path:inset(0 84.6% 0 0);transform:translateX(42.4%) scale(var(--k,1));
+  transition:clip-path 1.7s var(--ease),transform 1.7s var(--ease)}
+#reviews.is-logo .rv__logo{opacity:1}
+#reviews.is-logo .rv__wall{opacity:0;transition:opacity 600ms var(--ease) 200ms}   /* the wall's mark hands over to the real one */
+#reviews.is-full .rv__logo img{clip-path:inset(0 0 0 0);transform:translateX(0) scale(1)}
+
+/* the invitation: beneath the logo, one by one on the black */
 .rv__ask{
-  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;width:max-content;max-width:min(92vw,1400px);
+  position:absolute;left:50%;top:62%;transform:translate(-50%,-50%);z-index:3;width:max-content;max-width:min(92vw,1400px);
   display:flex;flex-direction:column;align-items:center;gap:clamp(18px,3dvh,34px);
-  opacity:0;pointer-events:none;
+  pointer-events:none;
 }
-#reviews.is-ask .rv__ask{opacity:1;pointer-events:auto;transition:opacity 260ms linear}
-.rv__ask .rv__q{font-size:clamp(40px,6.4vw,124px)}
-.rv__ask-line{font-stretch:76%;font-weight:700;font-size:clamp(13px,1.05vw,17px);letter-spacing:.16em;text-transform:uppercase;color:var(--paper-soft);
-  opacity:0;transition:opacity 1200ms var(--ease)}
-.rv__ask .btn{margin-top:clamp(4px,1dvh,10px);opacity:0;transform:translateY(6px);transition:opacity 900ms var(--ease),transform 900ms var(--ease)}
-#reviews.is-ask.is-ask2 .rv__ask-line,#reviews.is-ask.is-ask2 .rv__ask .btn{opacity:1;transform:none}
+.rv__ask .rv__q{font-size:clamp(34px,5.2vw,104px);opacity:0;transition:opacity 700ms var(--ease)}
+.rv__ask-line{font-stretch:76%;font-weight:700;font-size:clamp(13px,1.05vw,17px);letter-spacing:.16em;text-transform:uppercase;color:#C8C8C8;
+  opacity:0;transition:opacity 700ms var(--ease)}
+.rv__ask .btn{margin-top:clamp(4px,1dvh,10px);opacity:0;transform:translateY(6px);transition:opacity 700ms var(--ease),transform 700ms var(--ease)}
+#reviews.is-ask .rv__ask{pointer-events:auto}
+#reviews.is-ask .rv__ask .rv__q{opacity:1}
+#reviews.is-ask2 .rv__ask-line{opacity:1}
+#reviews.is-ask3 .rv__ask .btn{opacity:1;transform:none}
 
 /* an optional line at the end (content.js "reviews line at end") */
 #reviews .sec-end{position:absolute;left:0;right:0;bottom:clamp(12px,2dvh,24px);z-index:3;margin:0;padding:0 clamp(20px,5vw,64px)}
@@ -79,8 +107,8 @@
   .rv__card.is-solo{max-width:calc(100vw - 2 * var(--gut,20px))}
   .rv__card.is-solo .rv__q{font-size:15.5vw}
   .rv__q{font-size:8.6vw}
-  .rv__ask{max-width:calc(100vw - 2 * var(--gut,20px))}
-  .rv__ask .rv__q{font-size:14vw}
+  .rv__ask,.rv__pre{max-width:calc(100vw - 2 * var(--gut,20px));top:60%}
+  .rv__ask .rv__q,.rv__pre .rv__q{font-size:12.5vw}
   .rv__ask-line{font-size:12px;letter-spacing:.14em}
   .rv__name{font-size:11px;letter-spacing:.16em}
   .rv__role{font-size:10px;letter-spacing:.14em}
@@ -88,5 +116,5 @@
 
 /* ---------------------------------------------------------------- reduced motion: the end, still */
 @media (prefers-reduced-motion:reduce){
-  .rv__card,.rv__by,.rv__ask,.rv__ask-line,.rv__ask .btn{transition:none}
+  .rv__card,.rv__by,.rv__ask .rv__q,.rv__ask-line,.rv__ask .btn,.rv__frame,.rv__cell,.rv__logo,.rv__logo img,.rv__wall,.rv__pre .rv__q{transition:none}
 }
