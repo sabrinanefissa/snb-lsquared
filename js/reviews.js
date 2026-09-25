@@ -211,7 +211,7 @@
   const layoutEnd = () => {
     const W = stage.clientWidth, H = stage.clientHeight, MK = Math.min(W, H) * .86;
     wall.style.setProperty('--mk', MK.toFixed(1) + 'px');
-    LWlogo = Math.min(W * (phone ? .84 : .56), phone ? 440 : 900);
+    LWlogo = Math.min(W * .8, phone ? 440 : 1180);   /* the hero's logo size, exactly (css/hero.css .hlogo, css/phone2-hero.css .p2h__logo) */
     mw = LWlogo * MARK_FRAC;
     const gap = LWlogo * .05;
     lock.style.width = LWlogo.toFixed(1) + 'px';
