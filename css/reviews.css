@@ -65,25 +65,29 @@
 /* the lockup, the hero's move: the mark (the logo's left 15.4%) centred,
    then it moves left as what is to its right is revealed. --k makes its
    mark the size of the wall's mark at the moment it takes over. */
-.rv__lock{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;pointer-events:none;opacity:0;transition:opacity 400ms var(--ease)}
-#reviews.is-lock .rv__lock{opacity:1}
-#reviews.is-lock .rv__wall{opacity:0}   /* the wall's solid mark hands over to the real one, same pixels */
-.rv__lock-in{display:flex;align-items:center;width:100%;transform-origin:7.53% 50%;
-  clip-path:inset(0 84.94% 0 0);transform:translateX(42.47%) scale(var(--k,1));
+/* js sets --mw (the mark's side), --gap, --tx (what centres the mark while
+   closed), --lwlogo (the logo's width) and the lockup's own width */
+.rv__lock{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;pointer-events:none;opacity:0;transition:opacity 450ms var(--ease)}
+#reviews.is-lock .rv__lock{opacity:1}                       /* the real mark fades in over the wall's solid mark, same pixels */
+#reviews.is-lock2 .rv__wall{visibility:hidden}              /* then the wall goes, already covered: nothing to see */
+.rv__lock-in{display:flex;align-items:center;width:100%;transform-origin:calc(var(--mw,100px) / 2) 50%;
+  clip-path:inset(0 calc(100% - var(--mw,100px)) 0 0);transform:translateX(var(--tx,0px)) scale(var(--k,1));
   transition:clip-path 1.7s var(--ease),transform 1.7s var(--ease)}
-.rv__lock.is-settled .rv__lock-in{transform:translateX(42.47%) scale(1)}
+.rv__lock.is-settled .rv__lock-in{transform:translateX(var(--tx,0px)) scale(1)}
 .rv__lock.is-open .rv__lock-in{clip-path:inset(0 0 0 0);transform:translateX(0) scale(1)}
-.rv__lock-mark{display:block;flex:none;width:15.06%;overflow:hidden}   /* measured: the mark is 290 of the image's 1926 px */
-.rv__lock-mark img{display:block;width:calc(100% / .1506);max-width:none;height:auto}
-.rv__lock-right{position:relative;display:block;flex:none;width:84.94%}
-/* the line, set like the wordmark: wide, geometric, the logo's blue, one line */
-.rv__lock-text{position:absolute;left:0;top:50%;transform:translateY(-50%);padding-left:5%;white-space:nowrap;
+.rv__lock-mark{display:block;flex:none;width:var(--mw,100px);height:var(--mw,100px);overflow:hidden}   /* measured: the mark is 290 of the image's 1926 px, square */
+.rv__lock-mark img{display:block;width:calc(var(--mw,100px) / .1506);max-width:none;height:auto}
+.rv__lock-right{position:relative;display:grid;align-items:center;justify-items:start;flex:1;min-width:0;text-align:left}
+.rv__lock-right > *{grid-area:1 / 1}   /* the line and the wordmark share the spot; the taller sets the height, both sit centred on the mark */
+/* the line, set like the wordmark: wide, geometric, the logo's blue, its letters the wordmark's height (js sizes it) */
+.rv__lock-text{display:block;padding-left:var(--gap,10px);white-space:nowrap;
   font-stretch:118%;font-weight:600;text-transform:uppercase;letter-spacing:.01em;line-height:1;color:var(--blue);
-  font-size:clamp(20px,3vw,58px);opacity:1}
-/* the wordmark: the same logo image, shifted so only its right part shows */
-.rv__lock-word{display:block;width:100%;overflow:hidden;opacity:0}
-.rv__lock-word img{display:block;width:calc(100% / .8494);max-width:none;height:auto;margin-left:calc(-100% * .1506 / .8494)}
-.rv__lock.is-word .rv__lock-text{opacity:0}
+  opacity:1;transition:opacity 600ms var(--ease)}
+.rv__lock.is-hide .rv__lock-text{opacity:0;transition-duration:450ms}
+/* the wordmark: the same logo image, shifted so only its right part shows; it fades in where the words were */
+.rv__lock-word{display:block;width:100%;overflow:hidden;opacity:0;transition:opacity 700ms var(--ease)}
+.rv__lock-word img{display:block;width:calc(100% + var(--mw,100px));max-width:none;height:auto;margin-left:calc(-1 * var(--mw,100px))}
+.rv__lock.is-word .rv__lock-text{opacity:0;transition-duration:700ms}
 .rv__lock.is-word .rv__lock-word{opacity:1}
 #reviews.is-gone .rv__lock{opacity:0;transition:opacity 1100ms var(--ease)}
 
@@ -119,10 +123,10 @@
   .rv__role{font-size:12px}
   .rv__ask{max-width:calc(100vw - 2 * var(--gut,20px))}
   .rv__ask .rv__q{font-size:12.5vw}
-  .rv__lock-text{font-size:6vw}
 }
 
 /* ---------------------------------------------------------------- reduced motion: the end, still */
 @media (prefers-reduced-motion:reduce){
   .rv__card,.rv__by,.rv__wall,.rv__frame,.rv__cell,.rv__lock,.rv__lock-in,.rv__ask .rv__q,.rv__ask-line,.rv__ask .btn{transition:none}
+  #reviews.is-gone .rv__lock{opacity:0}
 }
