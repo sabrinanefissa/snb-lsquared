@@ -214,10 +214,10 @@ reviews link: https://www.g2.com/products/l-squared/reviews
 # SPEED. 100% is as it is now, 200% is twice as fast, 50% is half as fast.
 # The first line sets the whole section; the others set one moment each, on top of it.
 reviews speed: 100%
-reviews speed first review: 200%
-reviews speed gathering: 300%
+reviews speed first review: 150%
+reviews speed gathering: 200%
 reviews speed filling: 700%
-reviews speed zoom: 150%
+reviews speed zoom: 200%
 reviews speed mark hold: 150%
 reviews speed line slide: 150%
 reviews speed line hold: 150%
