@@ -496,7 +496,8 @@
     const stack = $('.rely__stack');
     const handle = $('#rely-handle');
     const onPh = $('#rely-on'), offPh = $('#rely-off');
-    if (frame && handle) {
+    /* r117: on a laptop js/relyloop.js runs the phone's automatic sweep instead; the drag stays for the old phone design */
+    if (frame && handle && !matchMedia('(min-width:761px)').matches) {
       let p = 76, nudged = false, tween = 0;
       const apply = (v) => {
         p = clamp(v, 0, 100);

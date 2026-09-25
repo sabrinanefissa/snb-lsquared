@@ -400,10 +400,9 @@
      WHOLE. The height is whatever the section has left under the two lines of
      copy, and the width follows the real ratio, so nothing is cut. */
   --relyh:min(700px,calc(100dvh - 2 * var(--pad-sec) - var(--gap-title) - 100px));
-  aspect-ratio:2172 / 724;   /* r23: the new matched pair is 2172x724, exactly 3:1 */
-  /* r32: image led, like Industries. The scene runs nearly the full window width, whole, and the section
-     takes the height that needs (a little past one screen on a short window). */
-  width:min(calc(100vw - 40px),2400px);
+  aspect-ratio:1672 / 941;   /* r117: the store pair (store-off.webp, store-on.webp) is 1672x941 */
+  /* r118: full width, edge to edge, the whole photo; the section takes the height that needs */
+  width:100vw;align-self:center;border-radius:0;   /* the wrap is a centred flex column: an oversized child sits centred, overflowing both sides alike */
   height:auto;
   touch-action:pan-y;
   box-shadow:0 16px 34px rgba(0,0,0,.55);
@@ -429,6 +428,11 @@
 .rely__grip i{background:var(--hi);border-radius:1px}
 .rely__grip i:nth-child(5){background:none}
 .rely__handle:active .rely__grip{transform:scale(.94)}
+/* r117: the laptop loop (js/relyloop.js): the pixel bar rides the lit edge, no handle */
+.rely__bar{position:absolute;top:0;left:0;height:100%;width:40px;pointer-events:none;opacity:0;z-index:4;
+  will-change:transform,opacity;filter:drop-shadow(0 0 12px rgba(255,153,0,.55))}
+.rely--loop{cursor:pointer}
+@media (prefers-reduced-motion:reduce){.rely__bar{display:none}}
 
 @media (max-height:600px){
   .rely__h{font-size:var(--title)}
@@ -752,7 +756,7 @@
   .strips{--rowh:calc(min(calc(100dvh - 2 * var(--pad-sec) - var(--gap-title) - 1.1 * var(--title)),720px) * var(--k-strips,1))}
   .ind__stage{height:calc(min(80dvh,calc(100vw / 3)) * var(--k-ind,1))}
   .pub__rig{--pubh:calc((100dvh - 2 * var(--pad-sec) - 2 * (var(--title) + var(--gap-title))) * var(--k-pub,1))}
-  .rely__frame{width:calc(min(calc(100vw - 40px),2400px) * var(--k-rely,1))}
+  .rely__frame{width:calc(100vw * var(--k-rely,1))}
 }
 
 /* r65: the optional lines from content.js, in the same voice as the dead
