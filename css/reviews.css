@@ -50,10 +50,10 @@
    square, the nine cells wash in with the logo's colours and black gutters
    between them, then go solid, so what is left is exactly the mark. */
 .rv__frame,.rv__mark{position:absolute;left:50%;top:50%;width:var(--mk,600px);height:var(--mk,600px);transform:translate(-50%,-50%);pointer-events:none}
-.rv__frame{z-index:2;box-shadow:0 0 0 6000px #000;opacity:0;transition:opacity 1500ms var(--ease) 300ms}
+.rv__frame{z-index:2;box-shadow:0 0 0 6000px #000;opacity:0;transition:opacity calc(1500ms * var(--rv-zoom,1)) var(--ease) calc(300ms * var(--rv-zoom,1))}
 .rv__mark{z-index:3}
 .rv__cell{position:absolute;width:31.03%;height:31.03%;opacity:0;box-shadow:0 0 0 calc(var(--mk,600px) * .025) #000;
-  transition:opacity 1400ms var(--ease) 900ms,background-color 900ms var(--ease)}
+  transition:opacity calc(1400ms * var(--rv-zoom,1)) var(--ease) calc(900ms * var(--rv-zoom,1)),background-color calc(900ms * var(--rv-zoom,1)) var(--ease)}
 .rv__cell.is-blue{background:rgba(86,176,228,.86)}
 .rv__cell.is-grey{background:rgba(202,202,204,.86)}
 .rv__cell.is-open{background:rgba(0,0,0,.96)}
@@ -67,12 +67,12 @@
    mark the size of the wall's mark at the moment it takes over. */
 /* js sets --mw (the mark's side), --gap, --tx (what centres the mark while
    closed), --lwlogo (the logo's width) and the lockup's own width */
-.rv__lock{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;pointer-events:none;opacity:0;transition:opacity 450ms var(--ease)}
+.rv__lock{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;pointer-events:none;opacity:0;transition:opacity calc(450ms * var(--rv-mark,1)) var(--ease)}
 #reviews.is-lock .rv__lock{opacity:1}                       /* the real mark fades in over the wall's solid mark, same pixels */
 #reviews.is-lock2 .rv__wall{visibility:hidden}              /* then the wall goes, already covered: nothing to see */
 .rv__lock-in{display:flex;align-items:center;width:100%;transform-origin:calc(var(--mw,100px) / 2) 50%;
   clip-path:inset(0 calc(100% - var(--mw,100px)) 0 0);transform:translateX(var(--tx,0px)) scale(var(--k,1));
-  transition:clip-path 1.7s var(--ease),transform 1.7s var(--ease)}
+  transition:clip-path calc(1.7s * var(--rv-slide,1)) var(--ease),transform calc(1.7s * var(--rv-slide,1)) var(--ease)}
 .rv__lock.is-settled .rv__lock-in{transform:translateX(var(--tx,0px)) scale(1)}
 .rv__lock.is-open .rv__lock-in{clip-path:inset(0 0 0 0);transform:translateX(0) scale(1)}
 .rv__lock-mark{display:block;flex:none;width:var(--mw,100px);height:var(--mw,100px);overflow:hidden}   /* measured: the mark is 290 of the image's 1926 px, square */
@@ -82,14 +82,14 @@
 /* the line, set like the wordmark: wide, geometric, the logo's blue, its letters the wordmark's height (js sizes it) */
 .rv__lock-text{display:block;padding-left:var(--gap,10px);white-space:nowrap;
   font-stretch:118%;font-weight:600;text-transform:uppercase;letter-spacing:.01em;line-height:1;color:var(--blue);
-  opacity:1;transition:opacity 600ms var(--ease)}
-.rv__lock.is-hide .rv__lock-text{opacity:0;transition-duration:450ms}
+  opacity:1;transition:opacity calc(600ms * var(--rv-lfade,1)) var(--ease)}
+.rv__lock.is-hide .rv__lock-text{opacity:0;transition-duration:calc(450ms * var(--rv-lfade,1))}
 /* the wordmark: the same logo image, shifted so only its right part shows; it fades in where the words were */
-.rv__lock-word{display:block;width:100%;overflow:hidden;opacity:0;transition:opacity 700ms var(--ease)}
+.rv__lock-word{display:block;width:100%;overflow:hidden;opacity:0;transition:opacity calc(700ms * var(--rv-lfade,1)) var(--ease)}
 .rv__lock-word img{display:block;width:calc(100% + var(--mw,100px));max-width:none;height:auto;margin-left:calc(-1 * var(--mw,100px))}
-.rv__lock.is-word .rv__lock-text{opacity:0;transition-duration:700ms}
+.rv__lock.is-word .rv__lock-text{opacity:0;transition-duration:calc(700ms * var(--rv-lfade,1))}
 .rv__lock.is-word .rv__lock-word{opacity:1}
-#reviews.is-gone .rv__lock{opacity:0;transition:opacity 1100ms var(--ease)}
+#reviews.is-gone .rv__lock{opacity:0;transition:opacity calc(1100ms * var(--rv-gfade,1)) var(--ease)}
 
 /* the invitation: alone on the black, slowly, one by one */
 .rv__ask{
@@ -97,10 +97,10 @@
   display:flex;flex-direction:column;align-items:center;gap:clamp(18px,3dvh,34px);
   pointer-events:none;
 }
-.rv__ask .rv__q{font-size:clamp(34px,5.2vw,104px);opacity:0;transition:opacity 1400ms var(--ease)}
+.rv__ask .rv__q{font-size:clamp(34px,5.2vw,104px);opacity:0;transition:opacity calc(1400ms * var(--rv-ask,1)) var(--ease)}
 .rv__ask-line{font-stretch:76%;font-weight:700;font-size:clamp(13px,1.05vw,17px);letter-spacing:.16em;text-transform:uppercase;color:#C8C8C8;
-  opacity:0;transition:opacity 1400ms var(--ease)}
-.rv__ask .btn{margin-top:clamp(4px,1dvh,10px);opacity:0;transition:opacity 1400ms var(--ease)}
+  opacity:0;transition:opacity calc(1400ms * var(--rv-ask,1)) var(--ease)}
+.rv__ask .btn{margin-top:clamp(4px,1dvh,10px);opacity:0;transition:opacity calc(1400ms * var(--rv-ask,1)) var(--ease)}
 #reviews.is-ask .rv__ask{pointer-events:auto}
 #reviews.is-ask .rv__ask .rv__q{opacity:1}
 #reviews.is-ask2 .rv__ask-line{opacity:1}
