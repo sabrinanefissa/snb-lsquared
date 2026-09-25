@@ -145,8 +145,8 @@ dead screen text colour:
 dead screen title: Everyone notices a dark screen.
 dead screen line under title: We keep yours on.
 # the off and on photos must be the same scene at the same size, or the slider will not line up
-dead screen off photo: retail-off.webp
-dead screen on photo: retail-on.webp
+dead screen off photo: store-off.webp
+dead screen on photo: store-on.webp
 dead screen off phone photo: m/retail-off-full.webp
 dead screen on phone photo: m/retail-on-full.webp
 # optional: more phone pairs for the drag demo, one per industry. Retail is the pair above.
