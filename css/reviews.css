@@ -22,7 +22,7 @@
 .rv__card{
   position:absolute;left:0;top:0;width:max-content;max-width:min(88vw,1400px);
   display:flex;flex-direction:column;align-items:center;gap:clamp(14px,2.4dvh,30px);
-  opacity:0;pointer-events:none;will-change:transform,opacity;
+  opacity:0;pointer-events:none;
   transform:translate(-50%,-50%) rotate(var(--r,0deg)) scale(var(--s,1));
 }
 .rv__card.is-on{opacity:1}
@@ -44,8 +44,8 @@
 .rv__by{display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;transition:opacity 1100ms var(--ease)}
 .rv__card.is-solo .rv__by{transition-duration:900ms}
 .rv__card.is-by .rv__by{opacity:1}
-.rv__name{font-stretch:76%;font-weight:700;font-size:clamp(11px,.9vw,15px);letter-spacing:.18em;text-transform:uppercase;color:#C8C8C8}   /* the logo's grey */
-.rv__role{font-stretch:76%;font-weight:600;font-size:clamp(10px,.78vw,13px);letter-spacing:.16em;text-transform:uppercase;color:rgba(200,200,200,.7)}
+.rv__name{font-stretch:76%;font-weight:700;font-size:clamp(13px,1.1vw,18px);letter-spacing:.18em;text-transform:uppercase;color:#C8C8C8}   /* the logo's grey */
+.rv__role{font-stretch:76%;font-weight:600;font-size:clamp(12px,.95vw,16px);letter-spacing:.16em;text-transform:uppercase;color:rgba(200,200,200,.75)}
 
 /* the wall: every card lives in it, so the ending can zoom it as one */
 .rv__wall{position:absolute;inset:0;transform-origin:50% 50%;will-change:transform}
@@ -63,25 +63,35 @@
 .rv__cell.is-open{background:rgba(0,0,0,.96)}
 #reviews.is-mark .rv__frame,#reviews.is-mark .rv__cell{opacity:1}
 
-/* the line before the logo: beneath the mark, in and out */
-.rv__pre{position:absolute;left:50%;top:62%;transform:translate(-50%,-50%);z-index:3;width:max-content;max-width:min(92vw,1400px);pointer-events:none}
-.rv__pre .rv__q{font-size:clamp(34px,5.2vw,104px);opacity:0;transition:opacity 700ms var(--ease)}
-#reviews.is-pre .rv__pre .rv__q{opacity:1}
+/* the line before the logo: the hero's own move. The real mark (the logo's
+   left 15.4%) sits where the wall's mark was, at the same size (--k); then
+   the line slides out of it exactly as the wordmark does (the mark moves
+   left, the words are revealed to its right), holds, and slides back in. */
+.rv__pre{position:absolute;left:50%;top:32%;transform:translate(-50%,-50%);z-index:2;pointer-events:none;opacity:0;transition:opacity 500ms var(--ease)}
+.rv__pre-mark{display:block;flex:none;width:15.4%;overflow:hidden}
+.rv__pre-mark img{display:block;width:calc(100% / .154);max-width:none;height:auto}
+.rv__pre .rv__q{flex:none;width:80%;margin-left:4.6%;text-align:left;font-size:clamp(28px,4.2vw,84px);line-height:.92;opacity:1;transition:none}
+.rv__pre-in{display:flex;align-items:center;width:100%;transform-origin:7.7% 50%;clip-path:inset(0 84.6% 0 0);transform:translateX(42.4%) scale(var(--k,1));
+  transition:clip-path 1.7s var(--ease),transform 1.7s var(--ease)}
+#reviews.is-pre .rv__pre{opacity:1}
+#reviews.is-pre .rv__wall{opacity:0;transition:opacity 500ms var(--ease)}   /* the wall's mark hands over to the real one */
+.rv__pre.is-settled .rv__pre-in{transform:translateX(42.4%) scale(1)}
+.rv__pre.is-open .rv__pre-in{clip-path:inset(0 0 0 0);transform:translateX(0) scale(1)}
 
-/* the logo, the hero's reveal: the mark first (its left 15.4%, shifted so
-   the mark sits in the middle), then the wordmark slides out. It starts the
-   size of the wall's mark (--k) and settles at the logo's own size. */
+/* the logo, the hero's reveal, the same move again: the mark first, then
+   the wordmark slides out; then the whole thing fades away */
 .rv__logo{position:absolute;left:50%;top:32%;transform:translate(-50%,-50%);z-index:2;pointer-events:none;opacity:0;transition:opacity 500ms var(--ease)}
 .rv__logo img{display:block;width:100%;height:auto;transform-origin:7.7% 50%;
-  clip-path:inset(0 84.6% 0 0);transform:translateX(42.4%) scale(var(--k,1));
+  clip-path:inset(0 84.6% 0 0);transform:translateX(42.4%);
   transition:clip-path 1.7s var(--ease),transform 1.7s var(--ease)}
 #reviews.is-logo .rv__logo{opacity:1}
-#reviews.is-logo .rv__wall{opacity:0;transition:opacity 600ms var(--ease) 200ms}   /* the wall's mark hands over to the real one */
-#reviews.is-full .rv__logo img{clip-path:inset(0 0 0 0);transform:translateX(0) scale(1)}
+#reviews.is-logo .rv__pre{opacity:0}   /* same pixels underneath: the swap is invisible */
+#reviews.is-full .rv__logo img{clip-path:inset(0 0 0 0);transform:translateX(0)}
+#reviews.is-gone .rv__logo{opacity:0;transition:opacity 900ms var(--ease)}
 
-/* the invitation: beneath the logo, one by one on the black */
+/* the invitation: alone on the black, one by one */
 .rv__ask{
-  position:absolute;left:50%;top:62%;transform:translate(-50%,-50%);z-index:3;width:max-content;max-width:min(92vw,1400px);
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;width:max-content;max-width:min(92vw,1400px);
   display:flex;flex-direction:column;align-items:center;gap:clamp(18px,3dvh,34px);
   pointer-events:none;
 }
@@ -107,14 +117,15 @@
   .rv__card.is-solo{max-width:calc(100vw - 2 * var(--gut,20px))}
   .rv__card.is-solo .rv__q{font-size:15.5vw}
   .rv__q{font-size:8.6vw}
-  .rv__ask,.rv__pre{max-width:calc(100vw - 2 * var(--gut,20px));top:60%}
-  .rv__ask .rv__q,.rv__pre .rv__q{font-size:12.5vw}
+  .rv__ask{max-width:calc(100vw - 2 * var(--gut,20px));top:50%}
+  .rv__ask .rv__q{font-size:12.5vw}
+  .rv__pre .rv__q{font-size:7.2vw}
+  .rv__name{font-size:13px}
+  .rv__role{font-size:12px}
   .rv__ask-line{font-size:12px;letter-spacing:.14em}
-  .rv__name{font-size:11px;letter-spacing:.16em}
-  .rv__role{font-size:10px;letter-spacing:.14em}
 }
 
 /* ---------------------------------------------------------------- reduced motion: the end, still */
 @media (prefers-reduced-motion:reduce){
-  .rv__card,.rv__by,.rv__ask .rv__q,.rv__ask-line,.rv__ask .btn,.rv__frame,.rv__cell,.rv__logo,.rv__logo img,.rv__wall,.rv__pre .rv__q{transition:none}
+  .rv__card,.rv__by,.rv__ask .rv__q,.rv__ask-line,.rv__ask .btn,.rv__frame,.rv__cell,.rv__logo,.rv__logo img,.rv__wall,.rv__pre,.rv__pre-in{transition:none}
 }
