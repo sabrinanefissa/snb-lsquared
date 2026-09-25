@@ -216,15 +216,15 @@ reviews link: https://www.g2.com/products/l-squared/reviews
 reviews speed: 100%
 reviews speed first review: 200%
 reviews speed gathering: 200%
-reviews speed filling: 200%
-reviews speed zoom: 200%
-reviews speed mark hold: 150%
-reviews speed line slide: 150%
+reviews speed filling: 250%
+reviews speed zoom: 300%
+reviews speed mark hold: 250%
+reviews speed line slide: 200%
 reviews speed line hold: 150%
-reviews speed line fade: 150%
-reviews speed logo hold: 150%
+reviews speed line fade: 200%
+reviews speed logo hold: 1500%
 reviews speed logo fade: 150%
-reviews speed invitation: 150%
+reviews speed invitation: 200%
 review 1 words: Above and *beyond*.
 review 1 name: Luis Javier D.
 review 1 role: Owner
