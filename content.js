@@ -204,8 +204,9 @@ reviews text colour:
 # how long the first review is alone before the next lands beside it, in seconds
 reviews seconds each: 0.3
 # the ending: the invitation, its small line, and the button, which opens your G2 reviews page
-# once the screen is a wall of words it becomes the L Squared mark; this line slides out of the mark on one line, as L SQUARED does in the hero, then L SQUARED itself
-reviews line before logo: Every voice. Every screen.
+# once the screen is a wall of words it becomes the L Squared mark. The first of these lines slides out of the mark
+# as L SQUARED does in the hero; each next one fades in where it was; then L SQUARED fades in. A | separates the lines.
+reviews line before logo: Every voice.|Every screen.
 reviews invite: If we've earned it,|we'd love to hear it.
 reviews invite line: Two minutes to leave a review.
 reviews button: Leave a review

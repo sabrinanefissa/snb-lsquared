@@ -43,7 +43,7 @@
   const N = LIST.length;
   const secs = parseFloat(T['reviews seconds each']);
   const SOLO_HOLD = (isFinite(secs) && secs >= 0 ? secs : .3) * 1000;
-  const PRE = (T['reviews line before logo'] || 'Every voice. Every screen.').replace(/\|/g, ' ');   /* one line, as the wordmark */
+  const PRE = (T['reviews line before logo'] || 'Every voice.|Every screen.').split('|').map((x) => x.trim()).filter(Boolean);   /* the lines beside the mark, one at a time */
   const ASK = T['reviews invite'] || "If we've earned it,|we'd love to hear it.";
   const ASK_LINE = T['reviews invite line'] || 'Two minutes to leave a review.';
   const BTN = T['reviews button'] || 'Leave a review';
@@ -91,7 +91,7 @@
 
   /* ------------------------------------------------------------ DOM */
   const sr = el('p', 'sr-only');
-  sr.textContent = 'What our customers say. ' + LIST.map((r) => plain(r.words) + ' ' + [r.name, r.role].filter(Boolean).join(', ') + '.').join(' ') + ' ' + PRE + ' L Squared. ' + plain(ASK) + ' ' + ASK_LINE;
+  sr.textContent = 'What our customers say. ' + LIST.map((r) => plain(r.words) + ' ' + [r.name, r.role].filter(Boolean).join(', ') + '.').join(' ') + ' ' + PRE.join(' ') + ' L Squared. ' + plain(ASK) + ' ' + ASK_LINE;
   sec.insertBefore(sr, stage);
   stage.setAttribute('aria-hidden', 'true');
   /* the wall: every review lives in it, so the ending can zoom it as one */
@@ -113,7 +113,7 @@
   const lock = el('div', 'rv__lock'), lockIn = el('div', 'rv__lock-in');
   const lMark = el('span', 'rv__lock-mark'), lMarkImg = el('img'); lMarkImg.src = logoSrc; lMarkImg.alt = ''; lMarkImg.decoding = 'async'; lMark.appendChild(lMarkImg);
   const lRight = el('span', 'rv__lock-right');
-  const lText = el('span', 'rv__lock-text', PRE);
+  const lText = el('span', 'rv__lock-text', PRE[0] || '');
   const lWord = el('span', 'rv__lock-word'), lWordImg = el('img'); lWordImg.src = logoSrc; lWordImg.alt = 'L Squared'; lWordImg.decoding = 'async'; lWord.appendChild(lWordImg);
   lRight.append(lText, lWord); lockIn.append(lMark, lRight); lock.appendChild(lockIn);
   stage.appendChild(lock);
@@ -207,49 +207,32 @@
      to the size of the lockup's mark, centred on the section; the lockup's
      mark then takes over at the same pixels. */
   const MARK_FRAC = .1506;   /* measured from the logo image: the mark is 290 of 1926 px */
-  const CAP = 1.04;          /* the line's font size as a share of the mark's height: its letters are then the wordmark's height (73% of the mark) */
-  let LWlogo = 0, LWtext = 0, mw = 0;
+  let LWlogo = 0, mw = 0;
   const layoutEnd = () => {
     const W = stage.clientWidth, H = stage.clientHeight, MK = Math.min(W, H) * .86;
     wall.style.setProperty('--mk', MK.toFixed(1) + 'px');
-    /* the line at 100px, to know its width per pixel of font */
-    lText.style.fontSize = '100px'; lText.style.whiteSpace = 'nowrap'; lText.style.paddingLeft = '0';
-    const w100 = lText.scrollWidth;
-    if (!phone) {
-      /* one line, letters the size of the wordmark's: the whole logo scales so mark + gap + line fits the screen */
-      const perLW = MARK_FRAC + .05 + (w100 / 100) * CAP * MARK_FRAC;
-      LWlogo = Math.min(W * .56, 900, W * .92 / perLW);
-    } else {
-      LWlogo = Math.min(W * .84, 440);
-    }
+    LWlogo = Math.min(W * (phone ? .84 : .56), phone ? 440 : 900);
     mw = LWlogo * MARK_FRAC;
-    const gap = LWlogo * .05, tf = mw * CAP;
-    let textW;
-    if (!phone) { textW = (w100 / 100) * tf; }
-    else {
-      /* the phone cannot fit one line at that size: two lines, at the largest size that fits the width */
-      lText.style.whiteSpace = 'normal'; lText.style.paddingLeft = gap.toFixed(1) + 'px';
-      textW = W * .92 - mw;
-      lText.style.width = textW.toFixed(1) + 'px';
-      let f = tf;
-      lText.style.fontSize = f.toFixed(1) + 'px';
-      for (let n = 0; n < 20 && (lText.scrollWidth > textW + 1 || lText.offsetHeight > f * 2.3); n++) { f *= .93; lText.style.fontSize = f.toFixed(1) + 'px'; }
-    }
-    LWtext = phone ? mw + textW : mw + gap + textW;
+    const gap = LWlogo * .05;
+    lock.style.width = LWlogo.toFixed(1) + 'px';
     lock.style.setProperty('--mw', mw.toFixed(1) + 'px');
     lock.style.setProperty('--gap', gap.toFixed(1) + 'px');
-    lock.style.setProperty('--lwlogo', LWlogo.toFixed(1) + 'px');
-    if (!phone) lText.style.fontSize = tf.toFixed(1) + 'px';
-    lText.style.paddingLeft = ''; lText.style.whiteSpace = '';
-    setLockWidth(LWtext);
+    lock.style.setProperty('--tx', ((LWlogo - mw) / 2).toFixed(1) + 'px');
+    /* the lines sit exactly where the wordmark will: one line each, one
+       size for all of them, the longest spanning the wordmark's width */
+    const room = LWlogo - mw - gap;
+    let fs = mw * 1.04;   /* never taller than the wordmark's letters */
+    PRE.forEach((line) => {
+      lText.textContent = line; lText.style.fontSize = fs.toFixed(1) + 'px';
+      while (fs > 8 && lText.scrollWidth - gap > room) { fs *= .96; lText.style.fontSize = fs.toFixed(1) + 'px'; }
+    });
+    lText.textContent = PRE[0] || ''; lText.style.fontSize = fs.toFixed(1) + 'px';
     /* the wall zooms so its mark is exactly the lockup's mark on a laptop;
        on a phone the mark stays a little larger for the handover (--k) and settles as the line slides out */
     const wallMark = phone ? Math.min(W * .34, 132) : mw;
     lock.style.setProperty('--k', (wallMark / mw).toFixed(4));
     return 'scale(' + (wallMark / MK).toFixed(4) + ')';
   };
-  /* the lockup is centred on the section; its mark sits in the middle while closed, whatever the lockup's width */
-  const setLockWidth = (lw) => { lock.style.width = lw.toFixed(1) + 'px'; lock.style.setProperty('--tx', ((lw - mw) / 2).toFixed(1) + 'px'); };
   const fitAsk = () => fitQ(askQ, stage.clientWidth * (phone ? .9 : .92));
   const finish = (instant) => {
     if (ended) return;
@@ -269,10 +252,12 @@
       later(() => sec.classList.add('is-solid'), t); t += 900;                /* the reviews fade into solid squares: the mark */
       later(() => sec.classList.add('is-lock'), t); t += 450;                 /* the real mark fades in over the wall's, same pixels */
       later(() => sec.classList.add('is-lock2'), t); t += 900;                /* the wall goes, unseen beneath it; the mark holds, as in the hero */
-      later(() => lock.classList.add('is-open', 'is-settled'), t); t += SLIDE + 2200;   /* the line slides out; holds */
-      later(() => lock.classList.remove('is-open'), t); t += SLIDE + 500;     /* slides back in; the mark holds */
-      later(() => { lock.classList.add('is-word'); setLockWidth(LWlogo); }, t); t += 120;   /* the wordmark takes the line's place, unseen */
-      later(() => lock.classList.add('is-open'), t); t += SLIDE + 2600;       /* L SQUARED slides out; holds */
+      later(() => lock.classList.add('is-open', 'is-settled'), t); t += SLIDE + 2000;   /* the first line slides out of the mark; holds */
+      for (let i = 1; i < PRE.length; i++) {                                 /* each next line fades in where the last one was */
+        later(() => lock.classList.add('is-hide'), t); t += 450;
+        later(() => { lText.textContent = PRE[i]; lock.classList.remove('is-hide'); }, t); t += 600 + 2000;
+      }
+      later(() => lock.classList.add('is-word'), t); t += 700 + 2600;         /* L SQUARED fades in where the words were; holds */
       later(() => sec.classList.add('is-gone'), t); t += 1100 + 500;          /* the logo fades to black */
       later(() => sec.classList.add('is-ask'), t); t += 1000;                 /* the invitation, alone, slowly */
       later(() => sec.classList.add('is-ask2'), t); t += 900;
@@ -313,7 +298,7 @@
     cards.forEach((c) => c.remove()); cards.length = 0;
     wall.getAnimations().forEach((a) => a.cancel()); wall.style.transform = '';
     sec.classList.remove('is-ending', 'is-mark', 'is-solid', 'is-lock', 'is-lock2', 'is-gone', 'is-ask', 'is-ask2', 'is-ask3');
-    lock.classList.remove('is-open', 'is-settled', 'is-word');
+    lock.classList.remove('is-open', 'is-settled', 'is-word', 'is-hide'); lText.textContent = PRE[0] || '';
   };
   sec.addEventListener('click', (e) => { if (e.target.closest('a')) return; if (visible && !ended) finish(false); });
 

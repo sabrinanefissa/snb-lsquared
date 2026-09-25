@@ -81,11 +81,13 @@
 .rv__lock-right > *{grid-area:1 / 1}   /* the line and the wordmark share the spot; the taller sets the height, both sit centred on the mark */
 /* the line, set like the wordmark: wide, geometric, the logo's blue, its letters the wordmark's height (js sizes it) */
 .rv__lock-text{display:block;padding-left:var(--gap,10px);white-space:nowrap;
-  font-stretch:118%;font-weight:600;text-transform:uppercase;letter-spacing:.01em;line-height:1;color:var(--blue);opacity:1}
-/* the wordmark: the same logo image, shifted so only its right part shows */
-.rv__lock-word{display:block;width:calc(var(--lwlogo,600px) - var(--mw,100px));overflow:hidden;opacity:0}
-.rv__lock-word img{display:block;width:var(--lwlogo,600px);max-width:none;height:auto;margin-left:calc(-1 * var(--mw,100px))}
-.rv__lock.is-word .rv__lock-text{opacity:0}
+  font-stretch:118%;font-weight:600;text-transform:uppercase;letter-spacing:.01em;line-height:1;color:var(--blue);
+  opacity:1;transition:opacity 600ms var(--ease)}
+.rv__lock.is-hide .rv__lock-text{opacity:0;transition-duration:450ms}
+/* the wordmark: the same logo image, shifted so only its right part shows; it fades in where the words were */
+.rv__lock-word{display:block;width:100%;overflow:hidden;opacity:0;transition:opacity 700ms var(--ease)}
+.rv__lock-word img{display:block;width:calc(100% + var(--mw,100px));max-width:none;height:auto;margin-left:calc(-1 * var(--mw,100px))}
+.rv__lock.is-word .rv__lock-text{opacity:0;transition-duration:700ms}
 .rv__lock.is-word .rv__lock-word{opacity:1}
 #reviews.is-gone .rv__lock{opacity:0;transition:opacity 1100ms var(--ease)}
 
@@ -121,7 +123,6 @@
   .rv__role{font-size:12px}
   .rv__ask{max-width:calc(100vw - 2 * var(--gut,20px))}
   .rv__ask .rv__q{font-size:12.5vw}
-  .rv__lock-text{white-space:normal;line-height:1.02}
 }
 
 /* ---------------------------------------------------------------- reduced motion: the end, still */
