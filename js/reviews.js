@@ -48,7 +48,7 @@
   const LIST = (window.LSQ_REVIEWS && window.LSQ_REVIEWS.length) ? window.LSQ_REVIEWS : DEF;
   const N = LIST.length;
   const secs = parseFloat(T['reviews seconds each']);
-  const SOLO_HOLD = (isFinite(secs) && secs > 0 ? secs : .6) * 1000;
+  const SOLO_HOLD = (isFinite(secs) && secs > 0 ? secs : .3) * 1000;
   const ASK = T['reviews invite'] || "If we've earned it,|we'd love to hear it.";
   const ASK_LINE = T['reviews invite line'] || 'Two minutes to leave a review.';
   const BTN = T['reviews button'] || 'Leave a review';
@@ -61,9 +61,11 @@
 
   /* ------------------------------------------------------------ the words
      "Above and *beyond*." > words, some blue (*our own* spans two), | breaks */
-  const fillQ = (q, s) => {
+  const fillQ = (q, s, quoted) => {
     let em = false;
-    s.split('|').forEach((seg, n) => {
+    if (quoted) q.appendChild(document.createTextNode('\u201C'));
+    const segs = s.split('|');
+    segs.forEach((seg, n) => {
       if (n) q.appendChild(el('br'));
       const words = seg.split(/\s+/).filter(Boolean);
       words.forEach((w, k) => {
@@ -76,11 +78,12 @@
         if (k < words.length - 1) q.appendChild(document.createTextNode(' '));
       });
     });
+    if (quoted) q.appendChild(document.createTextNode('\u201D'));
   };
   const plain = (s) => s.replace(/[*|]/g, ' ').replace(/\s+/g, ' ').trim();
   const card = (r, solo, k) => {
     const c = el('div', 'rv__card' + (solo ? ' is-solo' : '')), q = el('p', 'rv__q');
-    fillQ(q, r.words); c.appendChild(q);
+    fillQ(q, r.words, true); c.appendChild(q);
     if (r.name || r.role) {
       const by = el('div', 'rv__by');
       if (r.name) by.appendChild(el('span', 'rv__name', r.name));
@@ -109,7 +112,10 @@
   wall.append(frame, mark);
   /* the line before the logo, and the logo itself (the hero's reveal: the
      mark first, then the wordmark slides out of it) */
-  const pre = el('div', 'rv__pre'), preQ = el('p', 'rv__q'); fillQ(preQ, PRE); pre.appendChild(preQ);
+  const pre = el('div', 'rv__pre'), preMark = el('span', 'rv__pre-mark'), preImg = el('img'), preQ = el('p', 'rv__q');
+  preImg.src = logoSrc; preImg.alt = ''; preImg.decoding = 'async'; preMark.appendChild(preImg);
+  fillQ(preQ, PRE);
+  const preIn = el('div', 'rv__pre-in'); preIn.append(preMark, preQ); pre.appendChild(preIn);   /* the part that slides, as the logo image does */
   const logo = el('div', 'rv__logo'), logoImg = el('img'); logoImg.src = logoSrc; logoImg.alt = 'L Squared'; logoImg.decoding = 'async';
   logo.appendChild(logoImg);
   stage.append(pre, logo);
@@ -127,7 +133,7 @@
     let fs = parseFloat(getComputedStyle(q).fontSize);
     for (let n = 0; n < 10 && q.scrollWidth > maxW + 1; n++) { fs *= .92; q.style.fontSize = fs.toFixed(1) + 'px'; }
   };
-  const fitAsk = () => { const w = stage.clientWidth * (phone ? .9 : .92); fitQ(askQ, w); fitQ(preQ, w); };
+  const fitAsk = () => { const w = stage.clientWidth * (phone ? .9 : .92); fitQ(askQ, w); };
 
   /* ------------------------------------------------------------ state */
   const cards = [];
@@ -154,8 +160,10 @@
     /* the logo, centred where the mark is: its mark starts the same size as
        the wall's mark, and scales to the finished logo as the wordmark slides out */
     const LW = Math.min(W * (phone ? .84 : .56), phone ? 440 : 900);
-    logo.style.width = LW.toFixed(1) + 'px'; logo.style.top = (MARK_Y * 100) + '%';
-    logo.style.setProperty('--k', (MARK_PX() / (LW * MARK_FRAC)).toFixed(4));
+    [logo, pre].forEach((g) => { g.style.width = LW.toFixed(1) + 'px'; g.style.top = (MARK_Y * 100) + '%'; });
+    pre.style.setProperty('--k', (MARK_PX() / (LW * MARK_FRAC)).toFixed(4));
+    preQ.style.fontSize = '';
+    fitQ(preQ, LW * .8);
     return { s, dy };
   };
   const finish = (instant) => {
@@ -166,25 +174,29 @@
     const { s, dy } = layoutEnd();
     const endT = 'translateY(' + dy.toFixed(1) + 'px) scale(' + s.toFixed(4) + ')';
     if (instant || RM) {
-      wall.style.transform = endT; sec.classList.add('is-mark', 'is-logo', 'is-full', 'is-ask', 'is-ask2', 'is-ask3'); return;
+      wall.style.transform = endT; sec.classList.add('is-mark', 'is-gone', 'is-ask', 'is-ask2', 'is-ask3'); return;
     }
-    const DUR = 2600, E = 'cubic-bezier(.77,0,.175,1)';
+    const DUR = 3000;
     later(() => {
       const kf = [{ transform: 'translateY(0) scale(1)' }, { transform: endT }];
-      wall.animate(kf, { duration: DUR, easing: E, fill: 'forwards' }).finished.then(() => { wall.style.transform = endT; }).catch(() => {});
-      if (!phone) wall.animate([{ filter: 'blur(0)' }, { filter: 'blur(5px)', offset: .35 }, { filter: 'blur(0)', offset: .85 }, { filter: 'blur(0)' }], { duration: DUR, easing: 'linear' });
+      wall.animate(kf, { duration: DUR, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' }).finished.then(() => { wall.style.transform = endT; }).catch(() => {});
       sec.classList.add('is-mark');   /* the frame, the gutters and the colours wash in over the zoom (css) */
-      /* the hero's ending: the line beneath the mark, it leaves, then the mark
-         becomes the logo as the wordmark slides out of it */
-      let t = DUR + 500;
-      later(() => sec.classList.add('is-pre'), t); t += 2400;
-      later(() => sec.classList.remove('is-pre'), t); t += 700;
-      later(() => sec.classList.add('is-logo'), t); t += 500;      /* the real mark over the wall's */
-      later(() => sec.classList.add('is-full'), t); t += 1900;     /* the wordmark slides out (1.7s, as the hero) */
-      later(() => sec.classList.add('is-ask'), t); t += 700;
+      /* then, one thing on screen at a time, the hero's own move three times:
+         1. the real mark takes over from the wall's, and "Every voice. Every
+            screen." slides out of it exactly as the wordmark does;
+         2. it slides back in, and L SQUARED slides out the same way;
+         3. the logo fades, and the invitation comes in alone. */
+      let t = DUR + 200;
+      later(() => sec.classList.add('is-pre'), t); t += 500;                   /* the real mark over the wall's (same size, same place) */
+      later(() => { pre.classList.add('is-open', 'is-settled'); }, t); t += 1700 + 1600;   /* the line slides out, holds */
+      later(() => pre.classList.remove('is-open'), t); t += 1700 + 200;        /* and slides back in */
+      later(() => sec.classList.add('is-logo'), t); t += 500;                  /* the logo's mark takes over, same pixels */
+      later(() => sec.classList.add('is-full'), t); t += 1700 + 1800;          /* L SQUARED slides out, holds */
+      later(() => sec.classList.add('is-gone'), t); t += 900;                  /* it fades */
+      later(() => sec.classList.add('is-ask'), t); t += 700;                   /* the invitation, alone */
       later(() => sec.classList.add('is-ask2'), t); t += 600;
       later(() => sec.classList.add('is-ask3'), t);
-    }, 500);
+    }, 200);
   };
 
   /* the beat, written out: the gap before each arrival after the solo, in
@@ -236,7 +248,10 @@
        about the base size to huge by the end, so there is never a jump */
     const t = Math.min(1, k / (TOTAL - 1));
     const lo = .55 - .25 * t, hi = (phone ? 1.15 : 1.25) + (phone ? 1.4 : 1.7) * t;
-    const s = lo + (hi - lo) * Math.pow(hash(k, 4), 1.7);   /* more small than large */
+    /* the first arrivals run through a fixed set of clearly different sizes
+       (big, small, medium, bigger, small, large...), then the wide range */
+    const EARLY = [1.15, .6, .9, 1.35, .7, 1.05, .55, 1.25, .8];
+    const s = k <= EARLY.length ? EARLY[k - 1] * (phone ? .9 : 1) : lo + (hi - lo) * Math.pow(hash(k, 4), 1.7);
     const rot = (hash(k, 5) - .5) * (phone ? 16 : 22) * busy;   /* straight, then tilting once it is busy */
     c.style.left = (best.x * 100).toFixed(2) + '%'; c.style.top = (best.y * 100).toFixed(2) + '%';
     c.style.setProperty('--s', s.toFixed(3)); c.style.setProperty('--r', rot.toFixed(2) + 'deg');
@@ -265,7 +280,7 @@
      places and sizes). Gaps between arrivals shrink from 1.7s to .32s;
      each card's stay grows, so the count on screen climbs: 1, 2, 3, 4...
      The last wave never leaves; it is the crowd that freezes. */
-  const on = (c) => { void c.offsetWidth; c.classList.add('is-on'); later(() => c.classList.add('is-by'), c.classList.contains('is-solo') ? 350 : 300); };
+  const on = (c) => { void c.offsetWidth; c.classList.add('is-on'); later(() => c.classList.add('is-by'), 250); };
   const off = (c) => { c.classList.remove('is-on'); c.classList.add('is-off'); live = live.filter((p) => p !== c._pos); later(() => c.remove(), 1000); };
   const arrive = () => {
     if (!visible) { playing = false; return; }
@@ -277,7 +292,7 @@
       wall.appendChild(c); cards.push(c);
       fitQ(c.querySelector('.rv__q'), stage.clientWidth * (phone ? .9 : .92));
       on(c);
-      k++; later(arrive, 350 + 600 + SOLO_HOLD);   /* the first one stays; the next arrives beside it */
+      k++; later(arrive, 250 + 350 + SOLO_HOLD);   /* the first one stays; the next arrives beside it */
       return;
     }
     on(c);   /* r108: once a review is in, it stays; nothing ever fades out */
