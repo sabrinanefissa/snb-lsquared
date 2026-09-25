@@ -402,7 +402,7 @@
   --relyh:min(700px,calc(100dvh - 2 * var(--pad-sec) - var(--gap-title) - 100px));
   aspect-ratio:1672 / 941;   /* r117: the store pair (store-off.webp, store-on.webp) is 1672x941 */
   /* r118: full width, edge to edge, the whole photo; the section takes the height that needs */
-  width:100vw;margin-left:calc(50% - 50vw);border-radius:0;
+  width:100vw;align-self:center;border-radius:0;   /* the wrap is a centred flex column: an oversized child sits centred, overflowing both sides alike */
   height:auto;
   touch-action:pan-y;
   box-shadow:0 16px 34px rgba(0,0,0,.55);
@@ -756,7 +756,7 @@
   .strips{--rowh:calc(min(calc(100dvh - 2 * var(--pad-sec) - var(--gap-title) - 1.1 * var(--title)),720px) * var(--k-strips,1))}
   .ind__stage{height:calc(min(80dvh,calc(100vw / 3)) * var(--k-ind,1))}
   .pub__rig{--pubh:calc((100dvh - 2 * var(--pad-sec) - 2 * (var(--title) + var(--gap-title))) * var(--k-pub,1))}
-  .rely__frame{width:calc(100vw * var(--k-rely,1));margin-left:calc(50% - 50vw * var(--k-rely,1))}
+  .rely__frame{width:calc(100vw * var(--k-rely,1))}
 }
 
 /* r65: the optional lines from content.js, in the same voice as the dead
